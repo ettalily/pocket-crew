@@ -1,6 +1,7 @@
 #include <iostream>
 #include <raylib.h>
 #include "raymath.h"
+#include "rlights.h"
 
 using namespace std;
 
@@ -8,66 +9,66 @@ const int screenWidth = 1600, screenHeight = 900;
 Camera3D camera;
 
 struct Player {
-    Vector3 position = (Vector3){ 0.0f, 0.0f, 0.0f }, 
-    startingPosition = (Vector3){ 0.0f, 0.0f, 0.0f },
+    Vector3 position = (Vector3){ 0.0f, 0.0f, 0.0f },
     velocity = (Vector3){ 0.0f, 0.0f, 0.0f }, 
-    direction = (Vector3){ 0.0f, 0.0f, 0.0f }, 
-    size = (Vector3){ 1.0f, 1.0f, 1.0f };
-    float acceleration = 0.03f, decceleration = 0.01f, maxVelocity = 0.15f, gravity = 0.01f, maxFallSpeed = 0.5f, jumpPower = 0.2f;
+    direction = (Vector3){ 0.0f, 0.0f, 0.0f };
+    float radius = 0.5f, acceleration = 0.02f, decceleration = 0.005f, maxVelocity = 0.12f, gravity = 0.01f, maxFallSpeed = 0.5f, jumpPower = 0.2f;
     bool touchingGround = false;
 };
 
 Player player;
 
-class Collider {
-    public:
-    Vector3 position, size;
-};
-
-Collider ground;
-Collider wall;
+Model groundTest;
+Mesh groundMesh;
 
 // Returns a normal that only considers horizontal directions. Used to figure out the vector for forward relative to the camera.
 Vector3 GetForwardNormal() {
     return Vector3Normalize((Vector3){ camera.target.x, 0.0f, camera.target.z } - (Vector3){ camera.position.x, 0.0f, camera.position.z });
 }
 
-BoundingBox GetCubeBoundingBox(Vector3 position, Vector3 size) {
-    return BoundingBox{position - (size/2), position + (size/2)};
+void FloorDetect(RayCollision ray) {
+    if (player.velocity.y <= 0 && ray.hit && ray.distance <= player.radius) {
+        player.touchingGround = true; player.velocity.y = 0.0f; player.position.y = ray.point.y + (player.radius);
+    }    
 }
 
-// Handles wall, floor, and ceiling collisions.
-void CubeCollisionCheck(Collider object) {
-    if (CheckCollisionBoxes(GetCubeBoundingBox(player.position, player.size), GetCubeBoundingBox(object.position, object.size))) {
-        if (player.position.x + (player.size.x/2) >= object.position.x - (object.size.x/2) && player.startingPosition.x - (player.size.x/2) <= object.position.x + (object.size.x/2) && player.startingPosition.z + (player.size.z/2) >= object.position.z - (object.size.z/2) && player.startingPosition.z - (player.size.z/2) <= object.position.z + (object.size.z/2)) {
-            // +Y
-            if (player.startingPosition.y + (player.size.y/2) <= object.position.y - (object.size.y/2)) {
-                player.velocity.y = 0.0f; player.position.y = object.position.y - (object.size.y/2) - (player.size.y/2);
-            }
-            // -Y
-            if (player.startingPosition.y - (player.size.y/2) >= object.position.y + (object.size.y/2)) {
-                player.touchingGround = true; player.velocity.y = 0.0f; player.position.y = object.position.y + (object.size.y/2) + (player.size.y/2);
-            }
-        }
-        if (player.position.y + (player.size.y/2) >= object.position.y - (object.size.y/2) && player.position.y - (player.size.y/2) <= object.position.y + (object.size.y/2)) {
-            // +X
-            if (player.startingPosition.x + (player.size.x/2) <= object.position.x - (object.size.x/2)) {
-                player.velocity.x = 0.0f; player.position.x = object.position.x - (object.size.x/2) - (player.size.x/2);
-            }
-            // -X
-            if (player.startingPosition.x - (player.size.x/2) >= object.position.x + (object.size.x/2)) {
-                player.velocity.x = 0.0f; player.position.x = object.position.x + (object.size.x/2) + (player.size.x/2);
-            }
-            // +Z
-            if (player.startingPosition.z + (player.size.z/2) <= object.position.z - (object.size.z/2)) {
-                player.velocity.z = 0.0f; player.position.z = object.position.z - (object.size.z/2) - (player.size.z/2);
-            }
-            // -Z
-            if (player.startingPosition.z - (player.size.z/2) >= object.position.z + (object.size.z/2)) {
-                player.velocity.z = 0.0f; player.position.z = object.position.z + (object.size.z/2) + (player.size.z/2);
-            }
-        }
-    }
+void WallDetect(RayCollision ray, Vector3 dir) {
+    if (ray.hit && ray.distance < player.radius) {
+        Vector3 horizontalOnlyNormal = Vector3Normalize((Vector3){ ray.normal.x, 0.0f, ray.normal.z });
+        //player.velocity -= (Vector3){ abs(dir.x), 0.0f, abs(dir.z) } * player.velocity;
+        player.position = (Vector3){ ray.point.x - (dir.x * player.radius) , player.position.y, ray.point.z - (dir.z * player.radius) };
+    }   
+}
+
+// Handles wall, floor, and ceiling collisions. Very much so a WIP. I hate math and I have no idea how to properly structure this so it is purely trial and error at this point.
+void CollisionCheck(Mesh mesh, Model model) {
+    // Floor Collision. Raycasts the center and all four corners of the base of the collision box.
+    RayCollision basedirposx = GetRayCollisionMesh(Ray{(Vector3){ player.position.x + player.radius, player.position.y, player.position.z }, (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+    FloorDetect(basedirposx);
+    RayCollision basedirposz = GetRayCollisionMesh(Ray{(Vector3){ player.position.x, player.position.y, player.position.z + player.radius }, (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+    FloorDetect(basedirposz);
+    RayCollision basedirnegx = GetRayCollisionMesh(Ray{(Vector3){ player.position.x - player.radius, player.position.y, player.position.z }, (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+    FloorDetect(basedirnegx);
+    RayCollision basedirnegz = GetRayCollisionMesh(Ray{(Vector3){ player.position.x, player.position.y, player.position.z - player.radius }, (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+    FloorDetect(basedirnegz);
+    RayCollision basecenter = GetRayCollisionMesh(Ray{(Vector3){ player.position.x, player.position.y, player.position.z }, (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+    FloorDetect(basecenter);
+
+    // Wall Collisionh.x * play
+    RayCollision walldirforward = GetRayCollisionMesh(Ray{(Vector3){ player.position.x, player.position.y, player.position.z }, player.direction }, mesh, model.transform);
+    RayCollision walldirleft = GetRayCollisionMesh(Ray{(Vector3){ player.position.x, player.position.y, player.position.z }, Vector3Perpendicular(player.direction) }, mesh, model.transform);
+    RayCollision walldirright = GetRayCollisionMesh(Ray{(Vector3){ player.position.x, player.position.y, player.position.z }, Vector3Perpendicular(player.direction) * -1 }, mesh, model.transform);
+    RayCollision walldirback = GetRayCollisionMesh(Ray{(Vector3){ player.position.x, player.position.y, player.position.z }, player.direction * -1 }, mesh, model.transform);
+    
+    WallDetect(walldirforward, player.direction);
+    WallDetect(walldirleft, Vector3Perpendicular(player.direction));
+    WallDetect(walldirright, Vector3Perpendicular(player.direction) * -1);
+    WallDetect(walldirback, player.direction * -1);
+
+    RayCollision walldirforwardleft = GetRayCollisionMesh(Ray{(Vector3){ player.position.x, player.position.y, player.position.z }, player.direction - Vector3Perpendicular(player.direction) }, mesh, model.transform);
+    RayCollision walldirforwardright = GetRayCollisionMesh(Ray{(Vector3){ player.position.x, player.position.y, player.position.z }, player.direction + Vector3Perpendicular(player.direction) }, mesh, model.transform);
+    WallDetect(walldirforwardleft, player.direction - Vector3Perpendicular(player.direction));
+    WallDetect(walldirforwardright, player.direction + Vector3Perpendicular(player.direction));
 }
 
 void PlayerMove() {
@@ -93,6 +94,12 @@ void PlayerMove() {
     } 
     else { player.velocity.x = 0.0f; player.velocity.z = 0.0f; }
 
+    // Sets the direction vector to the normalised horizontal direction.
+    if (player.velocity.x != 0) { player.direction.x = player.velocity.x; }
+    if (player.velocity.z != 0) { player.direction.z = player.velocity.z; }
+    player.direction = Vector3Normalize(player.direction);
+
+    // Jumping
     if (player.touchingGround && IsKeyPressed(KEY_SPACE)) {
         player.touchingGround = false; player.velocity.y = player.jumpPower;
     }
@@ -107,8 +114,7 @@ void Gravity() {
 // Calls all collider objects.
 void Collision() {
     player.touchingGround = false;
-    CubeCollisionCheck(ground);
-    CubeCollisionCheck(wall);
+    CollisionCheck(groundTest.meshes[0], groundTest);
 }
 
 void ApplyVelocity() {
@@ -119,34 +125,27 @@ int main() {
     // Sets up the window.
     InitWindow(screenWidth, screenHeight, "Pocket"); SetTargetFPS(60);
 
+    groundTest = LoadModel("assets/testmodel.glb");
+
     // Sets camera options.
     camera.projection = CAMERA_PERSPECTIVE;
-    camera.fovy = 60.0f;
+    camera.fovy = 40.0f;
     camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
     camera.position = (Vector3){ 10.0f, 7.0f, 10.0f };
     camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
 
-    ground.position = (Vector3){ 0.0f, -1.0f, 0.0f }; ground.size = (Vector3){ 20.0f, 1.0f, 20.0f };
-    wall.position = (Vector3){ 4.0f, 0.0f, 0.0f }; wall.size = (Vector3){ 2.0f, 2.0f, 2.0f };
-
-
     while (!WindowShouldClose()) {
-        player.startingPosition = player.position;
-        Gravity();
         PlayerMove();
+        Gravity();
         ApplyVelocity();
         Collision();
 
         BeginDrawing();
         ClearBackground(LIGHTGRAY);
         BeginMode3D(camera);
-            DrawCubeV(ground.position, ground.size, GREEN);
-            DrawCubeWiresV(ground.position, ground.size, BLACK);
-            DrawCubeV(wall.position, wall.size, GREEN);
-            DrawCubeWiresV(wall.position, wall.size, BLACK);
-            
-            DrawCubeV(player.position, player.size, BLUE);
-            DrawCubeWiresV(player.position, player.size, BLACK);
+            DrawModel(groundTest, (Vector3){ 0.0f, 0.0f, 0.0f }, 1.0f, GREEN);
+            DrawModelWires(groundTest, (Vector3){ 0.0f, 0.0f, 0.0f }, 1.0f, BLACK);
+            DrawSphere(player.position, player.radius, BLUE);
         EndMode3D();
         EndDrawing();
     }
