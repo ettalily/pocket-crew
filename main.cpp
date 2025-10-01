@@ -5,8 +5,13 @@
 
 using namespace std;
 
-const int screenWidth = 1600, screenHeight = 900; 
+const int screenWidth = 1600, screenHeight = 900;
 Camera3D camera;
+
+
+const float movementDeadzone = 0.05f;
+int gamepadID = 0;
+
 
 struct Player {
     Vector3 position = (Vector3){ 0.0f, 0.0f, 0.0f },
@@ -72,15 +77,24 @@ void CollisionCheck(Mesh mesh, Model model) {
 }
 
 void PlayerMove() {
-    // Gets input direction vector
+    // Gets keyboard input direction vector
     Vector3 dirInput = { 0.0f, 0.0f, 0.0f };
     if (IsKeyDown(KEY_W)) { dirInput += GetForwardNormal(); }
     if (IsKeyDown(KEY_S)) { dirInput -= GetForwardNormal(); }
     if (IsKeyDown(KEY_D)) { dirInput += Vector3Perpendicular(GetForwardNormal()); }
     if (IsKeyDown(KEY_A)) { dirInput -= Vector3Perpendicular(GetForwardNormal()); }
+    dirInput = Vector3Normalize(dirInput);
+
+    // Left stick input value that is normalised but keeps it's magnitude.
+    Vector2 leftStickInput = (Vector2){ GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X), -GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y) } * Vector2Normalize((Vector2){ abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X)), abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y)) });
+    // Ignores the keyboard input if a controller input is detected.
+    if (leftStickInput.x > movementDeadzone || leftStickInput.x < -movementDeadzone || leftStickInput.y > movementDeadzone || leftStickInput.y < -movementDeadzone) { dirInput = (Vector3){ 0.0f, 0.0f, 0.0f };  }
+    // Gets gamepad input direction vector.
+    if (leftStickInput.y > movementDeadzone || leftStickInput.y < -movementDeadzone) { dirInput += GetForwardNormal() * leftStickInput.y; }
+    if (leftStickInput.x > movementDeadzone || leftStickInput.x < -movementDeadzone) { dirInput += Vector3Perpendicular(GetForwardNormal()) * leftStickInput.x; }
 
     // Applies input direction vector to the velocity.
-    player.velocity += Vector3Normalize(dirInput) * player.acceleration;
+    player.velocity += dirInput * player.acceleration;
 
     // Caps the max velocity.
     if (Vector2Length((Vector2){ player.velocity.x, player.velocity.z }) >= player.maxVelocity) { 
@@ -100,7 +114,7 @@ void PlayerMove() {
     player.direction = Vector3Normalize(player.direction);
 
     // Jumping
-    if (player.touchingGround && IsKeyPressed(KEY_SPACE)) {
+    if (player.touchingGround && (IsKeyPressed(KEY_SPACE) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT)) ) {
         player.touchingGround = false; player.velocity.y = player.jumpPower;
     }
 }
@@ -139,7 +153,7 @@ int main() {
         Gravity();
         ApplyVelocity();
         Collision();
-
+        
         BeginDrawing();
         ClearBackground(LIGHTGRAY);
         BeginMode3D(camera);
