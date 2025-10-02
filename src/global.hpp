@@ -9,9 +9,8 @@ class Player {
     Vector3 position = (Vector3){ 0.0f, 0.0f, 0.0f },
     velocity = (Vector3){ 0.0f, 0.0f, 0.0f }, 
     direction = (Vector3){ 0.0f, 0.0f, 0.0f };
-    float radius = 0.5f, acceleration = 0.02f, decceleration = 0.005f, maxVelocity = 0.12f, gravity = 0.01f, maxFallSpeed = 0.5f, jumpPower = 0.2f;
+    float radius = 0.5f, acceleration = 0.02f, decceleration = 0.005f, maxVelocity = 0.12f, gravity = 0.01f, maxFallSpeed = 0.5f, jumpPower = 0.2f, wallJumpHorPower = 0.2f, wallSlideVelocity = 0.08f;
     bool touchingGround = false;
-
     void Update();
     void FloorDetect(RayCollision ray);
     void WallDetect(RayCollision ray, Vector3 dir);
@@ -20,9 +19,20 @@ class Player {
     void Gravity();
     void Collision();
     void ApplyVelocity();
+    void JumpLogic();
 };
 extern Player player;
 
+// camera.cpp
+class GameCamera {
+    public:
+    Camera3D camera;
+    Vector3 look, offset = (Vector3){ 10.0f, 7.0f, 10.0f };
+    void CameraInit();
+    void Update();
+};
+
+extern GameCamera cam;
+
 // main.cpp
 extern Model level;
-Vector3 GetForwardNormal();
