@@ -1,7 +1,6 @@
 #include <iostream>
 #include <raylib.h>
 #include <raymath.h>
-#include <rlights.h>
 
 // player.cpp
 class Player {
