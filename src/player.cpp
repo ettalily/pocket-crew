@@ -3,6 +3,7 @@
 const float movementDeadzone = 0.05f;
 const int coyoteTimeLength = 6;
 int coyoteTimer = 0;
+bool jumpPressHeld = false;
 
 int gamepadID = 0;
 
@@ -30,8 +31,8 @@ void Player::FloorDetect(RayCollision ray) {
 void Player::WallDetect(RayCollision ray, Vector3 dir) {
     if (ray.hit && ray.distance < radius) {
         Vector3 horizontalOnlyNormal = Vector3Normalize((Vector3){ ray.normal.x, 0.0f, ray.normal.z });
-        //velocity -= (Vector3){ abs(dir.x), 0.0f, abs(dir.z) } * velocity;
         position = (Vector3){ ray.point.x - (dir.x * radius) , position.y, ray.point.z - (dir.z * radius) };
+        velocity -= (Vector3){ abs(horizontalOnlyNormal.x), 0.0f, abs(horizontalOnlyNormal.z) } * velocity;
     }   
 }
 
@@ -101,11 +102,7 @@ void Player::Move() {
     if (velocity.z != 0) { direction.z = velocity.z; }
     direction = Vector3Normalize(direction);
 
-    // Sets and increments the kayote timer.
-    if (touchingGround) { coyoteTimer = coyoteTimeLength; }
-    else if (coyoteTimer > 0) { coyoteTimer -= 1; }
-
-    // Jumping and Wall Jumping.
+    // Jumping, wall sliding, and wall jumping.
     JumpLogic();
 }
 
@@ -126,14 +123,23 @@ void Player::ApplyVelocity() {
 }
 
 void Player::JumpLogic() {
+    // Jump hold difference.
+    if ((IsKeyReleased(KEY_SPACE) || IsGamepadButtonReleased(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT)) && jumpPressHeld) { jumpPressHeld = false; if (velocity.y > 0) { velocity.y -= jumpReleasePower; } }
+
+    // Sets and increments the kayote timer.
+    if (touchingGround) { coyoteTimer = coyoteTimeLength; }
+    else if (coyoteTimer > 0) { coyoteTimer -= 1; }
+
+    // Sliding and jumping against a wall.
     RayCollision wallcheck = GetRayCollisionMesh(Ray{(Vector3){ position.x, position.y, position.z }, direction }, level.meshes[0], level.transform);
-    if (!touchingGround  && velocity.y < 0 && coyoteTimer == 0 && wallcheck.hit && wallcheck.distance <= radius + 0.1f) { 
+    if (!touchingGround && wallcheck.hit && coyoteTimer == 0 && wallcheck.distance <= radius + 0.35f) { 
         if (velocity.y < -wallSlideVelocity) { velocity.y = -wallSlideVelocity; }
         if ((IsKeyPressed(KEY_SPACE) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT))) {
-            velocity.y = jumpPower; velocity = (Vector3){ wallcheck.normal.x * wallJumpHorPower, velocity.y, wallcheck.normal.z * wallJumpHorPower };
+            velocity.y = jumpPower; jumpPressHeld = true; velocity = (Vector3){ wallcheck.normal.x * wallJumpHorPower, velocity.y, wallcheck.normal.z * wallJumpHorPower };
         }
     }
+    // Jumping on the ground.
     else if ((touchingGround || coyoteTimer != 0) && (IsKeyPressed(KEY_SPACE) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT)) ) {
-        touchingGround = false; velocity.y = jumpPower;
+        touchingGround = false; velocity.y = jumpPower; coyoteTimer = 0; jumpPressHeld = true;
     }
 }

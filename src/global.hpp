@@ -9,7 +9,7 @@ class Player {
     Vector3 position = (Vector3){ 0.0f, 0.0f, 0.0f },
     velocity = (Vector3){ 0.0f, 0.0f, 0.0f }, 
     direction = (Vector3){ 0.0f, 0.0f, 0.0f };
-    float radius = 0.5f, acceleration = 0.02f, decceleration = 0.005f, maxVelocity = 0.12f, gravity = 0.01f, maxFallSpeed = 0.5f, jumpPower = 0.2f, wallJumpHorPower = 0.2f, wallSlideVelocity = 0.08f;
+    float radius = 0.5f, acceleration = 0.015f, decceleration = 0.005f, maxVelocity = 0.14f, gravity = 0.01f, maxFallSpeed = 0.4f, jumpPower = 0.25f, wallJumpHorPower = 0.2f, wallSlideVelocity = 0.07f, jumpReleasePower = 0.045f, airDriftMult = 0.2f;
     bool touchingGround = false;
     void Update();
     void FloorDetect(RayCollision ray);
