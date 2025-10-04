@@ -66,7 +66,7 @@ int main() {
                     DrawSphere(player.position, player.radius, BLUE);
                     
                     // Draw player drop shadow.
-                DrawModel(dropShadow, (Vector3){ player.position.x, dropShadowY + 0.05f, player.position.z }, 0.75f, WHITE);  
+                DrawModel(dropShadow, (Vector3){ player.position.x, dropShadowY + 0.05f, player.position.z }, 1.0f - ((player.position.y - dropShadowY) * 0.13f), WHITE);  
                 EndShaderMode();
             EndMode3D();
         DrawFPS(10, 10);
