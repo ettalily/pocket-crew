@@ -28,13 +28,15 @@ int main() {
 
     // Loads the level model and gives it the shader.
     level = LoadModel("assets/models/testmodel.glb");
-    level.materials[0].shader = shader;
+    for (int m = 0; m < level.materialCount; m++) {
+        level.materials[m].shader = shader;
+    }
 
     // Load audio.
     Sound backgroundMusic = LoadSound("assets/music/background.mp3");
     
     // Create lights.
-    Light light = CreateLight(LIGHT_DIRECTIONAL, (Vector3){ 50.0f, 100.0f, 50.0f }, Vector3Zero(), WHITE, shader);
+    Light light = CreateLight(LIGHT_DIRECTIONAL, (Vector3){ 50.0f, 100.0f, -50.0f }, Vector3Zero(), WHITE, shader);
 
     // Creates drop shadow.
     Model dropShadow = LoadModelFromMesh(GenMeshPlane(1.0f, 1.0f, 16, 16));
@@ -62,7 +64,6 @@ int main() {
                     DrawModel(level, Vector3Zero(), 1.0f, WHITE);
                     DrawPlane(Vector3Zero(), (Vector2){ 200.0f, 200.0f}, BLUE);
                     DrawSphere(player.position, player.radius, BLUE);
-                    DrawRay(Ray{ player.position, player.direction }, RED);
                     
                     // Draw player drop shadow.
                 DrawModel(dropShadow, (Vector3){ player.position.x, dropShadowY + 0.05f, player.position.z }, 0.75f, WHITE);  
