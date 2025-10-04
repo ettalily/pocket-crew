@@ -9,6 +9,8 @@ Model level;
 
 int main() {
     SetConfigFlags(FLAG_MSAA_4X_HINT);
+    SetConfigFlags(FLAG_VSYNC_HINT);
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     // Sets up the window and audio device.
     InitWindow(screenWidth, screenHeight, "Pocket Crew"); SetTargetFPS(60);
     InitAudioDevice();
