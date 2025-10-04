@@ -18,7 +18,7 @@ Requires a C++ compiler, such as the ``mingw-w64-gcc`` compiler included in [w64
 
 To build for windows, open ``w64devkit.exe``, then navigate to the root directory of this repository and run:
 ```
-gcc -o pocket.exe ./src/global.hpp ./src/player.cpp ./src/camera.cpp ./src/main.cpp -I ./raylib/include -L ./raylib/windows/lib -lraylib -lgdi32 -lwinmm
+gcc -o pocket.exe ./src/global.hpp ./src/player.cpp ./src/collision.cpp ./src/camera.cpp ./src/main.cpp -I ./raylib/include -L ./raylib/windows/lib -lraylib -lgdi32 -lwinmm
 ```
 
 ## Notes
