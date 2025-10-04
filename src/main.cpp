@@ -6,6 +6,7 @@
 const int screenWidth = 1600, screenHeight = 900;
 
 Model level;
+float dropShadowY;
 
 int main() {
     SetConfigFlags(FLAG_MSAA_4X_HINT);
@@ -62,7 +63,8 @@ int main() {
                     DrawSphere(player.position, player.radius, WHITE);
                     
                     // Draw player drop shadow.
-                    DrawModel(dropShadow, (Vector3){ player.position.x, GetRayCollisionMesh(Ray{player.position, (Vector3){ 0.0f, -1.0f, 0.0f } }, level.meshes[0], level.transform).point.y + 0.05f, player.position.z }, 0.75f, WHITE);
+                    DrawModel(dropShadow, (Vector3){ player.position.x, dropShadowY + 0.05f, player.position.z }, 0.75f, WHITE);
+                    
                 EndShaderMode();
             EndMode3D();
         DrawFPS(10, 10);
@@ -70,6 +72,7 @@ int main() {
     }
 
     // Unload assets and resources.
+    UnloadModel(dropShadow);
     UnloadModel(level);
     UnloadSound(backgroundMusic);
     UnloadShader(shader);

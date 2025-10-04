@@ -34,3 +34,4 @@ extern GameCamera cam;
 
 // main.cpp
 extern Model level;
+extern float dropShadowY;

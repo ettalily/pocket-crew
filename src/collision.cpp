@@ -1,9 +1,12 @@
 #include "global.hpp"
 
 void Player::FloorDetect(RayCollision ray) {
-    if (velocity.y <= 0 && ray.hit && ray.distance <= radius && abs(ray.normal.y) >= 0.5f) {
-        touchingGround = true; velocity.y = 0.0f; position.y = ray.point.y + (radius);
-    }    
+    if (ray.hit) {
+        if (velocity.y <= 0 && ray.distance <= radius && abs(ray.normal.y) >= 0.5f) {
+            touchingGround = true; velocity.y = 0.0f; position.y = ray.point.y + (radius);
+        }
+        if (ray.point.y > dropShadowY) { dropShadowY = ray.point.y; }
+    }
 }
 
 void Player::WallDetect(RayCollision ray, Vector3 dir) {

@@ -16,6 +16,7 @@ Vector3 GetForwardNormal() {
 
 void Player::Update() { 
     // Calls all the different parts of the player code.
+    dropShadowY = -100.0f;
     Move();
     Gravity();
     ApplyVelocity();
