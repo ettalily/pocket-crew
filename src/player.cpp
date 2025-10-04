@@ -5,14 +5,7 @@ const int coyoteTimeLength = 6;
 int coyoteTimer = 0;
 bool jumpPressHeld = false;
 
-int gamepadID = 0;
-
 Player player;
-
-// Returns a normal that only considers horizontal directions. Used to figure out the vector for forward relative to the camera.
-Vector3 GetForwardNormal() {
-    return Vector3Normalize((Vector3){ cam.camera.target.x, 0.0f, cam.camera.target.z } - (Vector3){ cam.camera.position.x, 0.0f, cam.camera.position.z });
-}
 
 void Player::Update() { 
     // Calls all the different parts of the player code.
@@ -68,12 +61,6 @@ void Player::Gravity() {
     if (velocity.y <= -maxFallSpeed) { velocity.y = -maxFallSpeed; }
 }
 
-// Calls all collider objects.
-void Player::Collision() {
-    touchingGround = false;
-    CollisionCheck(level.meshes[0], level);
-}
-
 void Player::ApplyVelocity() {
     position += velocity;
 }
@@ -87,11 +74,16 @@ void Player::JumpLogic() {
     else if (coyoteTimer > 0) { coyoteTimer -= 1; }
 
     // Sliding and jumping against a wall.
-    RayCollision wallcheck = GetRayCollisionMesh(Ray{(Vector3){ position.x, position.y, position.z }, direction }, level.meshes[0], level.transform);
-    if (!touchingGround && wallcheck.hit && coyoteTimer == 0 && wallcheck.distance <= radius + 0.35f) { 
-        if (velocity.y < -wallSlideVelocity) { velocity.y = -wallSlideVelocity; }
-        if ((IsKeyPressed(KEY_SPACE) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT))) {
-            velocity.y = jumpPower; jumpPressHeld = true; velocity = (Vector3){ wallcheck.normal.x * wallJumpHorPower, velocity.y, wallcheck.normal.z * wallJumpHorPower };
+    if (!touchingGround && coyoteTimer == 0) {
+        for (int m = 0; m < level.meshCount; m++) {
+            RayCollision wallcheck = GetRayCollisionMesh(Ray{(Vector3){ position.x, position.y, position.z }, direction }, level.meshes[m], level.transform);
+            if (wallcheck.hit && wallcheck.distance <= radius + 0.35f) { 
+                if (velocity.y < -wallSlideVelocity) { velocity.y = -wallSlideVelocity; }
+                if ((IsKeyPressed(KEY_SPACE) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT))) {
+                    velocity.y = jumpPower; jumpPressHeld = true; velocity = (Vector3){ wallcheck.normal.x * wallJumpHorPower, velocity.y, wallcheck.normal.z * wallJumpHorPower };
+                }
+                break;
+            }
         }
     }
     // Jumping on the ground.

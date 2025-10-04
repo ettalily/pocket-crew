@@ -4,6 +4,7 @@
 #define GLSL_VERSION 330
 
 const int screenWidth = 1600, screenHeight = 900;
+int gamepadID = 0;
 
 Model level;
 float dropShadowY;
@@ -33,7 +34,7 @@ int main() {
     Sound backgroundMusic = LoadSound("assets/music/background.mp3");
     
     // Create lights.
-    Light light = CreateLight(LIGHT_POINT, (Vector3){ 50.0f, 100.0f, 50.0f }, Vector3Zero(), WHITE, shader);
+    Light light = CreateLight(LIGHT_DIRECTIONAL, (Vector3){ 50.0f, 100.0f, 50.0f }, Vector3Zero(), WHITE, shader);
 
     // Creates drop shadow.
     Model dropShadow = LoadModelFromMesh(GenMeshPlane(1.0f, 1.0f, 16, 16));
@@ -60,17 +61,16 @@ int main() {
                 BeginShaderMode(shader);
                     DrawModel(level, Vector3Zero(), 1.0f, WHITE);
                     DrawPlane(Vector3Zero(), (Vector2){ 200.0f, 200.0f}, BLUE);
-                    DrawSphere(player.position, player.radius, WHITE);
+                    DrawSphere(player.position, player.radius, BLUE);
+                    DrawRay(Ray{ player.position, player.direction }, RED);
                     
                     // Draw player drop shadow.
-                    DrawModel(dropShadow, (Vector3){ player.position.x, dropShadowY + 0.05f, player.position.z }, 0.75f, WHITE);
-                    
+                DrawModel(dropShadow, (Vector3){ player.position.x, dropShadowY + 0.05f, player.position.z }, 0.75f, WHITE);  
                 EndShaderMode();
             EndMode3D();
         DrawFPS(10, 10);
         EndDrawing();
     }
-
     // Unload assets and resources.
     UnloadModel(dropShadow);
     UnloadModel(level);

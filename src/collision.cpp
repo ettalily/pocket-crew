@@ -1,20 +1,11 @@
 #include "global.hpp"
 
-void Player::FloorDetect(RayCollision ray) {
-    if (ray.hit) {
-        if (velocity.y <= 0 && ray.distance <= radius && abs(ray.normal.y) >= 0.5f) {
-            touchingGround = true; velocity.y = 0.0f; position.y = ray.point.y + (radius);
-        }
-        if (ray.point.y > dropShadowY) { dropShadowY = ray.point.y; }
+// Calls all collider objects.
+void Player::Collision() {
+    touchingGround = false;
+    for (int m = 0; m < level.meshCount; m++) {
+        CollisionCheck(level.meshes[m], level);
     }
-}
-
-void Player::WallDetect(RayCollision ray, Vector3 dir) {
-    if (ray.hit && ray.distance < radius) {
-        Vector3 horizontalOnlyNormal = Vector3Normalize((Vector3){ ray.normal.x, 0.0f, ray.normal.z });
-        position = (Vector3){ ray.point.x - (dir.x * radius) , position.y, ray.point.z - (dir.z * radius) };
-        velocity -= (Vector3){ abs(horizontalOnlyNormal.x), 0.0f, abs(horizontalOnlyNormal.z) } * velocity;
-    }   
 }
 
 // Handles wall, floor, and ceiling collisions. Very much so a WIP. I hate math and I have no idea how to properly structure this so it is purely trial and error at this point.
@@ -46,4 +37,21 @@ void Player::CollisionCheck(Mesh mesh, Model model) {
     RayCollision walldirforwardright = GetRayCollisionMesh(Ray{position, direction + Vector3Perpendicular(direction) }, mesh, model.transform);
     WallDetect(walldirforwardleft, direction - Vector3Perpendicular(direction));
     WallDetect(walldirforwardright, direction + Vector3Perpendicular(direction));
+}
+
+void Player::FloorDetect(RayCollision ray) {
+    if (ray.hit) {
+        if (velocity.y <= 0 && ray.distance <= radius && abs(ray.normal.y) >= 0.5f) {
+            touchingGround = true; velocity.y = 0.0f; position.y = ray.point.y + (radius);
+        }
+        if (ray.point.y > dropShadowY) { dropShadowY = ray.point.y; }
+    }
+}
+
+void Player::WallDetect(RayCollision ray, Vector3 dir) {
+    if (ray.hit && ray.distance < radius) {
+        Vector3 horizontalOnlyNormal = Vector3Normalize((Vector3){ ray.normal.x, 0.0f, ray.normal.z });
+        position = (Vector3){ ray.point.x - (dir.x * radius) , position.y, ray.point.z - (dir.z * radius) };
+        //velocity -= (Vector3){ abs(horizontalOnlyNormal.x), 0.0f, abs(horizontalOnlyNormal.z) } * velocity; Regressed until better solution.
+    }   
 }

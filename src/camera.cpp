@@ -1,6 +1,12 @@
 #include "global.hpp"
 
+CameraSettings cameraMode = Orbit;
 GameCamera cam;
+
+// Returns a normal that only considers horizontal directions. Used to figure out the vector for forward relative to the camera.
+Vector3 GetForwardNormal() {
+    return Vector3Normalize((Vector3){ cam.camera.target.x, 0.0f, cam.camera.target.z } - (Vector3){ cam.camera.position.x, 0.0f, cam.camera.position.z });
+}
 
 void GameCamera::CameraInit() {
     camera.projection = CAMERA_PERSPECTIVE;
@@ -11,8 +17,12 @@ void GameCamera::CameraInit() {
 }
 
 void GameCamera::Update() {
-    look = player.position;
-    cam.camera.target = look;
-    cam.camera.position = look + offset;
+    switch (cameraMode) {
+        case Orbit:
+            look = player.position;
+            orbits = (Vector3){ -33.0f, player.position.y, 33.0f };
+            cam.camera.position = orbits + ((Vector3){ player.position.x - orbits.x, 0.0f, player.position.z - orbits.z } + (Vector3Normalize((Vector3){ player.position.x - orbits.x, 0.0f, player.position.z - orbits.z }) * offset)) + (Vector3){ 0.0f, 6.0f, 0.0f };
+            cam.camera.target = look;
+            break;
+    }   
 }
-
