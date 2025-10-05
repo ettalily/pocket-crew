@@ -89,7 +89,13 @@ void Player::JumpLogic() {
     // Sliding and jumping against a wall.
     if (!touchingGround && coyoteTimer == 0) {
         for (int m = 0; m < level.meshCount; m++) {
-            RayCollision wallcheck = GetRayCollisionMesh(Ray{(Vector3){ position.x, position.y, position.z }, direction }, level.meshes[m], level.transform);
+            // Gets the normalised stick input direction.
+            Vector2 inputDir;
+            if (GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y) >= movementDeadzone || GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y) <= -movementDeadzone) { inputDir.y = GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y); }
+            if (GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X) >= movementDeadzone || GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X) <= -movementDeadzone) { inputDir.x = GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X); }
+            inputDir = Vector2Normalize(inputDir);
+            // Raycasts in the direction of the stick input.
+            RayCollision wallcheck = GetRayCollisionMesh(Ray{(Vector3){ position.x, position.y, position.z }, (GetForwardNormal() * -inputDir.y) + (Vector3Perpendicular(GetForwardNormal()) * inputDir.x) }, level.meshes[m], level.transform);
             if (wallcheck.hit && abs(wallcheck.normal.y) <= 0.2f && wallcheck.distance <= radius + 0.1f) { 
                 if (velocity.y < -wallSlideVelocity) { velocity.y = -wallSlideVelocity; }
                 if ((IsKeyPressed(KEY_SPACE) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT))) {

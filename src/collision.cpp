@@ -51,8 +51,8 @@ void Player::WallDetect(RayCollision ray, Vector3 dir) {
     if (ray.hit && ray.distance < radius) {
         Vector3 horizontalOnlyNormal = Vector3Normalize((Vector3){ ray.normal.x, 0.0f, ray.normal.z });
         position = (Vector3){ ray.point.x - (dir.x * radius) , position.y, ray.point.z - (dir.z * radius) };
-        if (dir == direction || dir == direction + Vector3Perpendicular(direction) || dir == direction - Vector3Perpendicular(direction)) { velocity.x = 0.0f, velocity.z = 0.0f; }
-    }   
+        if (dir == direction) { velocity.x = 0.0f, velocity.z = 0.0f; }
+    }
 }
 
 void Player::CeilingDetect(RayCollision ray) {
