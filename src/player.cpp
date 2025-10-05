@@ -18,17 +18,18 @@ void Player::Update() {
 }
 
 void Player::UpdateInputAxis() {
-    // Gets a normalised left stick input value that keeps it's magnitude.
-    dirInput = (Vector2){ GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X), -GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y) } * Vector2Normalize((Vector2){ abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X)), abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y)) });
+    dirInput = Vector2Zero();
+    // Checks if either left stick axis has passed the deadzone. If either has, it'll use the left stick input.
     if (abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X)) >= stickDeadzone || abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y)) >= stickDeadzone) {
+        // Gets a normalised left stick input value that keeps it's magnitude.
+        dirInput = (Vector2){ GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X), -GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y) } * Vector2Normalize((Vector2){ abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X)), abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y)) });
         // Applies deadzones.
         if (abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X)) < stickDeadzone) { dirInput.x = 0.0f; }
         if (abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y)) < stickDeadzone) { dirInput.y = 0.0f; }
     }
-    // Keyboard WASD/arrow key input. Only runs if neither gamepad stick axis deadzone is passed.
+    // Keyboard WASD/arrow key input. Only runs if neither gamepad stick axis deadzone is passed, which includes when no controller is connected.
     else {
-        dirInput = Vector2Zero();
-        // Gets keyboard input direction vector
+        // Gets the normalised keyboard input direction vector.
         if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) { dirInput.y += 1.0f; }
         if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) { dirInput.y -= 1.0f; }
         if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) { dirInput.x += 1.0f; }
