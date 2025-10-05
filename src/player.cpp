@@ -26,9 +26,13 @@ void Player::Move() {
         // Gets gamepad input direction vector.
         if (leftStickInput.y > movementDeadzone || leftStickInput.y < -movementDeadzone) { dirInput += GetForwardNormal() * leftStickInput.y; }
         if (leftStickInput.x > movementDeadzone || leftStickInput.x < -movementDeadzone) { dirInput += Vector3Perpendicular(GetForwardNormal()) * leftStickInput.x; }
+        // Caps max input magnitude at 1.
         if (Vector2Length((Vector2){ GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X), -GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y) }) >= 1) {
-            if (Vector2Length((Vector2){ velocity.x, velocity.z }) < maxVelocity) { velocity += dirInput * acceleration; }
-        } else if (Vector2Length((Vector2){ velocity.x, velocity.z }) < maxVelocity * Vector2Length((Vector2){ GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X), -GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y) })) { velocity += dirInput * acceleration; }
+            if (Vector2Length((Vector2){ velocity.x, velocity.z }) < maxVelocity) { if (touchingGround) { velocity += dirInput * acceleration; } else { velocity += dirInput * airAcceleration; } }
+        // Caps max velocity to scale with input magnitude.
+        } else if (Vector2Length((Vector2){ velocity.x, velocity.z }) < maxVelocity * Vector2Length((Vector2){ GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X), -GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y) })) { 
+            if (touchingGround) { velocity += dirInput * acceleration; } else { velocity += dirInput * airAcceleration; } 
+        }
     }
     else
     {
@@ -41,10 +45,19 @@ void Player::Move() {
     }
 
     // Applies drag/friction. Sets horizontal velocity to 0 if one application of drag would push the object past 0.
-    if (Vector2Length((Vector2){ velocity.x, velocity.z }) >= decceleration) {
-        velocity -= Vector3Normalize((Vector3){ velocity.x, 0.0f, velocity.z }) * decceleration;
+    if (touchingGround) {
+        if (Vector2Length((Vector2){ velocity.x, velocity.z }) >= decceleration) {
+            velocity -= Vector3Normalize((Vector3){ velocity.x, 0.0f, velocity.z }) * decceleration;
+        } 
+        else { velocity.x = 0.0f; velocity.z = 0.0f; }
     } 
-    else { velocity.x = 0.0f; velocity.z = 0.0f; }
+    else 
+    {
+        if (Vector2Length((Vector2){ velocity.x, velocity.z }) >= airDecceleration) {
+            velocity -= Vector3Normalize((Vector3){ velocity.x, 0.0f, velocity.z }) * airDecceleration;
+        } 
+        else { velocity.x = 0.0f; velocity.z = 0.0f; }
+    }
 
     // Sets the direction vector to the normalised horizontal direction.
     if (velocity.x != 0) { direction.x = velocity.x; }
