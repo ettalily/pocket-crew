@@ -41,10 +41,11 @@ void Player::CollisionCheck(Mesh mesh, Model model) {
 
 void Player::FloorDetect(RayCollision ray) {
     if (ray.hit) {
-        if (velocity.y <= 0 && ray.distance <= radius && abs(ray.normal.y) >= 0.7f) {
+        if (velocity.y <= 0 && ray.distance <= radius && ray.normal.y >= 0.7f) {
             touchingGround = true; velocity.y = 0.0f; position.y = ray.point.y + (radius);
         }
-        if (ray.point.y > dropShadowY) { dropShadowY = ray.point.y; }
+        // Sets drop shadow height.
+        if (ray.point.y > dropShadowY && ray.normal.y >= 0.7f) { dropShadowY = ray.point.y; }
     }
 }
 
