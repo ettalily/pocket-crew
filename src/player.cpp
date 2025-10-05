@@ -8,9 +8,8 @@ Vector2 dirInput;
 
 Player player;
 
+// Calls all the different parts of the player code.
 void Player::Update() { 
-    // Calls all the different parts of the player code.
-    dropShadowY = -100.0f;
     UpdateInputAxis();
     Move();
     Gravity();
@@ -39,29 +38,20 @@ void Player::UpdateInputAxis() {
 }
 
 void Player::Move() {
-    Vector3 moveVector = Vector3Zero();
     // Gets gamepad input direction and modifies it by the direction that is forward from the camera's perspective.
-    moveVector += GetForwardNormal() * dirInput.y;
-    moveVector += Vector3Perpendicular(GetForwardNormal()) * dirInput.x;
-    // Caps max input magnitude at 1. Applies it differently to the velocity depending on whether the player is touching the ground or not.
+    Vector3 moveVector = (GetForwardNormal() * dirInput.y) + (Vector3Perpendicular(GetForwardNormal()) * dirInput.x);
+    // Caps max input magnitude at 1 if it exceeds that. Applies it differently to the velocity depending on whether the player is touching the ground or not.
     if (Vector2Length(dirInput) >= 1) { if (Vector2Length((Vector2){ velocity.x, velocity.z }) < maxVelocity) { if (touchingGround) { velocity += moveVector * acceleration; } else { velocity += moveVector * airAcceleration; } }
     // Caps max velocity to scale with input magnitude. Applies it differently to the velocity depending on whether the player is touching the ground or not.
     } else if (Vector2Length((Vector2){ velocity.x, velocity.z }) < maxVelocity * Vector2Length(dirInput)) { if (touchingGround) { velocity += moveVector * acceleration; } else { velocity += moveVector * airAcceleration; } }
 
-    // Applies drag/friction. Sets horizontal velocity to 0 if one application of drag would push the object past 0.
+    // Applies drag/friction. Sets horizontal velocity to 0 if one application of drag would push the object past 0. Different amounts are applied depending on whether the player is touching the ground.
     if (touchingGround) {
-        if (Vector2Length((Vector2){ velocity.x, velocity.z }) >= decceleration) {
-            velocity -= Vector3Normalize((Vector3){ velocity.x, 0.0f, velocity.z }) * decceleration;
-        } 
+        if (Vector2Length((Vector2){ velocity.x, velocity.z }) >= decceleration) { velocity -= Vector3Normalize((Vector3){ velocity.x, 0.0f, velocity.z }) * decceleration; } 
         else { velocity.x = 0.0f; velocity.z = 0.0f; }
     } 
-    else 
-    {
-        if (Vector2Length((Vector2){ velocity.x, velocity.z }) >= airDecceleration) {
-            velocity -= Vector3Normalize((Vector3){ velocity.x, 0.0f, velocity.z }) * airDecceleration;
-        } 
-        else { velocity.x = 0.0f; velocity.z = 0.0f; }
-    }
+    else if (Vector2Length((Vector2){ velocity.x, velocity.z }) >= airDecceleration) { velocity -= Vector3Normalize((Vector3){ velocity.x, 0.0f, velocity.z }) * airDecceleration; } 
+    else { velocity.x = 0.0f; velocity.z = 0.0f; }
 
     // Sets the direction vector to the normalised horizontal direction.
     if (velocity.x != 0) { direction.x = velocity.x; }
@@ -95,8 +85,10 @@ void Player::JumpLogic() {
         for (int m = 0; m < level.meshCount; m++) {
             // Raycasts in the direction of the stick input.
             RayCollision wallcheck = GetRayCollisionMesh(Ray{(Vector3){ position.x, position.y, position.z }, (GetForwardNormal() * dirInput.y) + (Vector3Perpendicular(GetForwardNormal()) * dirInput.x) }, level.meshes[m], level.transform);
+            // Wall slide.
             if (wallcheck.hit && abs(wallcheck.normal.y) <= 0.2f && wallcheck.distance <= radius + 0.1f) { 
                 if (velocity.y < -wallSlideVelocity) { velocity.y = -wallSlideVelocity; }
+                // Wall jump.
                 if ((IsKeyPressed(KEY_SPACE) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT))) {
                     velocity.y = jumpPower; jumpPressHeld = true; velocity = (Vector3){ wallcheck.normal.x * wallJumpHorPower, velocity.y, wallcheck.normal.z * wallJumpHorPower };
                 }

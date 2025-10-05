@@ -8,18 +8,18 @@ void Player::Collision() {
     }
 }
 
-// Handles wall, floor, and ceiling collisions. Very much so a WIP. I hate math and I have no idea how to properly structure this so it is purely trial and error at this point.
+// Handles wall, floor, and ceiling collisions.
 void Player::CollisionCheck(Mesh mesh, Model model) {
     // Floor Collision. Raycasts the center and all four corners of the base of the collision box.
     RayCollision basecenter = GetRayCollisionMesh(Ray{position, (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
     FloorDetect(basecenter);
-    RayCollision basedirforward = GetRayCollisionMesh(Ray{(Vector3){ position.x, position.y, position.z } + (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+    RayCollision basedirforward = GetRayCollisionMesh(Ray{player.position + (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
     FloorDetect(basedirforward);
-    RayCollision basedirright = GetRayCollisionMesh(Ray{(Vector3){ position.x, position.y, position.z } + (Vector3Perpendicular(direction) * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+    RayCollision basedirright = GetRayCollisionMesh(Ray{player.position + (Vector3Perpendicular(direction) * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
     FloorDetect(basedirright);
-    RayCollision basedirleft = GetRayCollisionMesh(Ray{(Vector3){ position.x, position.y, position.z } - (Vector3Perpendicular(direction) * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+    RayCollision basedirleft = GetRayCollisionMesh(Ray{player.position - (Vector3Perpendicular(direction) * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
     FloorDetect(basedirleft);
-    RayCollision basedirback = GetRayCollisionMesh(Ray{(Vector3){ position.x, position.y, position.z } - (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+    RayCollision basedirback = GetRayCollisionMesh(Ray{player.position - (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
     FloorDetect(basedirback);
 
     // Wall Collision. Raycasts in all four directions, with the direction of movement as forward.

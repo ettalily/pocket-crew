@@ -49,6 +49,7 @@ int main() {
         // Background music.
         if (!IsSoundPlaying(backgroundMusic)) { PlaySound(backgroundMusic); }
 
+        dropShadowY = -100.0f;
         player.Update();
         cam.Update();
 
