@@ -1,48 +1,52 @@
 #include "global.hpp"
 
-const float movementDeadzone = 0.05f;
+const float stickDeadzone = 0.05f;
 const int coyoteTimeLength = 6;
 int coyoteTimer = 0;
 bool jumpPressHeld = false;
+Vector2 dirInput;
 
 Player player;
 
 void Player::Update() { 
     // Calls all the different parts of the player code.
     dropShadowY = -100.0f;
+    UpdateInputAxis();
     Move();
     Gravity();
     ApplyVelocity();
     Collision();
 }
 
-void Player::Move() {
-    Vector3 dirInput = Vector3Zero();
-    // Left stick input value that is normalised but keeps it's magnitude.
-    Vector2 leftStickInput = (Vector2){ GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X), -GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y) } * Vector2Normalize((Vector2){ abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X)), abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y)) });
-
-    // Uses the controller input if a stick direction is detected.
-    if (leftStickInput.x > movementDeadzone || leftStickInput.x < -movementDeadzone || leftStickInput.y > movementDeadzone || leftStickInput.y < -movementDeadzone) { 
-        // Gets gamepad input direction vector.
-        if (leftStickInput.y > movementDeadzone || leftStickInput.y < -movementDeadzone) { dirInput += GetForwardNormal() * leftStickInput.y; }
-        if (leftStickInput.x > movementDeadzone || leftStickInput.x < -movementDeadzone) { dirInput += Vector3Perpendicular(GetForwardNormal()) * leftStickInput.x; }
-        // Caps max input magnitude at 1.
-        if (Vector2Length((Vector2){ GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X), -GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y) }) >= 1) {
-            if (Vector2Length((Vector2){ velocity.x, velocity.z }) < maxVelocity) { if (touchingGround) { velocity += dirInput * acceleration; } else { velocity += dirInput * airAcceleration; } }
-        // Caps max velocity to scale with input magnitude.
-        } else if (Vector2Length((Vector2){ velocity.x, velocity.z }) < maxVelocity * Vector2Length((Vector2){ GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X), -GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y) })) { 
-            if (touchingGround) { velocity += dirInput * acceleration; } else { velocity += dirInput * airAcceleration; } 
-        }
+void Player::UpdateInputAxis() {
+    // Gets a normalised left stick input value that keeps it's magnitude.
+    dirInput = (Vector2){ GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X), -GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y) } * Vector2Normalize((Vector2){ abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X)), abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y)) });
+    if (abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X)) >= stickDeadzone || abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y)) >= stickDeadzone) {
+        // Applies deadzones.
+        if (abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X)) < stickDeadzone) { dirInput.x = 0.0f; }
+        if (abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y)) < stickDeadzone) { dirInput.y = 0.0f; }
     }
-    else
-    {
+    // Keyboard WASD/arrow key input. Only runs if neither gamepad stick axis deadzone is passed.
+    else {
+        dirInput = Vector2Zero();
         // Gets keyboard input direction vector
-        if (IsKeyDown(KEY_W)) { dirInput += GetForwardNormal(); }
-        if (IsKeyDown(KEY_S)) { dirInput -= GetForwardNormal(); }
-        if (IsKeyDown(KEY_D)) { dirInput += Vector3Perpendicular(GetForwardNormal()); }
-        if (IsKeyDown(KEY_A)) { dirInput -= Vector3Perpendicular(GetForwardNormal()); }
-        if (Vector2Length((Vector2){ velocity.x, velocity.z }) < maxVelocity) { velocity += Vector3Normalize(dirInput) * acceleration; }
+        if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) { dirInput.y += 1.0f; }
+        if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) { dirInput.y -= 1.0f; }
+        if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) { dirInput.x += 1.0f; }
+        if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) { dirInput.x -= 1.0f; }
+        dirInput = Vector2Normalize(dirInput);
     }
+}
+
+void Player::Move() {
+    Vector3 moveVector = Vector3Zero();
+    // Gets gamepad input direction and modifies it by the direction that is forward from the camera's perspective.
+    moveVector += GetForwardNormal() * dirInput.y;
+    moveVector += Vector3Perpendicular(GetForwardNormal()) * dirInput.x;
+    // Caps max input magnitude at 1. Applies it differently to the velocity depending on whether the player is touching the ground or not.
+    if (Vector2Length(dirInput) >= 1) { if (Vector2Length((Vector2){ velocity.x, velocity.z }) < maxVelocity) { if (touchingGround) { velocity += moveVector * acceleration; } else { velocity += moveVector * airAcceleration; } }
+    // Caps max velocity to scale with input magnitude. Applies it differently to the velocity depending on whether the player is touching the ground or not.
+    } else if (Vector2Length((Vector2){ velocity.x, velocity.z }) < maxVelocity * Vector2Length(dirInput)) { if (touchingGround) { velocity += moveVector * acceleration; } else { velocity += moveVector * airAcceleration; } }
 
     // Applies drag/friction. Sets horizontal velocity to 0 if one application of drag would push the object past 0.
     if (touchingGround) {
@@ -89,13 +93,8 @@ void Player::JumpLogic() {
     // Sliding and jumping against a wall.
     if (!touchingGround && coyoteTimer == 0) {
         for (int m = 0; m < level.meshCount; m++) {
-            // Gets the normalised stick input direction.
-            Vector2 inputDir;
-            if (GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y) >= movementDeadzone || GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y) <= -movementDeadzone) { inputDir.y = GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y); }
-            if (GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X) >= movementDeadzone || GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X) <= -movementDeadzone) { inputDir.x = GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X); }
-            inputDir = Vector2Normalize(inputDir);
             // Raycasts in the direction of the stick input.
-            RayCollision wallcheck = GetRayCollisionMesh(Ray{(Vector3){ position.x, position.y, position.z }, (GetForwardNormal() * -inputDir.y) + (Vector3Perpendicular(GetForwardNormal()) * inputDir.x) }, level.meshes[m], level.transform);
+            RayCollision wallcheck = GetRayCollisionMesh(Ray{(Vector3){ position.x, position.y, position.z }, (GetForwardNormal() * dirInput.y) + (Vector3Perpendicular(GetForwardNormal()) * dirInput.x) }, level.meshes[m], level.transform);
             if (wallcheck.hit && abs(wallcheck.normal.y) <= 0.2f && wallcheck.distance <= radius + 0.1f) { 
                 if (velocity.y < -wallSlideVelocity) { velocity.y = -wallSlideVelocity; }
                 if ((IsKeyPressed(KEY_SPACE) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT))) {
