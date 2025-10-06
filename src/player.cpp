@@ -2,8 +2,6 @@
 
 const float stickDeadzone = 0.05f;
 const int coyoteTimeLength = 6;
-int coyoteTimer = 0;
-bool jumpPressHeld = false;
 Vector2 dirInput;
 
 Player player;
@@ -85,13 +83,14 @@ void Player::JumpLogic() {
     if (!touchingGround && coyoteTimer == 0) {
         for (int m = 0; m < level.meshCount; m++) {
             // Raycasts in the direction of the stick input.
-            RayCollision wallcheck = GetRayCollisionMesh(Ray{(Vector3){ position.x, position.y, position.z }, (GetForwardNormal() * dirInput.y) + (Vector3Perpendicular(GetForwardNormal()) * dirInput.x) }, level.meshes[m], level.transform);
+            RayCollision wallJumpCheckInputDir = GetRayCollisionMesh(Ray{(Vector3){ position.x, position.y, position.z }, (GetForwardNormal() * dirInput.y) + (Vector3Perpendicular(GetForwardNormal()) * dirInput.x) }, level.meshes[m], level.transform);
+            RayCollision wallJumpCheckFacingDir = GetRayCollisionMesh(Ray{position, direction }, level.meshes[m], level.transform);
             // Wall slide.
-            if (wallcheck.hit && abs(wallcheck.normal.y) <= 0.2f && wallcheck.distance <= radius + 0.1f) { 
+            if ((wallJumpCheckInputDir.hit && abs(wallJumpCheckInputDir.normal.y) <= 0.2f && wallJumpCheckInputDir.distance <= radius + 0.1f) && (wallJumpCheckFacingDir.hit && abs(wallJumpCheckFacingDir.normal.y) <= 0.2f && wallJumpCheckFacingDir.distance <= radius + 0.1f)) { 
                 if (velocity.y < -wallSlideVelocity) { velocity.y = -wallSlideVelocity; }
                 // Wall jump.
                 if ((IsKeyPressed(KEY_SPACE) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT))) {
-                    velocity.y = jumpPower; jumpPressHeld = true; velocity = (Vector3){ wallcheck.normal.x * wallJumpHorPower, velocity.y, wallcheck.normal.z * wallJumpHorPower };
+                    velocity.y = jumpPower; jumpPressHeld = true; velocity = (Vector3){ wallJumpCheckInputDir.normal.x * wallJumpHorPower, velocity.y, wallJumpCheckInputDir.normal.z * wallJumpHorPower };
                 }
                 break;
             }
