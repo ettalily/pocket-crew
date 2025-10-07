@@ -10,6 +10,12 @@ bool pause = false;
 Model level;
 float dropShadowY;
 
+// Draws text using screen percentages, so that it keeps a consistent size and position on different screen shapes and sizes.
+void DrawTextScreenScaled(Font font, const char *text, float posPercentX, float posPercentY, float sizePercent, float spacingPercent, float posAlignmentPercent, Color color) {
+    Vector2 textScale = MeasureTextEx(font, text, GetScreenHeight() * sizePercent, GetScreenHeight() * spacingPercent);
+    DrawTextEx(font, text, (Vector2){ GetScreenWidth() * posPercentX, GetScreenHeight() * posPercentY } - (Vector2){ textScale.x * posAlignmentPercent, textScale.y * 0.5f }, GetScreenHeight() * sizePercent, GetScreenHeight() * spacingPercent, color);
+}
+
 int main() {
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     SetConfigFlags(FLAG_VSYNC_HINT);
@@ -76,7 +82,7 @@ int main() {
                 DrawModel(dropShadow, (Vector3){ player.position.x, dropShadowY + 0.05f, player.position.z }, 1.0f - ((player.position.y - dropShadowY) * 0.13f), WHITE);  
                 EndShaderMode();
             EndMode3D();
-        if (pause) { DrawTextEx(GetFontDefault(), "PAUSED", (Vector2){ GetScreenWidth() * 0.5f, GetScreenHeight() * 0.5f } - (MeasureTextEx(GetFontDefault(), "PAUSED", GetScreenHeight() * 0.1f, GetScreenHeight() * 0.01f) * 0.5f), GetScreenHeight() * 0.1f, GetScreenHeight() * 0.01f, BLACK); }
+        if (pause) { DrawTextScreenScaled(GetFontDefault(), "PAUSED", 0.5f, 0.5f, 0.1f, 0.01f, 0.5f, BLACK); }
         DrawFPS(10, 10);
         EndDrawing();
     }
