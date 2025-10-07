@@ -3,19 +3,31 @@
 const float stickDeadzone = 0.05f;
 const int coyoteTimeLength = 6;
 Vector2 dirInput;
+float slopeMovementModifier = 1.0f;
 
 Player player;
 
 // Calls all the different parts of the player code.
 void Player::Update() { 
-    UpdateInputAxis();
+    UpdateMovementAxis();
     Move();
     Gravity();
     ApplyVelocity();
     Collision();
 }
 
-void Player::UpdateInputAxis() {
+// Applies gravity within the max fall speed.
+void Player::Gravity() {
+    velocity.y -= gravity; 
+    if (velocity.y <= -maxFallSpeed) { velocity.y = -maxFallSpeed; }
+}
+
+// Applies velocity vector to player position.
+void Player::ApplyVelocity() {
+    position += velocity;
+}
+
+void Player::UpdateMovementAxis() {
     dirInput = Vector2Zero();
     // Checks if either left stick axis has passed the deadzone. If either has, it'll use the left stick input.
     if (abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X)) >= stickDeadzone || abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y)) >= stickDeadzone) {
@@ -40,9 +52,9 @@ void Player::Move() {
     // Gets gamepad input direction and modifies it by the direction that is forward from the camera's perspective.
     Vector3 moveVector = (GetForwardNormal() * dirInput.y) + (Vector3Perpendicular(GetForwardNormal()) * dirInput.x);
     // Caps max input magnitude at 1 if it exceeds that. Applies it differently to the velocity depending on whether the player is touching the ground or not.
-    if (Vector2Length(dirInput) >= 1) { if (Vector2Length((Vector2){ velocity.x, velocity.z }) < maxVelocity) { if (touchingGround) { velocity += moveVector * acceleration; } else { velocity += moveVector * airAcceleration; } }
+    if (Vector2Length(dirInput) >= 1) { if (Vector2Length((Vector2){ velocity.x, velocity.z }) < maxVelocity) { if (touchingGround) { velocity += moveVector * acceleration * slopeMovementModifier; } else { velocity += moveVector * airAcceleration; } }
     // Caps max velocity to scale with input magnitude. Applies it differently to the velocity depending on whether the player is touching the ground or not.
-    } else if (Vector2Length((Vector2){ velocity.x, velocity.z }) < maxVelocity * Vector2Length(dirInput)) { if (touchingGround) { velocity += moveVector * acceleration; } else { velocity += moveVector * airAcceleration; } }
+    } else if (Vector2Length((Vector2){ velocity.x, velocity.z }) < maxVelocity * Vector2Length(dirInput)) { if (touchingGround) { velocity += moveVector * acceleration * slopeMovementModifier; } else { velocity += moveVector * airAcceleration; } }
 
     // Applies drag/friction. Sets horizontal velocity to 0 if one application of drag would push the object past 0. Different amounts are applied depending on whether the player is touching the ground.
     if (touchingGround) {
@@ -59,16 +71,6 @@ void Player::Move() {
 
     // Jumping, wall sliding, and wall jumping.
     JumpLogic();
-}
-
-// Applies gravity within the max fall speed.
-void Player::Gravity() {
-    velocity.y -= gravity; 
-    if (velocity.y <= -maxFallSpeed) { velocity.y = -maxFallSpeed; }
-}
-
-void Player::ApplyVelocity() {
-    position += velocity;
 }
 
 void Player::JumpLogic() {

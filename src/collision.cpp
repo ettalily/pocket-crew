@@ -12,15 +12,15 @@ void Player::Collision() {
 void Player::CollisionCheck(Mesh mesh, Model model) {
     // Floor Collision. Raycasts the center and all four corners of the base of the collision box.
     RayCollision basecenter = GetRayCollisionMesh(Ray{position, (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
-    FloorDetect(basecenter);
+    FloorDetect(basecenter, mesh, model);
     RayCollision basedirforward = GetRayCollisionMesh(Ray{player.position + (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
-    FloorDetect(basedirforward);
+    FloorDetect(basedirforward, mesh, model);
     RayCollision basedirright = GetRayCollisionMesh(Ray{player.position + (Vector3Perpendicular(direction) * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
-    FloorDetect(basedirright);
+    FloorDetect(basedirright, mesh, model);
     RayCollision basedirleft = GetRayCollisionMesh(Ray{player.position - (Vector3Perpendicular(direction) * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
-    FloorDetect(basedirleft);
+    FloorDetect(basedirleft, mesh, model);
     RayCollision basedirback = GetRayCollisionMesh(Ray{player.position - (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
-    FloorDetect(basedirback);
+    FloorDetect(basedirback, mesh, model);
 
     // Wall Collision. Raycasts in all four directions, with the direction of movement as forward.
     RayCollision walldirforward = GetRayCollisionMesh(Ray{position, direction }, mesh, model.transform);
@@ -37,10 +37,17 @@ void Player::CollisionCheck(Mesh mesh, Model model) {
     CeilingDetect(topcenter);
 }
 
-void Player::FloorDetect(RayCollision ray) {
+void Player::FloorDetect(RayCollision ray, Mesh mesh, Model model) {
     if (ray.hit) {
         if (velocity.y <= 0 && ray.distance <= radius && ray.normal.y >= 0.7f) {
             touchingGround = true; velocity.y = 0.0f; position.y = ray.point.y + (radius);
+            
+            // Checks slope steepness and sets the slope steepness modifier.
+            RayCollision slopefront = GetRayCollisionMesh(Ray{player.position + (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+            RayCollision slopeback = GetRayCollisionMesh(Ray{player.position - (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+            slopeMovementModifier = 1.0f + ((slopefront.distance - slopeback.distance) * 0.75f);
+            if (slopeMovementModifier < 0.5f) { slopeMovementModifier = 0.5f; }
+            if (slopeMovementModifier > 1.5f) { slopeMovementModifier = 1.5f; }
         }
         // Sets drop shadow height.
         if (ray.point.y > dropShadowY && ray.normal.y >= 0.7f) { dropShadowY = ray.point.y; }
