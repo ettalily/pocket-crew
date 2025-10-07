@@ -88,7 +88,7 @@ void Player::JumpLogic() {
             RayCollision wallJumpCheckInputDir = GetRayCollisionMesh(Ray{(Vector3){ position.x, position.y, position.z }, (GetForwardNormal() * dirInput.y) + (Vector3Perpendicular(GetForwardNormal()) * dirInput.x) }, level.meshes[m], level.transform);
             RayCollision wallJumpCheckFacingDir = GetRayCollisionMesh(Ray{position, direction }, level.meshes[m], level.transform);
             // Wall slide.
-            if ((wallJumpCheckInputDir.hit && abs(wallJumpCheckInputDir.normal.y) <= 0.2f && wallJumpCheckInputDir.distance <= radius + 0.1f) && (wallJumpCheckFacingDir.hit && abs(wallJumpCheckFacingDir.normal.y) <= 0.2f && wallJumpCheckFacingDir.distance <= radius + 0.1f)) { 
+            if ((wallJumpCheckInputDir.hit && abs(wallJumpCheckInputDir.normal.y) <= 0.2f && wallJumpCheckInputDir.distance <= radius + 0.2f) && (wallJumpCheckFacingDir.hit && abs(wallJumpCheckFacingDir.normal.y) <= 0.2f && wallJumpCheckFacingDir.distance <= radius + 0.2f)) { 
                 if (velocity.y < -wallSlideVelocity) { velocity.y = -wallSlideVelocity; }
                 // Wall jump.
                 if ((IsKeyPressed(KEY_SPACE) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT))) {
