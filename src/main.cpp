@@ -5,6 +5,7 @@
 
 const int screenWidth = 1600, screenHeight = 900;
 int gamepadID = 0;
+bool pause = false;
 
 Model level;
 float dropShadowY;
@@ -46,12 +47,17 @@ int main() {
         // Toggle borderless fullscreen.
         if (IsKeyPressed(KEY_EQUAL)) { ToggleBorderlessWindowed(); }
 
+        // Pause toggle.
+        if (IsKeyPressed(KEY_ENTER) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_MIDDLE_RIGHT)) { pause = !pause; }
+
         // Background music.
         if (!IsSoundPlaying(backgroundMusic)) { PlaySound(backgroundMusic); }
-
+        
+        if (!pause) {
         dropShadowY = -100.0f;
         player.Update();
         cam.Update();
+        }
 
         // Updates the shader camera view vector.
         float cameraPos[3] = { cam.camera.position.x, cam.camera.position.y, cam.camera.position.z };
@@ -70,6 +76,7 @@ int main() {
                 DrawModel(dropShadow, (Vector3){ player.position.x, dropShadowY + 0.05f, player.position.z }, 1.0f - ((player.position.y - dropShadowY) * 0.13f), WHITE);  
                 EndShaderMode();
             EndMode3D();
+        if (pause) { DrawTextEx(GetFontDefault(), "PAUSED", (Vector2){ GetScreenWidth() * 0.5f, GetScreenHeight() * 0.5f } - (MeasureTextEx(GetFontDefault(), "PAUSED", GetScreenHeight() * 0.1f, GetScreenHeight() * 0.01f) * 0.5f), GetScreenHeight() * 0.1f, GetScreenHeight() * 0.01f, BLACK); }
         DrawFPS(10, 10);
         EndDrawing();
     }
