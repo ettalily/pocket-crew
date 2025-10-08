@@ -95,7 +95,7 @@ void Player::JumpLogic() {
                 if (velocity.y < -wallSlideVelocity) { velocity.y = -wallSlideVelocity; }
                 // Wall jump.
                 if ((IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT) || IsKeyPressed(KEY_K) || IsKeyPressed(KEY_H))) {
-                    velocity.y = jumpPower; jumpPressHeld = true; canDive = true; velocity = (Vector3){ wallJumpCheckInputDir.normal.x * wallJumpHorPower, velocity.y, wallJumpCheckInputDir.normal.z * wallJumpHorPower };
+                    velocity.y = jumpPower; jumpPressHeld = true; dived = false; velocity = (Vector3){ wallJumpCheckInputDir.normal.x * wallJumpHorPower, velocity.y, wallJumpCheckInputDir.normal.z * wallJumpHorPower };
                 }
                 break;
             }
@@ -108,8 +108,8 @@ void Player::JumpLogic() {
 }
 
 void Player::Dive() {
-    if (canDive && !touchingGround && (IsKeyPressed(KEY_J) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_UP))) {
-        canDive = false;
+    if (!dived && !touchingGround && (IsKeyPressed(KEY_J) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_UP))) {
+        dived = true;
         // Applies the dive values.
         velocity = (Vector3){ velocity.x * divePowerMult, velocity.y, velocity.z * divePowerMult };
         // Caps the max horizontal speed of a dive.

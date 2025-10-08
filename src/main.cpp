@@ -76,7 +76,8 @@ int main() {
                 BeginShaderMode(shader);
                     DrawModel(level, Vector3Zero(), 1.0f, WHITE);
                     DrawPlane(Vector3Zero(), (Vector2){ 200.0f, 200.0f}, BLUE);
-                    DrawSphere(player.position, player.radius, BLUE);
+                    if (player.dived) { DrawSphere(player.position, player.radius - 0.1f, BLUE); }
+                    else { DrawSphere(player.position, player.radius, BLUE); }
                     
                     // Draw player drop shadow.
                 DrawModel(dropShadow, (Vector3){ player.position.x, dropShadowY + 0.05f, player.position.z }, 1.0f - ((player.position.y - dropShadowY) * 0.13f), WHITE);  

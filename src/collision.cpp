@@ -40,7 +40,7 @@ void Player::CollisionCheck(Mesh mesh, Model model) {
 void Player::FloorDetect(RayCollision ray, Mesh mesh, Model model) {
     if (ray.hit) {
         if (velocity.y <= 0 && ray.distance <= radius && ray.normal.y >= 0.7f) {
-            touchingGround = true; canDive = true; velocity.y = 0.0f; position.y = ray.point.y + (radius);
+            touchingGround = true; dived = false; velocity.y = 0.0f; position.y = ray.point.y + (radius);
             
             // Checks slope steepness and sets the slope steepness modifier.
             RayCollision slopefront = GetRayCollisionMesh(Ray{player.position + (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
