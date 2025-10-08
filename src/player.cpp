@@ -64,6 +64,9 @@ void Player::Move() {
     else if (Vector2Length((Vector2){ velocity.x, velocity.z }) >= airDecceleration) { velocity -= Vector3Normalize((Vector3){ velocity.x, 0.0f, velocity.z }) * airDecceleration; } 
     else { velocity.x = 0.0f; velocity.z = 0.0f; }
 
+    // Air diving.
+    Dive();
+
     // Sets the direction vector to the normalised horizontal direction.
     if (velocity.x != 0) { direction.x = velocity.x; }
     if (velocity.z != 0) { direction.z = velocity.z; }
@@ -91,15 +94,25 @@ void Player::JumpLogic() {
             if ((wallJumpCheckInputDir.hit && abs(wallJumpCheckInputDir.normal.y) <= 0.2f && wallJumpCheckInputDir.distance <= radius + 0.2f) && (wallJumpCheckFacingDir.hit && abs(wallJumpCheckFacingDir.normal.y) <= 0.2f && wallJumpCheckFacingDir.distance <= radius + 0.2f)) { 
                 if (velocity.y < -wallSlideVelocity) { velocity.y = -wallSlideVelocity; }
                 // Wall jump.
-                if ((IsKeyPressed(KEY_SPACE) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT))) {
-                    velocity.y = jumpPower; jumpPressHeld = true; velocity = (Vector3){ wallJumpCheckInputDir.normal.x * wallJumpHorPower, velocity.y, wallJumpCheckInputDir.normal.z * wallJumpHorPower };
+                if ((IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT) || IsKeyPressed(KEY_K) || IsKeyPressed(KEY_H))) {
+                    velocity.y = jumpPower; jumpPressHeld = true; canDive = true; velocity = (Vector3){ wallJumpCheckInputDir.normal.x * wallJumpHorPower, velocity.y, wallJumpCheckInputDir.normal.z * wallJumpHorPower };
                 }
                 break;
             }
         }
     }
     // Jumping on the ground.
-    else if ((touchingGround || coyoteTimer != 0) && (IsKeyPressed(KEY_SPACE) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT)) ) {
+    else if ((touchingGround || coyoteTimer != 0) && (IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT) || IsKeyPressed(KEY_K) || IsKeyPressed(KEY_H)) ) {
         touchingGround = false; velocity.y = jumpPower; coyoteTimer = 0; jumpPressHeld = true;
+    }
+}
+
+void Player::Dive() {
+    if (canDive && !touchingGround && (IsKeyPressed(KEY_J) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_UP))) {
+        canDive = false;
+        // Applies the dive values.
+        velocity = (Vector3){ velocity.x * divePowerMult, velocity.y, velocity.z * divePowerMult };
+        // Caps the max horizontal speed of a dive.
+        if (Vector3Length((Vector3){ velocity.x, 0.0f, velocity.z }) > diveMaxSpeed) { velocity = (Vector3){ direction.x * diveMaxSpeed, velocity.y, direction.z * diveMaxSpeed }; }       
     }
 }
