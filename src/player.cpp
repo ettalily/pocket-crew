@@ -83,7 +83,7 @@ void Player::JumpLogic() {
     if ((IsKeyReleased(KEY_SPACE) || IsGamepadButtonReleased(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT)) && jumpPressHeld && !dived) { jumpPressHeld = false; if (velocity.y > 0) { velocity.y -= jumpReleasePower; } }
 
     // Sets and increments the coyote timer.
-    if (touchingGround) { coyoteTimer = coyoteTimeLength; }
+    if (touchingGround) { coyoteTimer = coyoteTimeLength; wallCoyoteTimer = 0; }
     else if (coyoteTimer != 0) { coyoteTimer--; }
     // Increments the wall jump coyote timer.
     if (wallCoyoteTimer != 0) { wallCoyoteTimer--; }
@@ -98,14 +98,14 @@ void Player::JumpLogic() {
                 // Wall slide.
                 if (velocity.y < -wallSlideVelocity) { velocity.y = -wallSlideVelocity; }
                 // Allows the player to wall jump through the coyote timer and sets the direction the player would go horizontally from that wall.
+                if (wallCoyoteTimer == 0) { wallJumpDir = Vector3Normalize((Vector3){ wallCheckInputDir.normal.x, 0.0f, wallCheckInputDir.normal.z }); }  
                 wallCoyoteTimer = wallCoyoteTimeLength;
-                wallJumpDir = Vector3Normalize((Vector3){ wallCheckInputDir.normal.x, 0.0f, wallCheckInputDir.normal.z });
                 break;
             }
         }
         // Wall jumping.
         if (wallCoyoteTimer != 0 && (IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT) || IsKeyPressed(KEY_K) || IsKeyPressed(KEY_H))) {
-            velocity.y = jumpPower; jumpPressHeld = true; dived = false; wallCoyoteTimer = 0; velocity = (Vector3){ wallJumpDir.x * wallJumpHorPower, player.velocity.y, wallJumpDir.z * wallJumpHorPower };
+            velocity.y = jumpPower; jumpPressHeld = true; dived = false; wallCoyoteTimer = 0; velocity.x = wallJumpDir.x * wallJumpHorPower; velocity.z = wallJumpDir.z * wallJumpHorPower;
         }
     }
     // Jumping on the ground.
