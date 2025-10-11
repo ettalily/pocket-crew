@@ -8,8 +8,8 @@ class Player {
     Vector3 position = (Vector3){ 0.0f, 5.0f, 0.0f },
     velocity = (Vector3){ 0.0f, 0.0f, 0.0f }, 
     direction = (Vector3){ 0.0f, 0.0f, 0.0f };
-    float radius = 0.5f, acceleration = 0.019f, decceleration = 0.006f, maxVelocity = 0.16f, gravity = 0.01f, maxFallSpeed = 0.4f, jumpPower = 0.25f, wallJumpHorPower = 0.2f, wallSlideVelocity = 0.07f, jumpReleasePower = 0.045f, airAcceleration = 0.006f, airDecceleration = 0.0015, divePowerMult = 1.6f, diveMaxSpeed = 0.35f;
-    int coyoteTimer = 0;
+    float radius = 0.5f, acceleration = 0.019f, decceleration = 0.006f, maxVelocity = 0.16f, gravity = 0.01f, maxFallSpeed = 0.4f, jumpPower = 0.25f, wallJumpHorPower = 0.17f, wallSlideVelocity = 0.07f, jumpReleasePower = 0.045f, airAcceleration = 0.006f, airDecceleration = 0.0015, divePowerMult = 1.6f, diveMaxSpeed = 0.35f;
+    unsigned int coyoteTimer = 0, wallCoyoteTimer = 0;
     bool touchingGround = false, jumpPressHeld = false, dived = false;
     void Update();
     void UpdateMovementAxis();
