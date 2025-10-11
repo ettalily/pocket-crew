@@ -2,7 +2,7 @@
 
 const float stickDeadzone = 0.05f;
 const unsigned int coyoteTimeLength = 6;
-const unsigned int wallCoyoteTimeLength = 15;
+const unsigned int wallCoyoteTimeLength = 10;
 Vector2 dirInput;
 float slopeMovementModifier = 1.0f;
 Vector3 wallJumpDir;
