@@ -78,7 +78,7 @@ void Player::Move() {
 
 void Player::JumpLogic() {
     // Jump hold difference.
-    if ((IsKeyReleased(KEY_SPACE) || IsGamepadButtonReleased(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT)) && jumpPressHeld) { jumpPressHeld = false; if (velocity.y > 0) { velocity.y -= jumpReleasePower; } }
+    if ((IsKeyReleased(KEY_SPACE) || IsGamepadButtonReleased(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT)) && jumpPressHeld && !dived) { jumpPressHeld = false; if (velocity.y > 0) { velocity.y -= jumpReleasePower; } }
 
     // Sets and increments the kayote timer.
     if (touchingGround) { coyoteTimer = coyoteTimeLength; }

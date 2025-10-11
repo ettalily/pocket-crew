@@ -19,7 +19,7 @@ class Player {
     void ApplyVelocity();
     void JumpLogic();
     void FloorDetect(RayCollision ray, Mesh mesh, Model model); // collision.cpp
-    void WallDetect(RayCollision ray, Vector3 dir); // collision.cppv, v
+    void WallDetect(RayCollision ray, Vector3 dir); // collision.cpp
     void CollisionCheck(Mesh mesh, Model model); // collision.cpp
     void CeilingDetect(RayCollision ray); // collision.cpp
     void Collision(); // collision.cpp
