@@ -18,7 +18,7 @@ Requires a C++ compiler, such as the ``mingw-w64-gcc`` compiler included in [w64
 
 To build for windows, open ``w64devkit.exe``, then navigate to the root directory of this repository and run:
 ```
-gcc -o pocket.exe ./src/*.hpp ./src/*.cpp -I ./raylib/include ./raylib/windows/lib/libraylib.a -lgdi32 -lwinmm
+gcc -o pocket.exe ./src/*.hpp ./src/*.cpp ./src/levels/*cpp -I ./raylib/include ./raylib/windows/lib/libraylib.a -lgdi32 -lwinmm
 ```
 
 ## Notes

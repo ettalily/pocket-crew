@@ -16,6 +16,7 @@ void Player::Update() {
     Gravity();
     ApplyVelocity();
     Collision();
+    playerColliderBox = BoundingBox{position - (Vector3){ 5.0f, 5.0f, 5.0f }, position + (Vector3){ 5.0f, 5.0f, 5.0f }};
 }
 
 // Applies gravity within the max fall speed.
@@ -90,18 +91,28 @@ void Player::JumpLogic() {
 
     // Sliding and jumping against a wall.
     if (!touchingGround && coyoteTimer == 0) {
-        for (int m = 0; m < level.meshCount; m++) {
-            // Raycasts in the stick input direction and the player facing direction.
-            RayCollision wallCheckInputDir = GetRayCollisionMesh(Ray{(Vector3){ position.x, position.y, position.z }, (GetForwardNormal() * dirInput.y) + (Vector3Perpendicular(GetForwardNormal()) * dirInput.x) }, level.meshes[m], level.transform);
-            RayCollision wallCheckFacingDir = GetRayCollisionMesh(Ray{position, direction }, level.meshes[m], level.transform);
-            if ((wallCheckInputDir.hit && abs(wallCheckInputDir.normal.y) <= 0.2f && wallCheckInputDir.distance <= radius + 0.2f) && (wallCheckFacingDir.hit && abs(wallCheckFacingDir.normal.y) <= 0.2f && wallCheckFacingDir.distance <= radius + 0.2f)) {
-                // Wall slide.
-                if (velocity.y < -wallSlideVelocity) { velocity.y = -wallSlideVelocity; }
-                // Allows the player to wall jump through the coyote timer and sets the direction the player would go horizontally from that wall.
-                if (wallCoyoteTimer == 0) { wallJumpDir = Vector3Normalize((Vector3){ wallCheckInputDir.normal.x, 0.0f, wallCheckInputDir.normal.z }); }  
-                wallCoyoteTimer = wallCoyoteTimeLength;
-                break;
+        for (auto it = loadedAreas.begin(); it != loadedAreas.end();) {
+            Area areaPtr = *loadedAreas[std::distance(loadedAreas.begin(), it)];
+            // Checks if the player is inside the model bounding box.
+            if (CheckCollisionBoxes(player.playerColliderBox, areaPtr.modelBoundingBox)) {
+                for (int m = 0; m < areaPtr.model.meshCount; m++) {
+                    // Checks whether the player is within each mesh's bounding box.
+                    if (CheckCollisionBoxes(player.playerColliderBox, GetMeshBoundingBox(areaPtr.model.meshes[m]))) {
+                        // Raycasts in the stick input direction and the player facing direction.
+                        RayCollision wallCheckInputDir = GetRayCollisionMesh(Ray{(Vector3){ position.x, position.y, position.z }, (GetForwardNormal() * dirInput.y) + (Vector3Perpendicular(GetForwardNormal()) * dirInput.x) }, areaPtr.model.meshes[m], areaPtr.model.transform);
+                        RayCollision wallCheckFacingDir = GetRayCollisionMesh(Ray{position, direction }, areaPtr.model.meshes[m], areaPtr.model.transform);
+                        if ((wallCheckInputDir.hit && abs(wallCheckInputDir.normal.y) <= 0.2f && wallCheckInputDir.distance <= radius + 0.2f) && (wallCheckFacingDir.hit && abs(wallCheckFacingDir.normal.y) <= 0.2f && wallCheckFacingDir.distance <= radius + 0.2f)) {
+                            // Wall slide.
+                            if (velocity.y < -wallSlideVelocity) { velocity.y = -wallSlideVelocity; }
+                            // Allows the player to wall jump through the coyote timer and sets the direction the player would go horizontally from that wall.
+                            if (wallCoyoteTimer == 0) { wallJumpDir = Vector3Normalize((Vector3){ wallCheckInputDir.normal.x, 0.0f, wallCheckInputDir.normal.z }); }  
+                            wallCoyoteTimer = wallCoyoteTimeLength;
+                            break;
+                        }
+                    }
+                }
             }
+            ++it;
         }
         // Wall jumping.
         if (wallCoyoteTimer != 0 && (IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT) || IsKeyPressed(KEY_K) || IsKeyPressed(KEY_H))) {

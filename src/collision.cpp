@@ -1,10 +1,20 @@
 #include "global.hpp"
 
-// Calls all collider objects.
 void Player::Collision() {
     touchingGround = false;
-    for (int m = 0; m < level.meshCount; m++) {
-        CollisionCheck(level.meshes[m], level);
+    // Iterates through each loaded area and run collision if the player is within the model bounding box.
+    for (auto it = loadedAreas.begin(); it != loadedAreas.end();) {
+        Area areaPtr = *loadedAreas[std::distance(loadedAreas.begin(), it)];
+        // Checks if the player is inside the model bounding box.
+        if (CheckCollisionBoxes(player.playerColliderBox, areaPtr.modelBoundingBox)) {
+            for (int m = 0; m < areaPtr.model.meshCount; m++) {
+                // Checks whether the player is within each mesh's bounding box.
+                if (CheckCollisionBoxes(player.playerColliderBox, GetMeshBoundingBox(areaPtr.model.meshes[m]))) {
+                    CollisionCheck(areaPtr.model.meshes[m], areaPtr.model);
+                }
+            }
+        }
+        ++it;
     }
 }
 
