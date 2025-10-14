@@ -68,6 +68,7 @@ void Player::Move() {
             else { velocity += moveVector * airAcceleration; }
         }
     }
+
     // Applies drag/friction. Sets horizontal velocity to 0 if one application of drag would push the object past 0. Different amounts are applied depending on whether the player is touching the ground.
     if (touchingGround) {
         if (Vector2Length((Vector2){ velocity.x, velocity.z }) >= decceleration) { velocity -= Vector3Normalize((Vector3){ velocity.x, 0.0f, velocity.z }) * decceleration; } 
@@ -92,7 +93,7 @@ void Player::Move() {
 
 void Player::JumpLogic() {
     // Jump hold difference.
-    if ((IsKeyReleased(KEY_SPACE) || IsGamepadButtonReleased(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT)) && jumpPressHeld && !dived) { jumpPressHeld = false; if (velocity.y > 0) { velocity.y -= jumpReleasePower; } }
+    if ((IsGamepadButtonReleased(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT) || IsKeyReleased(KEY_K) || IsKeyReleased(KEY_H)) && jumpPressHeld && !dived) { jumpPressHeld = false; if (velocity.y > 0) { velocity.y -= jumpReleasePower; } }
 
     // Sets and increments the coyote timer.
     if (touchingGround) { coyoteTimer = coyoteTimeLength; wallCoyoteTimer = 0; }
@@ -137,11 +138,13 @@ void Player::JumpLogic() {
 }
 
 void Player::Dive() {
-    if (!dived && !touchingGround && (IsKeyPressed(KEY_J) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_UP))) {
+    if (!dived && !touchingGround && (IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_UP) || IsKeyPressed(KEY_J))) {
         dived = true;
         // Applies the dive values.
         velocity = (Vector3){ velocity.x * divePowerMult, velocity.y, velocity.z * divePowerMult };
         // Caps the max horizontal speed of a dive.
-        if (Vector3Length((Vector3){ velocity.x, 0.0f, velocity.z }) > diveMaxSpeed) { velocity = (Vector3){ direction.x * diveMaxSpeed, velocity.y, direction.z * diveMaxSpeed }; }       
+        if (Vector3Length((Vector3){ velocity.x, 0.0f, velocity.z }) > diveMaxSpeed) {
+            velocity = (Vector3){ direction.x * diveMaxSpeed, velocity.y, direction.z * diveMaxSpeed };
+        }       
     }
 }
