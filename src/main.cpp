@@ -45,12 +45,12 @@ int main() {
         if (IsKeyPressed(KEY_ENTER) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_MIDDLE_RIGHT)) { pause = !pause; }
 
         // Background music.
-        if (!IsSoundPlaying(backgroundMusic)) { PlaySound(backgroundMusic); }
+        //if (!IsSoundPlaying(backgroundMusic)) { PlaySound(backgroundMusic); }
         
         if (!pause) {
-        dropShadowY = -100.0f;
-        player.Update();
-        cam.Update();
+            dropShadowY = -100.0f;
+            player.Update();
+            cam.Update();
         }
 
         // Updates the shader camera view vector.
@@ -62,10 +62,8 @@ int main() {
     }
 
     // Unload all areas.
-    for (auto it = loadedAreas.begin(); it != loadedAreas.end();) {
-        Area areaPtr = *loadedAreas[std::distance(loadedAreas.begin(), it)];
-        areaPtr.active = false;
-        ++it;
+    for (auto it : loadedAreas) {
+        it->active = false;
     }
     UnloadDisabledAreas();
 

@@ -1,1 +1,1 @@
-x86_64-w64-mingw32-gcc -o pocket.exe ./src/*.hpp ./src/*.cpp ./src/levels/*cpp -I ./raylib/include ./raylib/windows/lib/libraylib.a -lgdi32 -lwinmm
+x86_64-w64-mingw32-gcc -o pocket.exe ./src/*.hpp ./src/*.cpp ./src/levels/*.cpp -I ./raylib/include ./raylib/windows/lib/libraylib.a -lgdi32 -lwinmm

@@ -55,17 +55,28 @@ void Player::Move() {
     // Gets gamepad input direction and modifies it by the direction that is forward from the camera's perspective.
     Vector3 moveVector = (GetForwardNormal() * dirInput.y) + (Vector3Perpendicular(GetForwardNormal()) * dirInput.x);
     // Caps max input magnitude at 1 if it exceeds that. Applies it differently to the velocity depending on whether the player is touching the ground or not.
-    if (Vector2Length(dirInput) >= 1) { if (Vector2Length((Vector2){ velocity.x, velocity.z }) < maxVelocity) { if (touchingGround) { velocity += moveVector * acceleration * slopeMovementModifier; } else { velocity += moveVector * airAcceleration; } }
-    // Caps max velocity to scale with input magnitude. Applies it differently to the velocity depending on whether the player is touching the ground or not.
-    } else if (Vector2Length((Vector2){ velocity.x, velocity.z }) < maxVelocity * Vector2Length(dirInput)) { if (touchingGround) { velocity += moveVector * acceleration * slopeMovementModifier; } else { velocity += moveVector * airAcceleration; } }
-
+    if (Vector2Length(dirInput) >= 1) { 
+        if (Vector2Length((Vector2){ velocity.x, velocity.z }) < maxVelocity) { 
+            if (touchingGround) { velocity += moveVector * acceleration * slopeMovementModifier; }
+            else { velocity += moveVector * airAcceleration; } 
+        }
+    }
+    // Max velocity scales with input magnitude. Applies it differently to the velocity depending on whether the player is touching the ground or not. 
+    else { 
+        if (Vector2Length((Vector2){ velocity.x, velocity.z }) < maxVelocity * Vector2Length(dirInput)) {
+            if (touchingGround) { velocity += moveVector * acceleration * slopeMovementModifier; }
+            else { velocity += moveVector * airAcceleration; }
+        }
+    }
     // Applies drag/friction. Sets horizontal velocity to 0 if one application of drag would push the object past 0. Different amounts are applied depending on whether the player is touching the ground.
     if (touchingGround) {
         if (Vector2Length((Vector2){ velocity.x, velocity.z }) >= decceleration) { velocity -= Vector3Normalize((Vector3){ velocity.x, 0.0f, velocity.z }) * decceleration; } 
         else { velocity.x = 0.0f; velocity.z = 0.0f; }
     } 
-    else if (Vector2Length((Vector2){ velocity.x, velocity.z }) >= airDecceleration) { velocity -= Vector3Normalize((Vector3){ velocity.x, 0.0f, velocity.z }) * airDecceleration; } 
-    else { velocity.x = 0.0f; velocity.z = 0.0f; }
+    else {
+        if (Vector2Length((Vector2){ velocity.x, velocity.z }) >= airDecceleration) { velocity -= Vector3Normalize((Vector3){ velocity.x, 0.0f, velocity.z }) * airDecceleration; } 
+        else { velocity.x = 0.0f; velocity.z = 0.0f; }
+    }
 
     // Air diving.
     Dive();
@@ -91,28 +102,28 @@ void Player::JumpLogic() {
 
     // Sliding and jumping against a wall.
     if (!touchingGround && coyoteTimer == 0) {
-        for (auto it = loadedAreas.begin(); it != loadedAreas.end();) {
-            Area areaPtr = *loadedAreas[std::distance(loadedAreas.begin(), it)];
+        for (auto it : loadedAreas) {
             // Checks if the player is inside the model bounding box.
-            if (CheckCollisionBoxes(player.playerColliderBox, areaPtr.modelBoundingBox)) {
-                for (int m = 0; m < areaPtr.model.meshCount; m++) {
-                    // Checks whether the player is within each mesh's bounding box.
-                    if (CheckCollisionBoxes(player.playerColliderBox, GetMeshBoundingBox(areaPtr.model.meshes[m]))) {
-                        // Raycasts in the stick input direction and the player facing direction.
-                        RayCollision wallCheckInputDir = GetRayCollisionMesh(Ray{(Vector3){ position.x, position.y, position.z }, (GetForwardNormal() * dirInput.y) + (Vector3Perpendicular(GetForwardNormal()) * dirInput.x) }, areaPtr.model.meshes[m], areaPtr.model.transform);
-                        RayCollision wallCheckFacingDir = GetRayCollisionMesh(Ray{position, direction }, areaPtr.model.meshes[m], areaPtr.model.transform);
-                        if ((wallCheckInputDir.hit && abs(wallCheckInputDir.normal.y) <= 0.2f && wallCheckInputDir.distance <= radius + 0.2f) && (wallCheckFacingDir.hit && abs(wallCheckFacingDir.normal.y) <= 0.2f && wallCheckFacingDir.distance <= radius + 0.2f)) {
-                            // Wall slide.
-                            if (velocity.y < -wallSlideVelocity) { velocity.y = -wallSlideVelocity; }
-                            // Allows the player to wall jump through the coyote timer and sets the direction the player would go horizontally from that wall.
-                            if (wallCoyoteTimer == 0) { wallJumpDir = Vector3Normalize((Vector3){ wallCheckInputDir.normal.x, 0.0f, wallCheckInputDir.normal.z }); }  
-                            wallCoyoteTimer = wallCoyoteTimeLength;
-                            break;
-                        }
-                    }
+            if (!CheckCollisionBoxes(player.playerColliderBox, it->modelBoundingBox)) {
+                continue;
+            }
+            for (int m = 0; m < it->model.meshCount; m++) {
+                // Checks whether the player is within each mesh's bounding box.
+                if (!CheckCollisionBoxes(player.playerColliderBox, GetMeshBoundingBox(it->model.meshes[m]))) {
+                    continue;
+                }
+                // Raycasts in the stick input direction and the player facing direction.
+                RayCollision wallCheckInputDir = GetRayCollisionMesh(Ray{(Vector3){ position.x, position.y, position.z }, (GetForwardNormal() * dirInput.y) + (Vector3Perpendicular(GetForwardNormal()) * dirInput.x) }, it->model.meshes[m], it->model.transform);
+                RayCollision wallCheckFacingDir = GetRayCollisionMesh(Ray{position, direction }, it->model.meshes[m], it->model.transform);
+                if ((wallCheckInputDir.hit && abs(wallCheckInputDir.normal.y) <= 0.2f && wallCheckInputDir.distance <= radius + 0.2f) && (wallCheckFacingDir.hit && abs(wallCheckFacingDir.normal.y) <= 0.2f && wallCheckFacingDir.distance <= radius + 0.2f)) {
+                    // Wall slide.
+                    if (velocity.y < -wallSlideVelocity) { velocity.y = -wallSlideVelocity; }
+                    // Allows the player to wall jump through the coyote timer and sets the direction the player would go horizontally from that wall.
+                    if (wallCoyoteTimer == 0) { wallJumpDir = Vector3Normalize((Vector3){ wallCheckInputDir.normal.x, 0.0f, wallCheckInputDir.normal.z }); }  
+                    wallCoyoteTimer = wallCoyoteTimeLength;
+                    break;
                 }
             }
-            ++it;
         }
         // Wall jumping.
         if (wallCoyoteTimer != 0 && (IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT) || IsKeyPressed(KEY_K) || IsKeyPressed(KEY_H))) {

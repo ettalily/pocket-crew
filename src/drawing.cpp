@@ -8,26 +8,24 @@ void DrawTextScreenScaled(Font font, const char *text, float posPercentX, float 
 
 void Draw() {
     // Drawing.
-        BeginDrawing();
-        ClearBackground(LIGHTGRAY);
-            BeginMode3D(cam.camera);
-                BeginShaderMode(shader);
-                    // Draw water.
-                    DrawPlane(Vector3Zero(), (Vector2){ 200.0f, 200.0f}, BLUE);
-                    // Draw area models.
-                    for (auto it = loadedAreas.begin(); it != loadedAreas.end();) {
-                        Area areaPtr = *loadedAreas[std::distance(loadedAreas.begin(), it)];
-                        areaPtr.Draw();
-                        ++it;
-                    }
-                    // Draw player
-                    if (player.dived) { DrawSphere(player.position, player.radius - 0.1f, BLUE); }
-                    else { DrawSphere(player.position, player.radius, BLUE); }
-                    // Draw player drop shadow.
-                    DrawModel(dropShadow, (Vector3){ player.position.x, dropShadowY + 0.05f, player.position.z }, 1.0f - ((player.position.y - dropShadowY) * 0.13f), WHITE);  
-                EndShaderMode();
-            EndMode3D();
-        if (pause) { DrawTextScreenScaled(GetFontDefault(), "PAUSED", 0.5f, 0.5f, 0.1f, 0.01f, 0.5f, BLACK); }
-        DrawFPS(10, 10);
-        EndDrawing();
+    BeginDrawing();
+    ClearBackground(LIGHTGRAY);
+    BeginMode3D(cam.camera);
+    BeginShaderMode(shader);
+        // Draw water.
+        DrawPlane(Vector3Zero(), (Vector2){ 200.0f, 200.0f}, BLUE);
+        // Draw area models.
+        for (auto it : loadedAreas) {
+            it->Draw();
+        }
+        // Draw player
+        if (player.dived) { DrawSphere(player.position, player.radius - 0.1f, BLUE); }
+        else { DrawSphere(player.position, player.radius, BLUE); }
+        // Draw player drop shadow.
+        DrawModel(dropShadow, (Vector3){ player.position.x, dropShadowY + 0.05f, player.position.z }, 1.0f - ((player.position.y - dropShadowY) * 0.13f), WHITE);  
+    EndShaderMode();
+    EndMode3D();
+    if (pause) { DrawTextScreenScaled(GetFontDefault(), "PAUSED", 0.5f, 0.5f, 0.1f, 0.01f, 0.5f, BLACK); }
+    DrawFPS(10, 10);
+    EndDrawing();
 }
