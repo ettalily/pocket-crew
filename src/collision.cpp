@@ -1,6 +1,13 @@
 #include "global.hpp"
 
+const float floorNormalMin = 0.7f;
+const float ceilingNormalMax = -0.7f;
+const float stepDownBackDistance = 1.0f;
+const float stepDownMaxDistanceDiff = 0.8f;
+const float slopeSteepnessImpact = 0.65f;
+
 void Player::Collision() {
+    touchingGroundAtStart = touchingGround;
     touchingGround = false;
     // Iterates through each loaded area.
     for (auto it : loadedAreas) {
@@ -21,15 +28,20 @@ void Player::Collision() {
 void Player::CollisionCheck(Mesh mesh, Model model) {
     // Floor Collision. Raycasts the center and all four corners of the base of the collision box.
     RayCollision basecenter = GetRayCollisionMesh(Ray{position, (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
-    FloorDetect(basecenter, mesh, model);
+    FloorDetect(basecenter);
     RayCollision basedirforward = GetRayCollisionMesh(Ray{player.position + (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
-    FloorDetect(basedirforward, mesh, model);
-    RayCollision basedirright = GetRayCollisionMesh(Ray{player.position + (Vector3Perpendicular(direction) * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
-    FloorDetect(basedirright, mesh, model);
-    RayCollision basedirleft = GetRayCollisionMesh(Ray{player.position - (Vector3Perpendicular(direction) * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
-    FloorDetect(basedirleft, mesh, model);
+    FloorDetect(basedirforward);
     RayCollision basedirback = GetRayCollisionMesh(Ray{player.position - (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
-    FloorDetect(basedirback, mesh, model);
+    FloorDetect(basedirback);
+    // Deals with stepping down slopes.
+    SlopeStepDown(basedirforward, basedirback);
+    RayCollision basedirright = GetRayCollisionMesh(Ray{player.position + (Vector3Perpendicular(direction) * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+    FloorDetect(basedirright);
+    RayCollision basedirleft = GetRayCollisionMesh(Ray{player.position - (Vector3Perpendicular(direction) * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+    FloorDetect(basedirleft);
+    
+    // Changes the grounded movement speed based on the surface's steepness.
+    SlopeSteepness(mesh, model);
 
     // Wall Collision. Raycasts in all four directions, with the direction of movement as forward.
     RayCollision walldirforward = GetRayCollisionMesh(Ray{position, direction }, mesh, model.transform);
@@ -46,22 +58,14 @@ void Player::CollisionCheck(Mesh mesh, Model model) {
     CeilingDetect(topcenter);
 }
 
-void Player::FloorDetect(RayCollision ray, Mesh mesh, Model model) {
-    if (ray.hit) {
-        if (velocity.y <= 0 && ray.distance <= radius && ray.normal.y >= 0.7f) {
-            touchingGround = true; dived = false; velocity.y = 0.0f; position.y = ray.point.y + (radius);
-            
-            // Checks slope steepness and sets the slope steepness modifier.
-            RayCollision slopefront = GetRayCollisionMesh(Ray{player.position + (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
-            RayCollision slopeback = GetRayCollisionMesh(Ray{player.position - (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
-            slopeMovementModifier = 1.0f + ((slopefront.distance - slopeback.distance) * 0.75f);
-            // Caps the minimum and maximum slope movement modifier.
-            if (slopeMovementModifier < 0.5f) { slopeMovementModifier = 0.5f; }
-            if (slopeMovementModifier > 1.5f) { slopeMovementModifier = 1.5f; }
-        }
-        // Sets drop shadow height.
-        if (ray.point.y > dropShadowY && ray.normal.y >= 0.7f) { dropShadowY = ray.point.y; }
+void Player::FloorDetect(RayCollision ray) {
+    if (!ray.hit || ray.normal.y < floorNormalMin) {
+        return;
     }
+    if (velocity.y <= 0 && ray.distance <= radius) {
+        touchingGround = true; dived = false; velocity.y = 0.0f; position.y = ray.point.y + radius;
+    }
+    if (ray.point.y > dropShadowY) { dropShadowY = ray.point.y; }
 }
 
 void Player::WallDetect(RayCollision ray, Vector3 dir) {
@@ -72,7 +76,33 @@ void Player::WallDetect(RayCollision ray, Vector3 dir) {
 }
 
 void Player::CeilingDetect(RayCollision ray) {
-    if (ray.hit && ray.distance <= radius && ray.normal.y <= -0.7f) {
+    if (ray.hit && ray.distance <= radius && ray.normal.y <= ceilingNormalMax) {
         velocity.y = 0.0f; position.y = ray.point.y - (radius);
     }
+}
+
+void Player::SlopeStepDown(RayCollision front, RayCollision back) {
+    if (touchingGround || !touchingGroundAtStart || !front.hit || !back.hit) {
+        return;
+    }
+    // Checks if the slope meets the slope step conditions.
+    if (back.distance <= stepDownBackDistance && front.normal.y >= floorNormalMin && back.normal.y >= floorNormalMin && back.distance < front.distance && front.distance - back.distance <= stepDownMaxDistanceDiff) {
+        touchingGround = true; dived = false; velocity.y = 0.0f; position.y = back.point.y + radius;
+    }
+}
+
+void Player::SlopeSteepness(Mesh mesh, Model model) {
+    if (!touchingGround) {
+        return;
+    }
+    // Checks slope steepness and sets the slope steepness modifier.
+    RayCollision slopefront = GetRayCollisionMesh(Ray{player.position + (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+    RayCollision slopeback = GetRayCollisionMesh(Ray{player.position - (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+    if (!slopefront.hit || !slopeback.hit) {
+        return;
+    }
+    slopeMovementModifier = 1.0f + ((slopefront.distance - slopeback.distance) * slopeSteepnessImpact);
+    // Caps the minimum and maximum slope movement modifier.
+    if (slopeMovementModifier < 0.5f) { slopeMovementModifier = 0.5f; }
+    if (slopeMovementModifier > 1.5f) { slopeMovementModifier = 1.5f; }
 }

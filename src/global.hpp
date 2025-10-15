@@ -28,12 +28,12 @@ extern CameraSettings cameraMode;
 class Player {
     public:
     Vector3 position = (Vector3){ 0.0f, 5.0f, 0.0f },
-    velocity = (Vector3){ 0.0f, 0.0f, 0.0f }, 
-    direction = (Vector3){ 0.0f, 0.0f, 0.0f };
+    velocity = Vector3Zero(), 
+    direction = Vector3Zero();
     BoundingBox playerColliderBox;
     float radius = 0.5f, acceleration = 0.02f, decceleration = 0.006f, maxVelocity = 0.17f, gravity = 0.01f, maxFallSpeed = 0.4f, jumpPower = 0.25f, wallJumpHorPower = 0.17f, wallSlideVelocity = 0.09f, jumpReleasePower = 0.045f, airAcceleration = 0.006f, airDecceleration = 0.0015, divePowerMult = 1.6f, diveMaxSpeed = 0.35f;
     unsigned int coyoteTimer = 0, wallCoyoteTimer = 0;
-    bool touchingGround = false, jumpPressHeld = false, dived = false;
+    bool touchingGround = false, jumpPressHeld = false, dived = false, touchingGroundAtStart = false;
     void Update(); // player.cpp
     void UpdateMovementAxis(); // player.cpp
     void Move(); // player.cpp
@@ -41,7 +41,9 @@ class Player {
     void Gravity(); // player.cpp
     void ApplyVelocity(); // player.cpp
     void JumpLogic(); // player.cpp
-    void FloorDetect(RayCollision ray, Mesh mesh, Model model); // collision.cpp
+    void FloorDetect(RayCollision ray); // collision.cpp
+    void SlopeSteepness(Mesh mesh, Model model); // collision.cpp
+    void SlopeStepDown(RayCollision front, RayCollision back); // collision.cpp
     void WallDetect(RayCollision ray, Vector3 dir); // collision.cpp
     void CollisionCheck(Mesh mesh, Model model); // collision.cpp
     void CeilingDetect(RayCollision ray); // collision.cpp
