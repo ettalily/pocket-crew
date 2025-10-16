@@ -45,12 +45,12 @@ void Player::CollisionCheck(Mesh mesh, Model model) {
 
     // Wall Collision. Raycasts in all four directions, with the direction of movement as forward.
     RayCollision walldirforward = GetRayCollisionMesh(Ray{position, direction }, mesh, model.transform);
-    RayCollision walldirright = GetRayCollisionMesh(Ray{position, Vector3Perpendicular(direction) }, mesh, model.transform);
-    RayCollision walldirleft = GetRayCollisionMesh(Ray{position, Vector3Perpendicular(direction) * -1 }, mesh, model.transform);
-    RayCollision walldirback = GetRayCollisionMesh(Ray{position, direction * -1 }, mesh, model.transform);
     WallDetect(walldirforward, direction);
+    RayCollision walldirright = GetRayCollisionMesh(Ray{position, Vector3Perpendicular(direction) }, mesh, model.transform);
     WallDetect(walldirright, Vector3Perpendicular(direction));
+    RayCollision walldirleft = GetRayCollisionMesh(Ray{position, Vector3Perpendicular(direction) * -1 }, mesh, model.transform);
     WallDetect(walldirleft, Vector3Perpendicular(direction) * -1);
+    RayCollision walldirback = GetRayCollisionMesh(Ray{position, direction * -1 }, mesh, model.transform);
     WallDetect(walldirback, direction * -1);
 
     // Ceiling Collision. Raycasts once straight above the center of the player.
