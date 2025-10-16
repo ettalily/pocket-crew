@@ -16,7 +16,8 @@ void Player::Update() {
     Gravity();
     ApplyVelocity();
     Collision();
-    playerColliderBox = BoundingBox{position - (Vector3){ 5.0f, 5.0f, 5.0f }, position + (Vector3){ 5.0f, 5.0f, 5.0f }};
+    playerLogicBox = BoundingBox{ position - (Vector3){ 5.0f, 5.0f, 5.0f }, position + (Vector3){ 5.0f, 5.0f, 5.0f } };
+    playerHitbox = BoundingBox{ position - (Vector3){ radius * 0.5f, radius * 0.5f, radius * 0.5f }, position + (Vector3){ radius * 0.5f, radius * 0.5f, radius * 0.5f } };
 }
 
 // Applies gravity within the max fall speed.
@@ -34,7 +35,7 @@ void Player::UpdateMovementAxis() {
     dirInput = Vector2Zero();
     // Checks if either left stick axis has passed the deadzone. If either has, it'll use the left stick input.
     if (abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X)) >= stickDeadzone || abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y)) >= stickDeadzone) {
-        // Gets a normalised left stick input value that keeps it's magnitude.
+        // Gets left stick input value.
         dirInput = (Vector2){ GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X), -GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y) } ;
         // Applies deadzones.
         if (abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X)) < stickDeadzone) { dirInput.x = 0.0f; }
@@ -105,12 +106,12 @@ void Player::JumpLogic() {
     if (!touchingGround && coyoteTimer == 0) {
         for (auto it : loadedAreas) {
             // Checks if the player is inside the model bounding box.
-            if (!CheckCollisionBoxes(player.playerColliderBox, it->modelBoundingBox)) {
+            if (!CheckCollisionBoxes(player.playerLogicBox, it->modelBoundingBox)) {
                 continue;
             }
             for (int m = 0; m < it->model.meshCount; m++) {
                 // Checks whether the player is within each mesh's bounding box.
-                if (!CheckCollisionBoxes(player.playerColliderBox, GetMeshBoundingBox(it->model.meshes[m]))) {
+                if (!CheckCollisionBoxes(player.playerLogicBox, GetMeshBoundingBox(it->model.meshes[m]))) {
                     continue;
                 }
                 // Raycasts in the stick input direction and the player facing direction.

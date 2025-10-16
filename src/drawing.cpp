@@ -14,13 +14,13 @@ void Draw() {
     BeginShaderMode(shader);
         // Draw water.
         DrawPlane(Vector3Zero(), (Vector2){ 200.0f, 200.0f}, BLUE);
+        // Draw player
+        if (player.dived) { DrawSphere(player.position, player.radius - 0.1f, BLUE); }
+        else { DrawSphere(player.position, player.radius, BLUE); }
         // Draw area models.
         for (auto it : loadedAreas) {
             it->Draw();
         }
-        // Draw player
-        if (player.dived) { DrawSphere(player.position, player.radius - 0.1f, BLUE); }
-        else { DrawSphere(player.position, player.radius, BLUE); }
         // Draw player drop shadow.
         DrawModel(dropShadow, (Vector3){ player.position.x, dropShadowY + 0.05f, player.position.z }, 1.0f - ((player.position.y - dropShadowY) * 0.13f), WHITE);  
     EndShaderMode();

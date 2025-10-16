@@ -4,6 +4,16 @@
 #include <algorithm>
 #include <vector>
 
+class Collectable {
+    public:
+    Vector3 position, size = (Vector3){ 1.0f, 1.0f, 1.0f };
+    BoundingBox hitbox;
+    bool collected = false;
+
+    void PickupCheck();
+    void Draw();
+};
+
 class Area {
     public:
     bool active = false;
@@ -11,6 +21,8 @@ class Area {
     const char *modelPath;
     Model model;
     BoundingBox modelBoundingBox;
+    void (*AreaLogic)();
+    std::vector<Collectable> collectables;
 
     Vector3 position;
     float scale;
@@ -27,10 +39,10 @@ extern CameraSettings cameraMode;
 
 class Player {
     public:
-    Vector3 position = (Vector3){ 0.0f, 5.0f, 0.0f },
+    Vector3 position = (Vector3){ 0.0f, 3.0f, 0.0f },
     velocity = Vector3Zero(), 
     direction = Vector3Zero();
-    BoundingBox playerColliderBox;
+    BoundingBox playerLogicBox, playerHitbox;
     float radius = 0.5f, acceleration = 0.02f, decceleration = 0.006f, maxVelocity = 0.17f, gravity = 0.01f, maxFallSpeed = 0.4f, jumpPower = 0.25f, wallJumpHorPower = 0.17f, wallSlideVelocity = 0.09f, jumpReleasePower = 0.045f, airAcceleration = 0.006f, airDecceleration = 0.0015, divePowerMult = 1.6f, diveMaxSpeed = 0.35f;
     unsigned int coyoteTimer = 0, wallCoyoteTimer = 0;
     bool touchingGround = false, jumpPressHeld = false, dived = false, touchingGroundAtStart = false;

@@ -39,7 +39,7 @@ int main() {
         // Toggle borderless fullscreen.
         if (IsKeyPressed(KEY_EQUAL)) { ToggleBorderlessWindowed(); }
 
-        if (IsKeyPressed(KEY_M)) { firstIsland.active = false; UnloadDisabledAreas(); }
+        //if (IsKeyPressed(KEY_M)) { firstIsland.active = false; UnloadDisabledAreas(); }
 
         // Pause toggle.
         if (IsKeyPressed(KEY_ENTER) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_MIDDLE_RIGHT)) { pause = !pause; }
@@ -51,6 +51,11 @@ int main() {
             dropShadowY = -100.0f;
             player.Update();
             cam.Update();
+        }
+
+        // Draw and update entities for loaded areas.
+        for (auto it : loadedAreas) {
+            it->AreaLogic();
         }
 
         // Updates the shader camera view vector.
