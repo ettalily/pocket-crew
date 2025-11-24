@@ -39,7 +39,7 @@ int main() {
         // Toggle borderless fullscreen.
         if (IsKeyPressed(KEY_EQUAL)) { ToggleBorderlessWindowed(); }
 
-        //if (IsKeyPressed(KEY_M)) { firstIsland.active = false; UnloadDisabledAreas(); }
+        if (IsKeyPressed(KEY_M)) { std::cout << std::to_string(player.position.x) + " " + std::to_string(player.position.y) + " " + std::to_string(player.position.z) << std::endl; }
 
         // Pause toggle.
         if (IsKeyPressed(KEY_ENTER) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_MIDDLE_RIGHT)) { pause = !pause; }
@@ -53,7 +53,7 @@ int main() {
             cam.Update();
         }
 
-        // Draw and update entities for loaded areas.
+        // Update entities for loaded areas.
         for (auto it : loadedAreas) {
             it->AreaLogic();
         }

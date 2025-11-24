@@ -12,12 +12,12 @@ void Player::Collision() {
     // Iterates through each loaded area.
     for (auto it : loadedAreas) {
         // Checks if the player is inside the model bounding box.
-        if (!CheckCollisionBoxes(player.playerLogicBox, it->modelBoundingBox)) {
+        if (!CheckCollisionBoxes(playerLogicBox, it->modelBoundingBox)) {
             continue;
         }
         for (int m = 0; m < it->model.meshCount; m++) {
             // Checks whether the player is within each mesh's bounding box.
-            if (CheckCollisionBoxes(player.playerLogicBox, GetMeshBoundingBox(it->model.meshes[m]))) {
+            if (CheckCollisionBoxes(playerLogicBox, GetMeshBoundingBox(it->model.meshes[m]))) {
                 CollisionCheck(it->model.meshes[m], it->model);
             }
         }
@@ -29,15 +29,15 @@ void Player::CollisionCheck(Mesh mesh, Model model) {
     // Floor Collision. Raycasts the center and all four corners of the base of the collision box.
     RayCollision basecenter = GetRayCollisionMesh(Ray{position, (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
     FloorDetect(basecenter);
-    RayCollision basedirforward = GetRayCollisionMesh(Ray{player.position + (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+    RayCollision basedirforward = GetRayCollisionMesh(Ray{position + (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
     FloorDetect(basedirforward);
-    RayCollision basedirback = GetRayCollisionMesh(Ray{player.position - (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+    RayCollision basedirback = GetRayCollisionMesh(Ray{position - (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
     FloorDetect(basedirback);
     // Deals with stepping down slopes.
     SlopeStepDown(basedirforward, basedirback);
-    RayCollision basedirright = GetRayCollisionMesh(Ray{player.position + (Vector3Perpendicular(direction) * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+    RayCollision basedirright = GetRayCollisionMesh(Ray{position + (Vector3Perpendicular(direction) * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
     FloorDetect(basedirright);
-    RayCollision basedirleft = GetRayCollisionMesh(Ray{player.position - (Vector3Perpendicular(direction) * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+    RayCollision basedirleft = GetRayCollisionMesh(Ray{position - (Vector3Perpendicular(direction) * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
     FloorDetect(basedirleft);
     
     // Changes the grounded movement speed based on the surface's steepness.
@@ -96,8 +96,8 @@ void Player::SlopeSteepness(Mesh mesh, Model model) {
         return;
     }
     // Checks slope steepness and sets the slope steepness modifier.
-    RayCollision slopefront = GetRayCollisionMesh(Ray{player.position + (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
-    RayCollision slopeback = GetRayCollisionMesh(Ray{player.position - (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+    RayCollision slopefront = GetRayCollisionMesh(Ray{position + (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+    RayCollision slopeback = GetRayCollisionMesh(Ray{position - (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
     if (slopefront.hit && slopeback.hit) {
         slopeMovementModifier = 1.0f + ((slopefront.distance - slopeback.distance) * slopeSteepnessImpact);
         // Caps the minimum and maximum slope movement modifier.

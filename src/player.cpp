@@ -106,12 +106,12 @@ void Player::JumpLogic() {
     if (!touchingGround && coyoteTimer == 0) {
         for (auto it : loadedAreas) {
             // Checks if the player is inside the model bounding box.
-            if (!CheckCollisionBoxes(player.playerLogicBox, it->modelBoundingBox)) {
+            if (!CheckCollisionBoxes(playerLogicBox, it->modelBoundingBox)) {
                 continue;
             }
             for (int m = 0; m < it->model.meshCount; m++) {
                 // Checks whether the player is within each mesh's bounding box.
-                if (!CheckCollisionBoxes(player.playerLogicBox, GetMeshBoundingBox(it->model.meshes[m]))) {
+                if (!CheckCollisionBoxes(playerLogicBox, GetMeshBoundingBox(it->model.meshes[m]))) {
                     continue;
                 }
                 // Raycasts in the stick input direction and the player facing direction.
