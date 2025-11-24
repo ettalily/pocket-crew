@@ -82,18 +82,14 @@ class Particle {
 
     void DrawParticles();
 };
-extern Particle walkDust;
-extern Particle jumpDust;
-extern Particle walljumpDust;
-extern Particle diveDust;
+extern Particle walkDust, jumpDust, walljumpDust, diveDust, landDust;
 
 // main.cpp
 extern int gamepadID;
 extern float dropShadowY;
 extern Model dropShadow;
 extern bool pause;
-extern Sound jumpSound;
-extern Sound diveSound;
+extern Sound jumpSound, diveSound;
 
 // camera.cpp
 Vector3 GetForwardNormal();

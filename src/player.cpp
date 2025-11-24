@@ -22,6 +22,7 @@ void Player::Update() {
     Gravity();
     ApplyVelocity();
     Collision();
+    if (!touchingGroundAtStart && touchingGround) { SpawnParticle(landDust); }
     playerLogicBox = BoundingBox{ position - (Vector3){ 5.0f, 5.0f, 5.0f }, position + (Vector3){ 5.0f, 5.0f, 5.0f } };
     playerHitbox = BoundingBox{ position - (Vector3){ radius * 0.5f, radius * 0.5f, radius * 0.5f }, position + (Vector3){ radius * 0.5f, radius * 0.5f, radius * 0.5f } };
 }
