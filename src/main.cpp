@@ -7,8 +7,6 @@ bool pause = false;
 float dropShadowY;
 Model dropShadow;
 
-Sound jumpSound, diveSound;
-
 int main() {
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     SetConfigFlags(FLAG_VSYNC_HINT);
@@ -32,6 +30,12 @@ int main() {
     // Creates drop shadow.
     dropShadow = LoadModelFromMesh(GenMeshPlane(1.0f, 1.0f, 16, 16));
     dropShadow.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = LoadTexture("assets/textures/dropshadow.png");
+
+    // Loads particle textures.
+    walkDust.texture = LoadTexture("assets/textures/dust.png");
+    walkDust.frameCount = 3;
+    walkDust.frameSize = 16;
+    walkDust.frameSpeed = 5;
 
     // Setup level model values.
     InitAreas();

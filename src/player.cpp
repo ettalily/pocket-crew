@@ -7,6 +7,12 @@ Vector2 dirInput;
 float slopeMovementModifier = 1.0f;
 Vector3 wallJumpDir;
 
+Sound jumpSound, diveSound;
+
+const unsigned int walkDustKickUpFrequency = 3;
+const float walkDustKickUpVelocity = 0.05f;
+unsigned int walkDustKickUpTimer = 0;
+
 Player player;
 
 // Calls all the different parts of the player code.
@@ -90,6 +96,19 @@ void Player::Move() {
 
     // Jumping, wall sliding, and wall jumping.
     JumpLogic();
+
+    // Walk kick-up dust spawning.
+    if (touchingGround && Vector3Length(velocity) >= walkDustKickUpVelocity) {
+        walkDustKickUpTimer ++;
+        if (walkDustKickUpTimer >= walkDustKickUpFrequency / Vector3Length(velocity)) {
+            walkDustKickUpTimer = 0;
+            walkDust.position = player.position;
+            walkDust.active = true;
+            walkDust.timer = 0;
+            walkDust.currentFrame = 1;
+        }
+    }
+    else { walkDustKickUpTimer = 0; }
 }
 
 void Player::JumpLogic() {
