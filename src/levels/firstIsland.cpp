@@ -3,7 +3,6 @@
 Area firstIsland;
 const char *firstIslandPath = "assets/models/firstIsland.glb";
 
-
 void Logic() {
     for (Collectable& it : firstIsland.collectables) {
         it.PickupCheck();

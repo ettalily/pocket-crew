@@ -83,6 +83,9 @@ class Particle {
     void DrawParticles();
 };
 extern Particle walkDust;
+extern Particle jumpDust;
+extern Particle walljumpDust;
+extern Particle diveDust;
 
 // main.cpp
 extern int gamepadID;
@@ -106,6 +109,10 @@ extern float slopeMovementModifier;
 
 // drawing.cpp
 void Draw();
+
+// particles.cpp
+void InitParticles();
+void SpawnParticle(Particle& particle);
 
 // Area Setup
 void InitAreas();

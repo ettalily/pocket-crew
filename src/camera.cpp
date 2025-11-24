@@ -24,5 +24,8 @@ void GameCamera::Update() {
             cam.camera.position = orbits + ((Vector3){ player.position.x - orbits.x, 0.0f, player.position.z - orbits.z } + (Vector3Normalize((Vector3){ player.position.x - orbits.x, 0.0f, player.position.z - orbits.z }) * offset)) + (Vector3){ 0.0f, 6.0f, 0.0f };
             cam.camera.target = look;
             break;
-    }   
+    }  
+    if (camera.position.y < 5.0f) {
+        camera.position.y = 5.0f;
+    }
 }

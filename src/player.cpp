@@ -102,10 +102,7 @@ void Player::Move() {
         walkDustKickUpTimer ++;
         if (walkDustKickUpTimer >= walkDustKickUpFrequency / Vector3Length(velocity)) {
             walkDustKickUpTimer = 0;
-            walkDust.position = player.position;
-            walkDust.active = true;
-            walkDust.timer = 0;
-            walkDust.currentFrame = 1;
+            SpawnParticle(walkDust);
         }
     }
     else { walkDustKickUpTimer = 0; }
@@ -155,6 +152,7 @@ void Player::JumpLogic() {
             velocity.x = wallJumpDir.x * wallJumpHorPower;
             velocity.z = wallJumpDir.z * wallJumpHorPower;
             PlaySound(jumpSound);
+            SpawnParticle(walljumpDust);
         }
     }
     // Jumping on the ground.
@@ -163,6 +161,7 @@ void Player::JumpLogic() {
         velocity.y = jumpPower;
         coyoteTimer = 0; jumpPressHeld = true;
         PlaySound(jumpSound);
+        SpawnParticle(jumpDust);
     }
 }
 
@@ -170,6 +169,7 @@ void Player::Dive() {
     if (!dived && !touchingGround && (IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_UP) || IsKeyPressed(KEY_J))) {
         dived = true;
         PlaySound(diveSound);
+        SpawnParticle(diveDust);
         // Applies the dive values.
         velocity = (Vector3){ velocity.x * divePowerMult, velocity.y, velocity.z * divePowerMult };
         // Caps the max horizontal speed of a dive.
