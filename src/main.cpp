@@ -26,6 +26,8 @@ int main() {
     Sound backgroundMusic = LoadSound("assets/music/background.mp3");
     jumpSound = LoadSound("assets/sound/jump.wav");
     diveSound = LoadSound("assets/sound/dive.wav");
+    landSound = LoadSound("assets/sound/land.wav");
+    walkSound = LoadSound("assets/sound/walk.wav");
 
     // Creates drop shadow.
     dropShadow = LoadModelFromMesh(GenMeshPlane(1.0f, 1.0f, 16, 16));
@@ -51,7 +53,7 @@ int main() {
         if (IsKeyPressed(KEY_ENTER) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_MIDDLE_RIGHT)) { pause = !pause; }
 
         // Background music.
-        //if (!IsSoundPlaying(backgroundMusic)) { PlaySound(backgroundMusic); }
+        if (!IsSoundPlaying(backgroundMusic)) { PlaySound(backgroundMusic); }
         
         if (!pause) {
             dropShadowY = -100.0f;

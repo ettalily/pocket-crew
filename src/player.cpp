@@ -7,11 +7,12 @@ Vector2 dirInput;
 float slopeMovementModifier = 1.0f;
 Vector3 wallJumpDir;
 
-Sound jumpSound, diveSound;
+Sound jumpSound, diveSound, landSound, walkSound;
 
 const unsigned int walkDustKickUpFrequency = 3;
+const unsigned int wallSlideDustFrequency = 12;
 const float walkDustKickUpVelocity = 0.05f;
-unsigned int walkDustKickUpTimer = 0;
+unsigned int dustKickUpTimer = 0;
 
 Player player;
 
@@ -22,9 +23,9 @@ void Player::Update() {
     Gravity();
     ApplyVelocity();
     Collision();
-    if (!touchingGroundAtStart && touchingGround) { SpawnParticle(landDust); }
     playerLogicBox = BoundingBox{ position - (Vector3){ 5.0f, 5.0f, 5.0f }, position + (Vector3){ 5.0f, 5.0f, 5.0f } };
     playerHitbox = BoundingBox{ position - (Vector3){ radius * 0.5f, radius * 0.5f, radius * 0.5f }, position + (Vector3){ radius * 0.5f, radius * 0.5f, radius * 0.5f } };
+    if (!touchingGroundAtStart && touchingGround) { PlaySound(landSound); SpawnParticle(landDust); }
 }
 
 // Applies gravity within the max fall speed.
@@ -98,15 +99,15 @@ void Player::Move() {
     // Jumping, wall sliding, and wall jumping.
     JumpLogic();
 
-    // Walk kick-up dust spawning.
+    // Walk kick-up dust spawning and walk sound.
     if (touchingGround && Vector3Length(velocity) >= walkDustKickUpVelocity) {
-        walkDustKickUpTimer ++;
-        if (walkDustKickUpTimer >= walkDustKickUpFrequency / Vector3Length(velocity)) {
-            walkDustKickUpTimer = 0;
+        dustKickUpTimer ++;
+        if (dustKickUpTimer >= walkDustKickUpFrequency / Vector3Length(velocity)) {
+            dustKickUpTimer = 0;
+            PlaySound(walkSound);
             SpawnParticle(walkDust);
         }
     }
-    else { walkDustKickUpTimer = 0; }
 }
 
 void Player::JumpLogic() {
@@ -136,7 +137,14 @@ void Player::JumpLogic() {
                 RayCollision wallCheckFacingDir = GetRayCollisionMesh(Ray{position, direction }, it->model.meshes[m], it->model.transform);
                 if ((wallCheckInputDir.hit && abs(wallCheckInputDir.normal.y) <= 0.2f && wallCheckInputDir.distance <= radius + 0.2f) && (wallCheckFacingDir.hit && abs(wallCheckFacingDir.normal.y) <= 0.2f && wallCheckFacingDir.distance <= radius + 0.2f)) {
                     // Wall slide.
-                    if (velocity.y < -wallSlideVelocity) { velocity.y = -wallSlideVelocity; }
+                    if (velocity.y < -wallSlideVelocity) { 
+                        velocity.y = -wallSlideVelocity; 
+                        dustKickUpTimer ++;
+                        if (dustKickUpTimer >= wallSlideDustFrequency) {
+                            dustKickUpTimer = 0;
+                            SpawnParticle(walkDust);
+                        }
+                    }
                     // Allows the player to wall jump through the coyote timer and sets the direction the player would go horizontally from that wall.
                     if (wallCoyoteTimer == 0) { wallJumpDir = Vector3Normalize((Vector3){ wallCheckInputDir.normal.x, 0.0f, wallCheckInputDir.normal.z }); }  
                     wallCoyoteTimer = wallCoyoteTimeLength;

@@ -89,7 +89,7 @@ extern int gamepadID;
 extern float dropShadowY;
 extern Model dropShadow;
 extern bool pause;
-extern Sound jumpSound, diveSound;
+extern Sound jumpSound, diveSound, landSound, walkSound;
 
 // camera.cpp
 Vector3 GetForwardNormal();
