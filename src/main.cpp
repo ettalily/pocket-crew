@@ -7,12 +7,15 @@ bool pause = false;
 float dropShadowY;
 Model dropShadow;
 
+Sound jumpSound, diveSound;
+
 int main() {
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     SetConfigFlags(FLAG_VSYNC_HINT);
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     // Sets up the window and audio device.
-    InitWindow(screenWidth, screenHeight, "Pocket Crew"); SetTargetFPS(60);
+    InitWindow(screenWidth, screenHeight, "Pocket Crew");
+    SetTargetFPS(60);
     InitAudioDevice();
 
     // Sets up camera values.
@@ -23,6 +26,8 @@ int main() {
 
     // Load audio.
     Sound backgroundMusic = LoadSound("assets/music/background.mp3");
+    jumpSound = LoadSound("assets/sound/jump.wav");
+    diveSound = LoadSound("assets/sound/dive.wav");
 
     // Creates drop shadow.
     dropShadow = LoadModelFromMesh(GenMeshPlane(1.0f, 1.0f, 16, 16));
@@ -45,7 +50,7 @@ int main() {
         if (IsKeyPressed(KEY_ENTER) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_MIDDLE_RIGHT)) { pause = !pause; }
 
         // Background music.
-        //if (!IsSoundPlaying(backgroundMusic)) { PlaySound(backgroundMusic); }
+        if (!IsSoundPlaying(backgroundMusic)) { PlaySound(backgroundMusic); }
         
         if (!pause) {
             dropShadowY = -100.0f;

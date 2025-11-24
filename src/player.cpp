@@ -129,18 +129,28 @@ void Player::JumpLogic() {
         }
         // Wall jumping.
         if (wallCoyoteTimer != 0 && (IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT) || IsKeyPressed(KEY_K) || IsKeyPressed(KEY_H))) {
-            velocity.y = jumpPower; jumpPressHeld = true; dived = false; wallCoyoteTimer = 0; velocity.x = wallJumpDir.x * wallJumpHorPower; velocity.z = wallJumpDir.z * wallJumpHorPower;
+            velocity.y = jumpPower;
+            jumpPressHeld = true; 
+            dived = false; 
+            wallCoyoteTimer = 0; 
+            velocity.x = wallJumpDir.x * wallJumpHorPower;
+            velocity.z = wallJumpDir.z * wallJumpHorPower;
+            PlaySound(jumpSound);
         }
     }
     // Jumping on the ground.
     else if ((touchingGround || coyoteTimer != 0) && (IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT) || IsKeyPressed(KEY_K) || IsKeyPressed(KEY_H)) ) {
-        touchingGround = false; velocity.y = jumpPower; coyoteTimer = 0; jumpPressHeld = true;
+        touchingGround = false;
+        velocity.y = jumpPower;
+        coyoteTimer = 0; jumpPressHeld = true;
+        PlaySound(jumpSound);
     }
 }
 
 void Player::Dive() {
     if (!dived && !touchingGround && (IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_UP) || IsKeyPressed(KEY_J))) {
         dived = true;
+        PlaySound(diveSound);
         // Applies the dive values.
         velocity = (Vector3){ velocity.x * divePowerMult, velocity.y, velocity.z * divePowerMult };
         // Caps the max horizontal speed of a dive.
