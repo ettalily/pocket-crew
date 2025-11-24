@@ -21,14 +21,11 @@ void Draw() {
         for (auto it : loadedAreas) {
             it->Draw();
         }
+    EndShaderMode();
         // Draw player drop shadow.
         DrawModel(dropShadow, (Vector3){ player.position.x, dropShadowY + 0.05f, player.position.z }, 1.0f - ((player.position.y - dropShadowY) * 0.13f), WHITE);
-    EndShaderMode();
-        walkDust.DrawParticles();
-        jumpDust.DrawParticles();
-        walljumpDust.DrawParticles();
-        diveDust.DrawParticles();
-        landDust.DrawParticles();
+        // Draw player particles.
+        DrawParticles();
     EndMode3D();
     if (pause) { DrawTextScreenScaled(GetFontDefault(), "PAUSED", 0.5f, 0.5f, 0.1f, 0.01f, 0.5f, BLACK); }
     DrawFPS(10, 10);

@@ -23,7 +23,7 @@ void Player::Update() {
     Gravity();
     ApplyVelocity();
     Collision();
-    playerLogicBox = BoundingBox{ position - (Vector3){ 5.0f, 5.0f, 5.0f }, position + (Vector3){ 5.0f, 5.0f, 5.0f } };
+    playerLogicBox = BoundingBox{ position - (Vector3){ 8.0f, 8.0f, 8.0f }, position + (Vector3){ 8.0f, 8.0f, 8.0f } };
     playerHitbox = BoundingBox{ position - (Vector3){ radius * 0.5f, radius * 0.5f, radius * 0.5f }, position + (Vector3){ radius * 0.5f, radius * 0.5f, radius * 0.5f } };
     if (!touchingGroundAtStart && touchingGround) { PlaySound(landSound); SpawnParticle(landDust); }
 }
@@ -112,7 +112,7 @@ void Player::Move() {
 
 void Player::JumpLogic() {
     // Jump hold difference.
-    if ((IsGamepadButtonReleased(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT) || IsKeyReleased(KEY_K) || IsKeyReleased(KEY_H)) && jumpPressHeld && !dived) { jumpPressHeld = false; if (velocity.y > 0) { velocity.y -= jumpReleasePower; } }
+    if ((IsGamepadButtonReleased(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT) || IsGamepadButtonReleased(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_DOWN) || IsKeyReleased(KEY_K) || IsKeyReleased(KEY_H)) && jumpPressHeld && !dived) { jumpPressHeld = false; if (velocity.y > 0) { velocity.y -= jumpReleasePower; } }
 
     // Sets and increments the coyote timer.
     if (touchingGround) { coyoteTimer = coyoteTimeLength; wallCoyoteTimer = 0; }
@@ -153,7 +153,7 @@ void Player::JumpLogic() {
             }
         }
         // Wall jumping.
-        if (wallCoyoteTimer != 0 && (IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT) || IsKeyPressed(KEY_K) || IsKeyPressed(KEY_H))) {
+        if (wallCoyoteTimer != 0 && (IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_DOWN) || IsKeyPressed(KEY_K) || IsKeyPressed(KEY_H))) {
             velocity.y = jumpPower;
             jumpPressHeld = true; 
             dived = false; 
@@ -165,7 +165,7 @@ void Player::JumpLogic() {
         }
     }
     // Jumping on the ground.
-    else if ((touchingGround || coyoteTimer != 0) && (IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT) || IsKeyPressed(KEY_K) || IsKeyPressed(KEY_H)) ) {
+    else if ((touchingGround || coyoteTimer != 0) && (IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_DOWN) || IsKeyPressed(KEY_K) || IsKeyPressed(KEY_H)) ) {
         touchingGround = false;
         velocity.y = jumpPower;
         coyoteTimer = 0; jumpPressHeld = true;
@@ -175,7 +175,7 @@ void Player::JumpLogic() {
 }
 
 void Player::Dive() {
-    if (!dived && !touchingGround && (IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_UP) || IsKeyPressed(KEY_J))) {
+    if (!dived && !touchingGround && (IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_UP) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_LEFT) || IsKeyPressed(KEY_J))) {
         dived = true;
         PlaySound(diveSound);
         SpawnParticle(diveDust);

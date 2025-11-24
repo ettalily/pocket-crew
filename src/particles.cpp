@@ -2,7 +2,7 @@
 
 Particle walkDust, jumpDust, walljumpDust, diveDust, landDust;
 
-void Particle::DrawParticles() {
+void Particle::Draw() {
     if (!active)
     {
         return;
@@ -18,6 +18,14 @@ void Particle::DrawParticles() {
         }
     }
     DrawBillboardRec(cam.camera, texture, Rectangle{(float)frameSize * currentFrame, (float)frameSize * currentFrame, (float)frameSize, (float)frameSize}, position - (Vector3){ 0.0f, 0.1f, 0.0f}, (Vector2){ 1.0f, 1.0f }, WHITE); 
+}
+
+void DrawParticles() {
+    walkDust.Draw();
+    jumpDust.Draw();
+    walljumpDust.Draw();
+    diveDust.Draw();
+    landDust.Draw();
 }
 
 void InitParticles() {
