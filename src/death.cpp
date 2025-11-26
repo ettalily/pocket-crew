@@ -1,6 +1,6 @@
 #include "global.hpp"
 
-#define LSL_PING_FREQUENCY 120
+#define LSL_PING_FREQUENCY 60
 
 Sound deathSound;
 
@@ -8,7 +8,7 @@ Vector3 lastSafeLocation = (Vector3){ 0.0f, 3.0f, 0.0f };
 unsigned int lslTimer= 0;
 
 void OOBCheck() {
-    if (player.position.y < -10) {
+    if (player.position.y < -6) {
         player.position = lastSafeLocation;
         player.velocity = Vector3Zero();
         PlaySound(deathSound);

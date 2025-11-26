@@ -3,7 +3,6 @@
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
 
-int gamepadID = 0;
 bool pause = false;
 bool closeGame = false;
 bool musicOn = true;
@@ -60,6 +59,9 @@ int main() {
         // Background music.
         if (musicOn && !IsSoundPlaying(backgroundMusic)) { PlaySound(backgroundMusic); }
         
+        // Update controller inputs
+        UpdateMovementAxis();
+
         if (!pause) {
             dropShadowY = -100.0f;
             player.Update();

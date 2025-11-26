@@ -42,10 +42,10 @@ void InitCfg() {
     std::cout << "Loaded setting preferences" << "\n";
 }
 
-void CfgUpdate(std::string setting, std::string value) {
-    std::ifstream currentFileI ("preferences.cfg");
+void CfgUpdate(std::string file, std::string setting, std::string value) {
+    std::ifstream currentFileI (file);
     if (!currentFileI.is_open()) {
-        std::cout << "Unable to open preferences.cfg" << "\n";
+        std::cout << "Unable to open " + file << "\n";
         closeGame = true;
         return;   
     }
@@ -60,10 +60,10 @@ void CfgUpdate(std::string setting, std::string value) {
         }
     }
     currentFileI.close();
-    std::ofstream currentFileO ("preferences.cfg", std::ios::out | std::ios::trunc);
+    std::ofstream currentFileO (file, std::ios::out | std::ios::trunc);
     for (std::string i: newText) {
         currentFileO << i << "\n";
     }
     currentFileO.close();
-    std::cout << "Updated setting preferences" << "\n";
+    std::cout << "Updated " + file << "\n";
 }

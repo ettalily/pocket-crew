@@ -48,7 +48,6 @@ class Player {
     unsigned int coyoteTimer = 0, wallCoyoteTimer = 0;
     bool touchingGround = false, jumpPressHeld = false, dived = false, touchingGroundAtStart = false;
     void Update(); // player.cpp
-    void UpdateMovementAxis(); // player.cpp
     void Move(); // player.cpp
     void Dive(); // player.cpp
     void Gravity(); // player.cpp
@@ -92,7 +91,6 @@ void InitCfg();
 // main.cpp
 extern bool closeGame;
 extern bool musicOn;
-extern int gamepadID;
 extern float dropShadowY;
 extern Model dropShadow;
 extern bool pause;
@@ -123,6 +121,11 @@ void SpawnParticle(Particle& particle);
 // death.cpp
 extern Sound deathSound;
 void OOBCheck();
+
+// input.cpp
+extern int gamepadID;
+extern Vector2 dirInput;
+void UpdateMovementAxis();
 
 // Area Setup
 void InitAreas();
