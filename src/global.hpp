@@ -111,6 +111,10 @@ void DrawParticles();
 void InitParticles();
 void SpawnParticle(Particle& particle);
 
+// death.cpp
+extern Sound deathSound;
+void OOBCheck();
+
 // Area Setup
 void InitAreas();
 void firstIslandInit();

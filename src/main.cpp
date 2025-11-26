@@ -30,6 +30,7 @@ int main() {
     diveSound = LoadSound("assets/sound/dive.wav");
     landSound = LoadSound("assets/sound/land.wav");
     walkSound = LoadSound("assets/sound/walk.wav");
+    deathSound = LoadSound("assets/sound/dies.wav");
 
     // Creates drop shadow.
     dropShadow = LoadModelFromMesh(GenMeshPlane(1.0f, 1.0f, 16, 16));
@@ -61,6 +62,7 @@ int main() {
             dropShadowY = -100.0f;
             player.Update();
             cam.Update();
+            OOBCheck();
         }
 
         // Update entities for loaded areas.
@@ -81,10 +83,17 @@ int main() {
         it->active = false;
     }
     UnloadDisabledAreas();
+    
+    // Unloads sounds.
+    UnloadSound(backgroundMusic);
+    UnloadSound(jumpSound);
+    UnloadSound(diveSound);
+    UnloadSound(landSound);
+    UnloadSound(walkSound);
+    UnloadSound(deathSound);
 
     // Unloads other assets and resources.
     UnloadModel(dropShadow);
-    UnloadSound(backgroundMusic);
     UnloadShader(shader);
     CloseAudioDevice();
     CloseWindow();
