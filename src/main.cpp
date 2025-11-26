@@ -5,9 +5,13 @@
 
 int gamepadID = 0;
 bool pause = false;
+bool closeGame = false;
+bool musicOn = true;
 
 float dropShadowY;
 Model dropShadow;
+
+Sound backgroundMusic;
 
 int main() {
     SetConfigFlags(FLAG_MSAA_4X_HINT);
@@ -25,12 +29,7 @@ int main() {
     ShaderInit();
 
     // Load audio.
-    Sound backgroundMusic = LoadSound("assets/music/background.mp3");
-    jumpSound = LoadSound("assets/sound/jump.wav");
-    diveSound = LoadSound("assets/sound/dive.wav");
-    landSound = LoadSound("assets/sound/land.wav");
-    walkSound = LoadSound("assets/sound/walk.wav");
-    deathSound = LoadSound("assets/sound/dies.wav");
+    AudioInit();
 
     // Creates drop shadow.
     dropShadow = LoadModelFromMesh(GenMeshPlane(1.0f, 1.0f, 16, 16));
@@ -46,7 +45,7 @@ int main() {
     firstIsland.Load();
 
     // Game loop
-    while (!WindowShouldClose()) {
+    while (!WindowShouldClose() || closeGame) {
         // Toggle borderless fullscreen.
         if (IsKeyPressed(KEY_EQUAL)) { ToggleBorderlessWindowed(); }
 
@@ -56,7 +55,7 @@ int main() {
         if (IsKeyPressed(KEY_ENTER) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_MIDDLE_RIGHT)) { pause = !pause; }
 
         // Background music.
-        if (!IsSoundPlaying(backgroundMusic)) { PlaySound(backgroundMusic); }
+        if (musicOn && !IsSoundPlaying(backgroundMusic)) { PlaySound(backgroundMusic); }
         
         if (!pause) {
             dropShadowY = -100.0f;

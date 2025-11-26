@@ -3,6 +3,7 @@
 #include <raymath.h>
 #include <algorithm>
 #include <vector>
+#include <string>
 
 class Collectable {
     public:
@@ -84,12 +85,18 @@ class Particle {
 };
 extern Particle walkDust, jumpDust, walljumpDust, diveDust, landDust;
 
+// cfgreadandwrite.cpp
+void cfgUpdate(std::string setting, std::string value);
+void initCfg();
+
 // main.cpp
+extern bool closeGame;
+extern bool musicOn;
 extern int gamepadID;
 extern float dropShadowY;
 extern Model dropShadow;
 extern bool pause;
-extern Sound jumpSound, diveSound, landSound, walkSound;
+extern Sound backgroundMusic;
 
 // camera.cpp
 Vector3 GetForwardNormal();
@@ -98,10 +105,12 @@ Vector3 GetForwardNormal();
 extern Shader shader;
 extern std::vector<Area*> loadedAreas;
 void ShaderInit();
+void AudioInit();
 void UnloadDisabledAreas();
 
 // player.cpp
 extern float slopeMovementModifier;
+extern Sound jumpSound, diveSound, landSound, walkSound;
 
 // drawing.cpp
 void Draw();
