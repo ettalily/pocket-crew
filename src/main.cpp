@@ -1,6 +1,8 @@
 #include "global.hpp"
 
-const int screenWidth = 1600, screenHeight = 900;
+#define SCREEN_WIDTH 1280
+#define SCREEN_HEIGHT 720
+
 int gamepadID = 0;
 bool pause = false;
 
@@ -12,7 +14,7 @@ int main() {
     SetConfigFlags(FLAG_VSYNC_HINT);
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     // Sets up the window and audio device.
-    InitWindow(screenWidth, screenHeight, "Pocket Crew");
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Pocket Crew");
     SetTargetFPS(60);
     InitAudioDevice();
 

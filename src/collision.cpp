@@ -1,10 +1,10 @@
 #include "global.hpp"
 
-const float floorNormalMin = 0.7f;
-const float ceilingNormalMax = -0.7f;
-const float stepDownBackDistance = 1.0f;
-const float stepDownMaxDistanceDiff = 0.8f;
-const float slopeSteepnessImpact = 0.65f;
+#define FLOOR_NORMAL_MIN 0.7
+#define CEILING_NORMAL_MAX -0.7
+#define STEP_DOWN_BACK_DISTANCE 1
+#define STEP_DOWN_MAX_DISTANCE_DIFF 0.8
+#define SLOPE_STEEPNESS_IMPACT 0.65
 
 void Player::Collision() {
     touchingGroundAtStart = touchingGround;
@@ -59,7 +59,7 @@ void Player::CollisionCheck(Mesh mesh, Model model) {
 }
 
 void Player::FloorDetect(RayCollision ray) {
-    if (!ray.hit || ray.normal.y < floorNormalMin) {
+    if (!ray.hit || ray.normal.y < FLOOR_NORMAL_MIN) {
         return;
     }
     if (velocity.y <= 0 && ray.distance <= radius) {
@@ -76,7 +76,7 @@ void Player::WallDetect(RayCollision ray, Vector3 dir) {
 }
 
 void Player::CeilingDetect(RayCollision ray) {
-    if (ray.hit && ray.distance <= radius && ray.normal.y <= ceilingNormalMax) {
+    if (ray.hit && ray.distance <= radius && ray.normal.y <= CEILING_NORMAL_MAX) {
         velocity.y = 0.0f; position.y = ray.point.y - (radius);
     }
 }
@@ -86,7 +86,7 @@ void Player::SlopeStepDown(RayCollision front, RayCollision back) {
         return;
     }
     // Checks if the slope meets the slope step conditions.
-    if (back.distance <= stepDownBackDistance && front.normal.y >= floorNormalMin && back.normal.y >= floorNormalMin && back.distance < front.distance && front.distance - back.distance <= stepDownMaxDistanceDiff) {
+    if (back.distance <= STEP_DOWN_BACK_DISTANCE && front.normal.y >= FLOOR_NORMAL_MIN && back.normal.y >= FLOOR_NORMAL_MIN && back.distance < front.distance && front.distance - back.distance <= STEP_DOWN_MAX_DISTANCE_DIFF) {
         touchingGround = true; dived = false; velocity.y = 0.0f; position.y = back.point.y + radius;
     }
 }
@@ -99,7 +99,7 @@ void Player::SlopeSteepness(Mesh mesh, Model model) {
     RayCollision slopefront = GetRayCollisionMesh(Ray{position + (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
     RayCollision slopeback = GetRayCollisionMesh(Ray{position - (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
     if (slopefront.hit && slopeback.hit) {
-        slopeMovementModifier = 1.0f + ((slopefront.distance - slopeback.distance) * slopeSteepnessImpact);
+        slopeMovementModifier = 1.0f + ((slopefront.distance - slopeback.distance) * SLOPE_STEEPNESS_IMPACT);
         // Caps the minimum and maximum slope movement modifier.
         if (slopeMovementModifier < 0.5f) { slopeMovementModifier = 0.5f; }
         if (slopeMovementModifier > 1.5f) { slopeMovementModifier = 1.5f; }

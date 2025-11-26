@@ -1,17 +1,19 @@
 #include "global.hpp"
 
-const float stickDeadzone = 0.05f;
-const unsigned int coyoteTimeLength = 6;
-const unsigned int wallCoyoteTimeLength = 10;
+#define STICK_DEADZONE 0.05
+#define COYOTE_TIME_DURATION 6
+#define WALLJUMP_COYOTE_TIME_DURATION 10
+
+#define WALK_DUST_PARTICLE_FREQUENCY 3
+#define WALL_SLIDE_PARTICLE_FREQUENCY 12
+#define WALK_DUST_REQUIRED_SPEED 0.05
+
 Vector2 dirInput;
-float slopeMovementModifier = 1.0f;
 Vector3 wallJumpDir;
+float slopeMovementModifier = 1.0f;
 
 Sound jumpSound, diveSound, landSound, walkSound;
 
-const unsigned int walkDustKickUpFrequency = 3;
-const unsigned int wallSlideDustFrequency = 12;
-const float walkDustKickUpVelocity = 0.05f;
 unsigned int dustKickUpTimer = 0;
 
 Player player;
@@ -42,12 +44,12 @@ void Player::ApplyVelocity() {
 void Player::UpdateMovementAxis() {
     dirInput = Vector2Zero();
     // Checks if either left stick axis has passed the deadzone. If either has, it'll use the left stick input.
-    if (abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X)) >= stickDeadzone || abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y)) >= stickDeadzone) {
+    if (abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X)) >= STICK_DEADZONE || abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y)) >= STICK_DEADZONE) {
         // Gets left stick input value.
         dirInput = (Vector2){ GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X), -GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y) } ;
         // Applies deadzones.
-        if (abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X)) < stickDeadzone) { dirInput.x = 0.0f; }
-        if (abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y)) < stickDeadzone) { dirInput.y = 0.0f; }
+        if (abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_X)) < STICK_DEADZONE) { dirInput.x = 0.0f; }
+        if (abs(GetGamepadAxisMovement(gamepadID, GAMEPAD_AXIS_LEFT_Y)) < STICK_DEADZONE) { dirInput.y = 0.0f; }
     }
     // WASD/arrow key/d-pad input. Only runs if neither gamepad stick axis deadzone is passed, which includes when no controller is connected.
     else {
@@ -100,9 +102,9 @@ void Player::Move() {
     JumpLogic();
 
     // Walk kick-up dust spawning and walk sound.
-    if (touchingGround && Vector3Length(velocity) >= walkDustKickUpVelocity) {
+    if (touchingGround && Vector3Length(velocity) >= WALK_DUST_REQUIRED_SPEED) {
         dustKickUpTimer ++;
-        if (dustKickUpTimer >= walkDustKickUpFrequency / Vector3Length(velocity)) {
+        if (dustKickUpTimer >= WALK_DUST_PARTICLE_FREQUENCY / Vector3Length(velocity)) {
             dustKickUpTimer = 0;
             PlaySound(walkSound);
             SpawnParticle(walkDust);
@@ -115,7 +117,7 @@ void Player::JumpLogic() {
     if ((IsGamepadButtonReleased(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT) || IsGamepadButtonReleased(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_DOWN) || IsKeyReleased(KEY_K) || IsKeyReleased(KEY_H)) && jumpPressHeld && !dived) { jumpPressHeld = false; if (velocity.y > 0) { velocity.y -= jumpReleasePower; } }
 
     // Sets and increments the coyote timer.
-    if (touchingGround) { coyoteTimer = coyoteTimeLength; wallCoyoteTimer = 0; }
+    if (touchingGround) { coyoteTimer = COYOTE_TIME_DURATION; wallCoyoteTimer = 0; }
     else if (coyoteTimer != 0) { coyoteTimer--; }
     // Increments the wall jump coyote timer.
     if (wallCoyoteTimer != 0) { wallCoyoteTimer--; }
@@ -140,14 +142,14 @@ void Player::JumpLogic() {
                     if (velocity.y < -wallSlideVelocity) { 
                         velocity.y = -wallSlideVelocity; 
                         dustKickUpTimer ++;
-                        if (dustKickUpTimer >= wallSlideDustFrequency) {
+                        if (dustKickUpTimer >= WALL_SLIDE_PARTICLE_FREQUENCY) {
                             dustKickUpTimer = 0;
                             SpawnParticle(walkDust);
                         }
                     }
                     // Allows the player to wall jump through the coyote timer and sets the direction the player would go horizontally from that wall.
                     if (wallCoyoteTimer == 0) { wallJumpDir = Vector3Normalize((Vector3){ wallCheckInputDir.normal.x, 0.0f, wallCheckInputDir.normal.z }); }  
-                    wallCoyoteTimer = wallCoyoteTimeLength;
+                    wallCoyoteTimer = WALLJUMP_COYOTE_TIME_DURATION;
                     break;
                 }
             }
