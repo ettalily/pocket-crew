@@ -4,7 +4,7 @@
 
 const std::string preferencesDefault[2] = {"[Settings]", "music = 1"};
 
-void initCfg() {
+void InitCfg() {
     // Create preferences.cfg if it doesn't exist.
     if (!std::filesystem::exists("preferences.cfg")) {
         std::ofstream currentFileO ("preferences.cfg");
@@ -42,13 +42,14 @@ void initCfg() {
     std::cout << "Loaded setting preferences" << "\n";
 }
 
-void cfgUpdate(std::string setting, std::string value) {
+void CfgUpdate(std::string setting, std::string value) {
     std::ifstream currentFileI ("preferences.cfg");
     if (!currentFileI.is_open()) {
         std::cout << "Unable to open preferences.cfg" << "\n";
         closeGame = true;
         return;   
     }
+
     std::string currentLine;
     std::vector<std::string> newText; 
     while (std::getline(currentFileI, currentLine)) {
@@ -59,7 +60,6 @@ void cfgUpdate(std::string setting, std::string value) {
         }
     }
     currentFileI.close();
-
     std::ofstream currentFileO ("preferences.cfg", std::ios::out | std::ios::trunc);
     for (std::string i: newText) {
         currentFileO << i << "\n";

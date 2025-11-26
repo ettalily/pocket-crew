@@ -16,7 +16,7 @@ void InitCollectables() {
     firstIsland.collectables.push_back(Collectable{ (Vector3){ -12.0f, 8.0f, 0.0f } });
 }
 
-void firstIslandInit() {
+void FirstIslandInit() {
     firstIsland.modelPath = firstIslandPath;
     firstIsland.position = Vector3Zero();
     firstIsland.scale = 1.0f;

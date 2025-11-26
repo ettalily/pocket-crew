@@ -85,9 +85,9 @@ class Particle {
 };
 extern Particle walkDust, jumpDust, walljumpDust, diveDust, landDust;
 
-// cfgreadandwrite.cpp
-void cfgUpdate(std::string setting, std::string value);
-void initCfg();
+// preferences.cpp
+void CfgUpdate(std::string setting, std::string value);
+void InitCfg();
 
 // main.cpp
 extern bool closeGame;
@@ -126,4 +126,4 @@ void OOBCheck();
 
 // Area Setup
 void InitAreas();
-void firstIslandInit();
+void FirstIslandInit();

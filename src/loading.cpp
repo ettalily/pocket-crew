@@ -57,5 +57,5 @@ void UnloadDisabledAreas() {
 
 // Sets up the starting values for all the area objects on game start.
 void InitAreas() {
-    firstIslandInit();
+    FirstIslandInit();
 }

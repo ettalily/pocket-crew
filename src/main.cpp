@@ -41,6 +41,9 @@ int main() {
     // Setup level model values.
     InitAreas();
 
+    // Load settings preferences.
+    InitCfg();
+
     // Load the starting area
     firstIsland.Load();
 
