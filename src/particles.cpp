@@ -17,7 +17,7 @@ void Particle::Draw() {
             return;
         }
     }
-    DrawBillboardRec(cam.camera, texture, Rectangle{(float)frameSize * currentFrame, (float)frameSize * currentFrame, (float)frameSize, (float)frameSize}, position - (Vector3){ 0.0f, 0.1f, 0.0f}, (Vector2){ 1.0f, 1.0f }, WHITE); 
+    DrawBillboardRec(cam.camera, texture, Rectangle{(float)frameSize * currentFrame, (float)frameSize * currentFrame, (float)frameSize, (float)frameSize}, position - (Vector3){ 0.0f, 0.15f, 0.0f}, (Vector2){ 1.0f, 1.0f }, WHITE); 
 }
 
 void DrawParticles() {
@@ -35,19 +35,19 @@ void InitParticles() {
     walkDust.frameSpeed = 5;
     jumpDust.texture = LoadTexture("assets/textures/jumpdust.png");
     jumpDust.frameCount = 3;
-    jumpDust.frameSize = 16;
+    jumpDust.frameSize = 18;
     jumpDust.frameSpeed = 13;
     walljumpDust.texture = LoadTexture("assets/textures/walljumpdust.png");
     walljumpDust.frameCount = 3;
-    walljumpDust.frameSize = 16;
+    walljumpDust.frameSize = 18;
     walljumpDust.frameSpeed = 5;
     diveDust.texture = LoadTexture("assets/textures/divedust.png");
     diveDust.frameCount = 3;
-    diveDust.frameSize = 16;
+    diveDust.frameSize = 18;
     diveDust.frameSpeed = 7;
     landDust.texture = LoadTexture("assets/textures/landdust.png");
     landDust.frameCount = 3;
-    landDust.frameSize = 16;
+    landDust.frameSize = 18;
     landDust.frameSpeed = 8;
 }
 
