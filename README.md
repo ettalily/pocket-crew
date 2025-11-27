@@ -29,6 +29,10 @@ Requires `gcc` and `raylib` for linux builds, and `mingw-w64-gcc` and `mingw-w64
 
 To build, run `build.bash` in the root of the directory and select the desired target platform.
 
+```bash
+bash build.bash
+```
+
 ### Using Non-System Libraries
 Alternatively, you can manually download a raylib release and link the libraries in the build command.
 
@@ -36,6 +40,7 @@ Alternatively, you can manually download a raylib release and link the libraries
 Requires `gcc` and a linux [raylib release](https://github.com/raysan5/raylib/releases).
 
 To build for linux, substitute `/path/to/raylib` for the location of your raylib release, then run:
+
 ```bash
 mkdir -p build
 cp -p assets ./build/assets
@@ -46,6 +51,7 @@ gcc -o ./build/pocket ./src/*.hpp ./src/*.cpp ./src/levels/*cpp -I /path/to/rayl
 Requires `mingw-w64-gcc` and a windows [raylib release](https://github.com/raysan5/raylib/releases).
 
 To build for windows, substitute `/path/to/raylib` for the location of your raylib release, then run:
+
 ```bash
 mkdir -p build
 cp -p assets ./build/assets
@@ -58,6 +64,7 @@ x86_64-w64-mingw32-gcc -o ./build/pocket.exe ./src/*.hpp ./src/*.cpp ./src/level
 Requires [raylib](https://www.raylib.com/) and a C++ compiler, such as the ``mingw-w64-gcc`` compiler included in [w64devkit](https://github.com/skeeto/w64devkit).
 
 To build for windows, open `C:\raylib\w64devkit.exe`, then navigate to the root directory of this repository and run:
+
 ```bash
 mkdir -p build
 cp -r assets ./build/assets
@@ -65,11 +72,12 @@ gcc -o ./build/pocket.exe ./src/*.hpp ./src/*.cpp ./src/levels/*.cpp -lraylib -l
 ```
 
 ### Using Non-System Libraries
-Alternatively, you can manually download a compiler and a raylib release and link the libraries in the build command.
+Alternatively, you can manually download a compiler and a raylib release, and then link the libraries in the build command.
 
 Requires a C++ compiler, such as the `mingw-w64-gcc` compiler included in [w64devkit](https://github.com/skeeto/w64devkit), and a windows [raylib release](https://github.com/raysan5/raylib/releases).
 
 To build for windows, open `w64devkit.exe`, navigate to the root directory of this repository, substitute `/path/to/raylib` for the location of your raylib release, then run:
+
 ```bash
 mkdir -p build
 cp -r assets ./build/assets
@@ -77,4 +85,4 @@ gcc -o ./build/pocket.exe ./src/*.hpp ./src/*.cpp ./src/levels/*.cpp -I /path/to
 ```
 
 ## Notes
-- The raylib project can be found [here](https://github.com/raysan5/raylib). I am not involved at all with this project.
+- The raylib project can be found [here](https://github.com/raysan5/raylib). I am not involved with this project.
