@@ -22,21 +22,53 @@ mkdir -p build
 echo "Copying assets to build directory..."
 cp -r assets ./build/assets
 
+echo "Downloading raylib library..."
+mkdir -p ./build/tmp
+cd ./build/tmp
 if [ $selection == "1" ]; then
+    if ! wget https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_linux_amd64.tar.gz; then
+        echo "Failed to download library."
+        exit 1
+    fi
+    
+    echo "Extracting raylib archive..."
+    if ! tar -xzvf raylib-5.5_linux_amd64.tar.gz; then
+        echo "Failed to extract archive."
+        exit 1
+    fi
+    cd ../../
+
     echo "Building binary for Linux platform..."
-    if gcc -o ./build/pocket ./src/*.hpp ./src/*.cpp ./src/levels/*cpp -lraylib -lGL -lm -lpthread -ldl -lrt -lX11 -lstdc++; then
+    if g++ -o ./build/pocket ./src/*.hpp ./src/*.cpp ./src/levels/*cpp -I ./build/tmp/raylib-5.5_linux_amd64/include ./build/tmp/raylib-5.5_linux_amd64/lib/libraylib.a -lGL -lm -lpthread -ldl -lrt -lX11; then
         echo "Build successful."
     else
         echo "Build failed."
-        exit 2
+        exit 1
     fi
 else
+    if ! wget https://github.com/raysan5/raylib/releases/download/5.5/raylib-5.5_win64_mingw-w64.zip; then
+        echo "Failed to download library."
+        exit 1
+    fi
+    
+    echo "Extracting raylib archive..."
+    if ! unzip raylib-5.5_win64_mingw-w64.zip; then
+        echo "Failed to extract archive."
+        exit 1
+    fi
+    cd ../../
+
     echo "Building binary for Windows platform..."
-    if x86_64-w64-mingw32-gcc -o ./build/pocket.exe ./src/*.hpp ./src/*.cpp ./src/levels/*.cpp -lraylib -lgdi32 -lwinmm -lstdc++; then
+    if x86_64-w64-mingw32-g++ -o ./build/pocket.exe ./src/*.hpp ./src/*.cpp ./src/levels/*.cpp -I ./build/tmp/raylib-5.5_win64_mingw-w64/include ./build/tmp/raylib-5.5_win64_mingw-w64/lib/libraylib.a -lgdi32 -lwinmm; then
         echo "Build successful."
     else
         echo "Build failed."
-        exit 2
+        exit 3
     fi
 fi
+
+echo "Deleting temporary files..."
+rm -rf ./build/tmp
+
+echo "Done."
 exit 0

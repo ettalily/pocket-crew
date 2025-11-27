@@ -25,37 +25,12 @@ Game and display preferences can be set in `preferences.cfg`, which is created i
 ## Building on Linux
 
 ### Build Script (Recommended)
-Requires `gcc` and `raylib` for linux builds, and `mingw-w64-gcc` and `mingw-w64-raylib` for windows builds.
+Requires `gcc`. Additionally requires `mingw-w64-gcc` for windows builds.
 
 To build, run `build.bash` in the root of the directory and select the desired target platform.
 
 ```bash
 bash build.bash
-```
-
-### Using Non-System Libraries
-Alternatively, you can manually download a raylib release and link the libraries in the build command.
-
-#### Linux Builds
-Requires `gcc` and a linux [raylib release](https://github.com/raysan5/raylib/releases).
-
-To build for linux, substitute `/path/to/raylib` for the location of your raylib release, then run:
-
-```bash
-mkdir -p build
-cp -p assets ./build/assets
-gcc -o ./build/pocket ./src/*.hpp ./src/*.cpp ./src/levels/*cpp -I /path/to/raylib/include /path/to/raylib/lib/libraylib.a -lGL -lm -lpthread -ldl -lrt -lX11 -lstdc++
-```
-
-#### Windows Builds
-Requires `mingw-w64-gcc` and a windows [raylib release](https://github.com/raysan5/raylib/releases).
-
-To build for windows, substitute `/path/to/raylib` for the location of your raylib release, then run:
-
-```bash
-mkdir -p build
-cp -p assets ./build/assets
-x86_64-w64-mingw32-gcc -o ./build/pocket.exe ./src/*.hpp ./src/*.cpp ./src/levels/*.cpp -I /path/to/raylib/include /path/to/raylib/lib/libraylib.a -lgdi32 -lwinmm -lstdc++
 ```
 
 ## Building on Windows
@@ -81,7 +56,7 @@ To build for windows, run `w64devkit.exe`, navigate to the root directory of thi
 ```bash
 mkdir -p build
 cp -r assets ./build/assets
-gcc -o ./build/pocket.exe ./src/*.hpp ./src/*.cpp ./src/levels/*.cpp -I /path/to/raylib/include /path/to/raylib/lib/libraylib.a -lgdi32 -lwinmm -lstdc++
+g++ -o ./build/pocket.exe ./src/*.hpp ./src/*.cpp ./src/levels/*.cpp -I /path/to/raylib/include /path/to/raylib/lib/libraylib.a -lgdi32 -lwinmm
 ```
 
 ## Notes
