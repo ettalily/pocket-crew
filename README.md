@@ -1,5 +1,21 @@
 # Pocket Crew
-3D platformer collectathon made in C++ and raylib.
+3D platformer made in C++ and raylib.
+
+## Configuration
+Game and display preferences can be set in `preferences.cfg`, which is created in the game's root directory when the game is first run. It can be reset by deleting the file and restarting the game.
+
+## Controls
+### Keyboard:
+- **Movement** - WASD or the Arrow Keys
+- **Jump** - K or H
+- **Dive** - J
+- **Pause** - Enter
+
+### Gamepad:
+- **Movement** - Left Stick or Directional Pad
+- **Jump** - A or B
+- **Dive** - X or Y
+- **Pause** - Start/Menu
 
 ## Building on Linux
 Requires ``gcc`` for linux builds and ``mingw-w64-gcc`` for windows builds.
@@ -24,4 +40,4 @@ gcc -o ./build/pocket.exe ./src/*.hpp ./src/*.cpp ./src/levels/*.cpp -I ./raylib
 ```
 
 ## Notes
-- Raylib 5.5 builds for Linux and Windows for x86_64 platforms are included in the ``./raylib`` directory along with their licenses. The raylib project can be found [here](https://github.com/raysan5/raylib). I am not involved with this project.
+- Raylib 5.5 builds for Linux and Windows for x86_64 platforms are included in the ``./raylib`` directory along with the license. The raylib project can be found [here](https://github.com/raysan5/raylib). I am not involved with this project.
