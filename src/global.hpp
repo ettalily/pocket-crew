@@ -100,7 +100,7 @@ void InitCfg();
 
 // main.cpp
 extern bool closeGame;
-extern bool musicOn;
+extern bool musicOn, soundOn, showFps;
 extern float dropShadowY;
 extern Model dropShadow;
 extern bool pause;
@@ -118,7 +118,7 @@ void UnloadDisabledAreas();
 
 // player.cpp
 extern float slopeMovementModifier;
-extern Sound jumpSound, diveSound, landSound, walkSound;
+extern Sound jumpSound, diveSound, landSound, walkSound, slideSound;
 
 // drawing.cpp
 void Draw();

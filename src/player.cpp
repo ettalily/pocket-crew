@@ -16,7 +16,7 @@
 Vector3 wallJumpDir;
 float slopeMovementModifier = 1.0f;
 
-Sound jumpSound, diveSound, landSound, walkSound;
+Sound jumpSound, diveSound, landSound, walkSound, slideSound;
 
 unsigned int dustKickUpTimer = 0;
 unsigned int wallDustKickUpTimer = 0;
@@ -160,6 +160,7 @@ void Player::JumpLogic() {
                         if (wallDustKickUpTimer >= WALL_SLIDE_PARTICLE_FREQUENCY) {
                             wallDustKickUpTimer = 0;
                             SpawnParticle(walkDust);
+                            PlaySound(slideSound);
                         }
                     }
                     // Allows the player to wall jump through the coyote timer and sets the direction the player would go horizontally from that wall.

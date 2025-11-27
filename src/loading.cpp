@@ -25,6 +25,7 @@ void AudioInit() {
     landSound = LoadSound("assets/sound/land.wav");
     walkSound = LoadSound("assets/sound/walk.wav");
     deathSound = LoadSound("assets/sound/dies.wav");
+    slideSound = LoadSound("assets/sound/slide.wav");
 }
 
 // Loads the level model and gives it the shader.
