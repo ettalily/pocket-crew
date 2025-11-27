@@ -95,12 +95,12 @@ class BugCollectable {
 };
 
 // preferences.cpp
-void CfgUpdate(std::string setting, std::string value);
+void CfgUpdate(std::string file, std::string setting, std::string value);
 void InitCfg();
 
 // main.cpp
 extern bool closeGame;
-extern bool musicOn, soundOn, showFps;
+extern bool musicOn, soundOn, showFps, borderlessFullscreen;
 extern float dropShadowY;
 extern Model dropShadow;
 extern bool pause;

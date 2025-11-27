@@ -32,7 +32,7 @@ void Player::Update() {
     Collision();
     playerLogicBox = BoundingBox{ position - (Vector3){ 8.0f, 8.0f, 8.0f }, position + (Vector3){ 8.0f, 8.0f, 8.0f } };
     playerHitbox = BoundingBox{ position - (Vector3){ radius * 0.5f, radius * 0.5f, radius * 0.5f }, position + (Vector3){ radius * 0.5f, radius * 0.5f, radius * 0.5f } };
-    if (!touchingGroundAtStart && touchingGround && coyoteTimer == 0) { PlaySound(landSound); SpawnParticle(landDust); }
+    if (!touchingGroundAtStart && touchingGround && coyoteTimer == 0) { if (soundOn) { PlaySound(landSound); } SpawnParticle(landDust); }
 }
 
 // Applies gravity within the max fall speed.
@@ -91,13 +91,13 @@ void Player::Move() {
         if ((Vector3Length(velocity + moveVector) >= WALK_SLIDE_CUTOFF_DUST) || Vector3Length(velocity) < 0.155f) {
             if (dustKickUpTimer >= WALK_DUST_PARTICLE_FREQUENCY / Vector3Length(velocity)) {
                 dustKickUpTimer = 0;
-                PlaySound(walkSound);
+                if (soundOn) { PlaySound(walkSound); }
                 SpawnParticle(walkDust);
             }
         } else {
             if (dustKickUpTimer >= WALK_DUST_PARTICLE_FREQUENCY * 0.3f / Vector3Length(velocity)) {
                 dustKickUpTimer = 0;
-                PlaySound(walkSound);
+                if (soundOn) { PlaySound(walkSound); }
                 SpawnParticle(walkDust);
             }
         }
@@ -160,7 +160,7 @@ void Player::JumpLogic() {
                         if (wallDustKickUpTimer >= WALL_SLIDE_PARTICLE_FREQUENCY) {
                             wallDustKickUpTimer = 0;
                             SpawnParticle(walkDust);
-                            PlaySound(slideSound);
+                            if (soundOn) { PlaySound(slideSound); }
                         }
                     }
                     // Allows the player to wall jump through the coyote timer and sets the direction the player would go horizontally from that wall.
@@ -178,7 +178,7 @@ void Player::JumpLogic() {
             wallCoyoteTimer = 0; 
             velocity.x = wallJumpDir.x * wallJumpHorPower;
             velocity.z = wallJumpDir.z * wallJumpHorPower;
-            PlaySound(jumpSound);
+            if (soundOn) { PlaySound(jumpSound); }
             SpawnParticle(walljumpDust);
         }
     }
@@ -187,7 +187,7 @@ void Player::JumpLogic() {
         touchingGround = false;
         velocity.y = jumpPower;
         coyoteTimer = 0; jumpPressHeld = true;
-        PlaySound(jumpSound);
+        if (soundOn) { PlaySound(jumpSound); }
         SpawnParticle(jumpDust);
     }
 }
@@ -195,7 +195,7 @@ void Player::JumpLogic() {
 void Player::Dive() {
     if (!dived && !touchingGround && (IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_UP) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_LEFT) || IsKeyPressed(KEY_J))) {
         dived = true;
-        PlaySound(diveSound);
+        if (soundOn) { PlaySound(diveSound); }
         SpawnParticle(diveDust);
         // Applies the dive values.
         velocity = (Vector3){ velocity.x * divePowerMult, velocity.y, velocity.z * divePowerMult };

@@ -32,6 +32,6 @@ void Draw() {
         DrawParticles();
     EndMode3D();
     if (pause) { DrawTextScreenScaled(GetFontDefault(), "PAUSED", 0.5f, 0.5f, 0.1f, 0.01f, 0.5f, BLACK); }
-    DrawFPS(10, 10);
+    if (showFps) { DrawFPS(10, 10); }
     EndDrawing();
 }

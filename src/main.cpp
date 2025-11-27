@@ -5,7 +5,7 @@
 
 bool pause = false;
 bool closeGame = false;
-bool musicOn = true;
+bool musicOn, soundOn, showFps, borderlessFullscreen;
 
 float dropShadowY;
 Model dropShadow;
@@ -13,11 +13,16 @@ Model dropShadow;
 Sound backgroundMusic;
 
 int main() {
-    SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
+    // Load settings preferences.
+    InitCfg();
+    
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
     // Sets up the window and audio device.
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Pocket Crew");
     SetTargetFPS(60);
     InitAudioDevice();
+
+    if (borderlessFullscreen) { ToggleBorderlessWindowed(); }
 
     // Sets up camera values.
     cam.CameraInit();
@@ -38,16 +43,13 @@ int main() {
     // Setup level model values.
     InitAreas();
 
-    // Load settings preferences.
-    InitCfg();
-
     // Load the starting area
     firstIsland.Load();
 
     // Game loop
     while (!WindowShouldClose() || closeGame) {
         // Toggle borderless fullscreen.
-        if (IsKeyPressed(KEY_EQUAL)) { ToggleBorderlessWindowed(); }
+        if (IsKeyPressed(KEY_EQUAL)) { ToggleBorderlessWindowed(); borderlessFullscreen = !borderlessFullscreen; if (borderlessFullscreen) { CfgUpdate("preferences.cfg", "borderless_fullscreen", "1"); } else { CfgUpdate("preferences.cfg", "borderless_fullscreen", "0"); } }
 
         if (IsKeyPressed(KEY_M)) { std::cout << std::to_string(player.position.x) + " " + std::to_string(player.position.y) + " " + std::to_string(player.position.z) << std::endl; }
 

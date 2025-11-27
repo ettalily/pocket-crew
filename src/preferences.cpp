@@ -2,7 +2,7 @@
 #include <fstream>
 #include <filesystem>
 
-const std::string preferencesDefault[2] = {"[Settings]", "music = 1"};
+const std::string preferencesDefault[8] = {"[Settings]", "music = 1", "sound = 1", "show_fps = 0", "", "[Display]", "borderless_fullscreen = 0", "msaa_4x = 1"};
 
 void InitCfg() {
     // Create preferences.cfg if it doesn't exist.
@@ -37,6 +37,39 @@ void InitCfg() {
                 musicOn = true;
             }
         }
+        // Sound
+        if (currentLine.find("sound") != std::string::npos) {
+            if (currentLine.substr(currentLine.find("=") + 2, currentLine.find("=") + 3) == "1") {
+                musicOn = true;
+                soundOn = true;
+            } else {
+                musicOn = false;
+                soundOn = false;
+            }
+        }
+        // Show FPS
+        if (currentLine.find("show_fps") != std::string::npos) {
+            if (currentLine.substr(currentLine.find("=") + 2, currentLine.find("=") + 3) == "1") {
+                showFps = true;
+            } else {
+                showFps = false;
+            }
+        }
+        // MSAA 4x
+        if (currentLine.find("msaa_4x") != std::string::npos) {
+            if (currentLine.substr(currentLine.find("=") + 2, currentLine.find("=") + 3) == "1") {
+                SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
+            }
+        }
+        // Borderless Fullscreen
+        if (currentLine.find("borderless_fullscreen") != std::string::npos) {
+            if (currentLine.substr(currentLine.find("=") + 2, currentLine.find("=") + 3) == "0") {
+                borderlessFullscreen = false;
+            } else {
+                borderlessFullscreen = true;
+            }
+        }
+        
     }
     currentFileI.close();
     std::cout << "Loaded setting preferences" << "\n";
