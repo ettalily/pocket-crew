@@ -41,9 +41,6 @@ void Area::Load() {
 // Draws the model.
 void Area::Draw() {
     DrawModel(model, position, scale, WHITE);
-    for (Collectable& it : collectables) {
-        it.Draw();
-    }
 }
 
 // Unloads the model for non active areas and removes it from the vector.

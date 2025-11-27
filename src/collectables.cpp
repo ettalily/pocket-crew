@@ -1,17 +1,26 @@
 #include "global.hpp"
 
-void Collectable::PickupCheck() {
+BugCollectable bugCollectables[1] = {
+    *new BugCollectable{(Vector3){ 2.0f, 2.0f, 2.0f }}
+};
+
+
+void BugCollectable::BugUpdate() {
+    
+}
+
+void BugCollectable::PickupCheck() {
     if (collected) {
         return;
     }
-    hitbox = BoundingBox{ position - size, position + size };
     if (CheckCollisionBoxes(player.playerHitbox, hitbox)) {
         collected = true;
+        BugUpdate();
     }
 }
 
-void Collectable::Draw() {
+void BugCollectable::Draw() {
     if (!collected) {
-        DrawCube(position, size.x, size.y, size.z, RED);
+        DrawCube(position, size.x, size.y, size.z, GREEN);
     }
 }

@@ -18,8 +18,12 @@ void Draw() {
         if (player.dived) { DrawSphere(player.position, player.radius - 0.1f, BLUE); }
         else { DrawSphere(player.position, player.radius, BLUE); }
         // Draw area models.
-        for (auto it : loadedAreas) {
-            it->Draw();
+        for (auto i : loadedAreas) {
+            i->Draw();
+        }
+        // Draw bug collectables.
+        for (auto i : bugCollectables) {
+            i.Draw();
         }
     EndShaderMode();
         // Draw player drop shadow.

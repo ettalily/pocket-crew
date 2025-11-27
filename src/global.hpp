@@ -23,7 +23,6 @@ class Area {
     Model model;
     BoundingBox modelBoundingBox;
     void (*AreaLogic)();
-    std::vector<Collectable> collectables;
 
     Vector3 position;
     float scale;
@@ -84,6 +83,17 @@ class Particle {
 };
 extern Particle walkDust, jumpDust, walljumpDust, diveDust, landDust;
 
+class BugCollectable {
+    public:
+    Vector3 position;
+    bool collected = false;
+    Vector3 size = (Vector3){ 1.0f, 1.0f, 1.0f };
+    BoundingBox hitbox = BoundingBox{ position - size, position + size };
+    void BugUpdate();
+    void PickupCheck();
+    void Draw();
+};
+
 // preferences.cpp
 void CfgUpdate(std::string setting, std::string value);
 void InitCfg();
@@ -126,6 +136,9 @@ void OOBCheck();
 extern int gamepadID;
 extern Vector2 dirInput;
 void UpdateMovementAxis();
+
+// collectables.cpp
+extern BugCollectable bugCollectables[1];
 
 // Area Setup
 void InitAreas();

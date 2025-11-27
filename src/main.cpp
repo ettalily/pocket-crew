@@ -13,9 +13,7 @@ Model dropShadow;
 Sound backgroundMusic;
 
 int main() {
-    SetConfigFlags(FLAG_MSAA_4X_HINT);
-    SetConfigFlags(FLAG_VSYNC_HINT);
-    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
     // Sets up the window and audio device.
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Pocket Crew");
     SetTargetFPS(60);
@@ -70,8 +68,8 @@ int main() {
         }
 
         // Update entities for loaded areas.
-        for (auto it : loadedAreas) {
-            it->AreaLogic();
+        for (auto i : loadedAreas) {
+            i->AreaLogic();
         }
 
         // Updates the shader camera view vector.
@@ -83,8 +81,8 @@ int main() {
     }
 
     // Unload all areas.
-    for (auto it : loadedAreas) {
-        it->active = false;
+    for (auto i : loadedAreas) {
+        i->active = false;
     }
     UnloadDisabledAreas();
     

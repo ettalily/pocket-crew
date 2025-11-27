@@ -100,19 +100,19 @@ void Player::JumpLogic() {
 
     // Sliding and jumping against a wall.
     if (!touchingGround && coyoteTimer == 0) {
-        for (auto it : loadedAreas) {
+        for (auto i : loadedAreas) {
             // Checks if the player is inside the model bounding box.
-            if (!CheckCollisionBoxes(playerLogicBox, it->modelBoundingBox)) {
+            if (!CheckCollisionBoxes(playerLogicBox, i->modelBoundingBox)) {
                 continue;
             }
-            for (int m = 0; m < it->model.meshCount; m++) {
+            for (int m = 0; m < i->model.meshCount; m++) {
                 // Checks whether the player is within each mesh's bounding box.
-                if (!CheckCollisionBoxes(playerLogicBox, GetMeshBoundingBox(it->model.meshes[m]))) {
+                if (!CheckCollisionBoxes(playerLogicBox, GetMeshBoundingBox(i->model.meshes[m]))) {
                     continue;
                 }
                 // Raycasts in the stick input direction and the player facing direction.
-                RayCollision wallCheckInputDir = GetRayCollisionMesh(Ray{(Vector3){ position.x, position.y, position.z }, (GetForwardNormal() * dirInput.y) + (Vector3Perpendicular(GetForwardNormal()) * dirInput.x) }, it->model.meshes[m], it->model.transform);
-                RayCollision wallCheckFacingDir = GetRayCollisionMesh(Ray{position, direction }, it->model.meshes[m], it->model.transform);
+                RayCollision wallCheckInputDir = GetRayCollisionMesh(Ray{(Vector3){ position.x, position.y, position.z }, (GetForwardNormal() * dirInput.y) + (Vector3Perpendicular(GetForwardNormal()) * dirInput.x) }, i->model.meshes[m], i->model.transform);
+                RayCollision wallCheckFacingDir = GetRayCollisionMesh(Ray{position, direction }, i->model.meshes[m], i->model.transform);
                 if ((wallCheckInputDir.hit && abs(wallCheckInputDir.normal.y) <= 0.2f && wallCheckInputDir.distance <= radius + 0.2f) && (wallCheckFacingDir.hit && abs(wallCheckFacingDir.normal.y) <= 0.2f && wallCheckFacingDir.distance <= radius + 0.2f)) {
                     // Wall slide.
                     if (velocity.y < -wallSlideVelocity) { 
