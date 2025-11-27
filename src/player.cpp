@@ -88,7 +88,7 @@ void Player::Move() {
     // Walk kick-up dust spawning and walk sound.
     if (touchingGround && Vector3Length(velocity) >= WALK_DUST_REQUIRED_SPEED ) {
         dustKickUpTimer ++;
-        if ((Vector2Length((Vector2){ velocity.x, velocity.z } + (Vector2){ moveVector.x, moveVector.z }) >= WALK_SLIDE_CUTOFF_DUST) || Vector2Length((Vector2){ velocity.x, velocity.z }) < 0.155f) {
+        if ((Vector3Length(velocity + moveVector) >= WALK_SLIDE_CUTOFF_DUST) || Vector3Length(velocity) < 0.155f) {
             if (dustKickUpTimer >= WALK_DUST_PARTICLE_FREQUENCY / Vector3Length(velocity)) {
                 dustKickUpTimer = 0;
                 PlaySound(walkSound);
@@ -106,7 +106,7 @@ void Player::Move() {
     }
 
     // Walk bobbing animation.
-    if (Vector2Length(dirInput) > 0.0f && touchingGround && Vector3Length(velocity) >= WALK_BOB_REQUIRED_SPEED && (Vector2Length((Vector2){ velocity.x, velocity.z } + (Vector2){ moveVector.x, moveVector.z }) >= WALK_SLIDE_CUTOFF_BOUNCE) || (Vector3Length(moveVector) > 0.0f && Vector2Length((Vector2){ velocity.x, velocity.z }) < 0.155f && Vector2Length((Vector2){ velocity.x, velocity.z }) > 0.002f)) {
+    if (Vector2Length(dirInput) > 0.0f && touchingGround && Vector3Length(velocity) >= WALK_BOB_REQUIRED_SPEED && wallCoyoteTimer == 0 && ((Vector3Length(velocity + moveVector) >= WALK_SLIDE_CUTOFF_BOUNCE) || (Vector3Length(moveVector) > 0.0f && Vector3Length(velocity) < 0.155f && Vector3Length(velocity) > 0.002f))) {
         if (walkBobOffset == 0.0f) {
             walkBobOffsetVelocity = WALK_BOB_STRENGTH * Vector2Length(dirInput);
         } else {
@@ -117,7 +117,7 @@ void Player::Move() {
             walkBobOffset = 0.0f;
         }
     } else {
-        if (touchingGround && walkBobOffset > 0.0f) {
+        if (walkBobOffset > 0.0f) {
             walkBobOffsetVelocity -= WALK_BOB_DECLINE;
             walkBobOffset += walkBobOffsetVelocity;
         } else {
