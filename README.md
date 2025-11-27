@@ -61,9 +61,9 @@ x86_64-w64-mingw32-gcc -o ./build/pocket.exe ./src/*.hpp ./src/*.cpp ./src/level
 ## Building on Windows
 
 ### Using a Raylib System Installation (Recommended)
-Requires [raylib](https://www.raylib.com/) and a C++ compiler, such as the ``mingw-w64-gcc`` compiler included in [w64devkit](https://github.com/skeeto/w64devkit).
+Requires [raylib](https://www.raylib.com/).
 
-To build for windows, open `C:\raylib\w64devkit.exe`, then navigate to the root directory of this repository and run:
+To build for windows, run `C:\raylib\w64devkit.exe`, then navigate to the root directory of this repository and run:
 
 ```bash
 mkdir -p build
@@ -76,7 +76,7 @@ Alternatively, you can manually download a compiler and a raylib release, and th
 
 Requires a C++ compiler, such as the `mingw-w64-gcc` compiler included in [w64devkit](https://github.com/skeeto/w64devkit), and a windows [raylib release](https://github.com/raysan5/raylib/releases).
 
-To build for windows, open `w64devkit.exe`, navigate to the root directory of this repository, substitute `/path/to/raylib` for the location of your raylib release, then run:
+To build for windows, run `w64devkit.exe`, navigate to the root directory of this repository, substitute `/path/to/raylib` for the location of your raylib release, then run:
 
 ```bash
 mkdir -p build
