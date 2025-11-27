@@ -40,7 +40,6 @@ void InitCfg() {
         // Sound
         if (currentLine.find("sound") != std::string::npos) {
             if (currentLine.substr(currentLine.find("=") + 2, currentLine.find("=") + 3) == "1") {
-                musicOn = true;
                 soundOn = true;
             } else {
                 musicOn = false;
