@@ -1,6 +1,7 @@
 #include "global.hpp"
 
-CameraSettings cameraMode = Orbit;
+#define CAMERA_SPEED 0.05
+
 GameCamera cam;
 
 // Used to figure out the vector for forward relative to the camera. Returns a normal that only considers horizontal directions.
@@ -16,16 +17,25 @@ void GameCamera::CameraInit() {
 }
 
 void GameCamera::Update() {
+    orbits = (Vector3){ -33.0f, player.position.y, 33.0f };
     switch (cameraMode) {
         // Orbits around a center point but looks at the player.
         case Orbit:
-            look = player.position;
-            orbits = (Vector3){ -33.0f, player.position.y, 33.0f };
-            cam.camera.position = orbits + ((Vector3){ player.position.x - orbits.x, 0.0f, player.position.z - orbits.z } + (Vector3Normalize((Vector3){ player.position.x - orbits.x, 0.0f, player.position.z - orbits.z }) * offset)) + (Vector3){ 0.0f, 6.0f, 0.0f };
-            cam.camera.target = look;
+            camera.target = player.position;
+            desiredPosition = orbits + ((Vector3){ camera.target.x - orbits.x, 0.0f, camera.target.z - orbits.z } + (Vector3Normalize((Vector3){ camera.target.x - orbits.x, 0.0f, camera.target.z - orbits.z }) * offset)) + (Vector3){ 0.0f, 6.0f, 0.0f };
+            break;
+        case Track:
+            desiredPosition = camera.target + staticOffset;
             break;
     }  
     if (camera.position.y < 5.0f) {
         camera.position.y = 5.0f;
     }
+    // Moves the camera.
+    if (smoothing) {
+        camera.position += (desiredPosition - camera.position) * CAMERA_SPEED;
+    } else {
+        camera.position = desiredPosition;
+    }
+    
 }

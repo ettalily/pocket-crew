@@ -4,6 +4,7 @@
 #define SCREEN_HEIGHT 720
 
 bool pause = false;
+bool pauseMenu = false;
 bool closeGame = false;
 bool musicOn, soundOn, showFps, borderlessFullscreen;
 
@@ -54,7 +55,7 @@ int main() {
         if (IsKeyPressed(KEY_M)) { std::cout << std::to_string(player.position.x) + " " + std::to_string(player.position.y) + " " + std::to_string(player.position.z) << std::endl; }
 
         // Pause toggle.
-        if (IsKeyPressed(KEY_ENTER) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_MIDDLE_RIGHT)) { pause = !pause; }
+        if (IsKeyPressed(KEY_ENTER) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_MIDDLE_RIGHT)) { pauseMenu = !pauseMenu; }
 
         // Background music.
         if (musicOn && !IsSoundPlaying(backgroundMusic)) { PlaySound(backgroundMusic); }
@@ -62,11 +63,13 @@ int main() {
         // Update controller inputs
         UpdateMovementAxis();
 
-        if (!pause) {
+        if (!pause && !pauseMenu) {
             dropShadowY = -100.0f;
             player.Update();
-            cam.Update();
             OOBCheck();
+        }
+        if (!(pauseMenu)) {
+            cam.Update();
         }
 
         // Update entities for loaded areas.

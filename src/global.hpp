@@ -33,9 +33,8 @@ class Area {
 extern Area firstIsland;
 
 enum CameraSettings {
-    Orbit
+    Orbit, Track
 };
-extern CameraSettings cameraMode;
 
 class Player {
     public:
@@ -65,7 +64,9 @@ extern Player player;
 class GameCamera {
     public:
     Camera3D camera;
-    Vector3 look, orbits;
+    CameraSettings cameraMode = Orbit;
+    Vector3 desiredPosition, orbits, lookDirection, staticOffset;
+    bool smoothing = false;
     float offset = 20.0f;
     void CameraInit();
     void Update();
@@ -85,7 +86,7 @@ extern Particle walkDust, jumpDust, walljumpDust, diveDust, landDust;
 
 class BugCollectable {
     public:
-    Vector3 position;
+    Vector3 position, cameraOffset;
     bool collected = false;
     Vector3 size = (Vector3){ 1.0f, 1.0f, 1.0f };
     BoundingBox hitbox = BoundingBox{ position - size, position + size };
@@ -103,7 +104,7 @@ extern bool closeGame;
 extern bool musicOn, soundOn, showFps, borderlessFullscreen;
 extern float dropShadowY;
 extern Model dropShadow;
-extern bool pause;
+extern bool pause, pauseMenu;
 extern Sound backgroundMusic;
 
 // camera.cpp
