@@ -6,6 +6,12 @@
 #define WALK_DUST_PARTICLE_FREQUENCY 3
 #define WALL_SLIDE_PARTICLE_FREQUENCY 12
 #define WALK_DUST_REQUIRED_SPEED 0.05
+#define WALK_SLIDE_CUTOFF_DUST 1
+#define WALK_SLIDE_CUTOFF_BOUNCE 0.95
+
+#define WALK_BOB_REQUIRED_SPEED 0.02
+#define WALK_BOB_STRENGTH 0.03
+#define WALK_BOB_DECLINE 0.0037
 
 Vector3 wallJumpDir;
 float slopeMovementModifier = 1.0f;
@@ -13,6 +19,8 @@ float slopeMovementModifier = 1.0f;
 Sound jumpSound, diveSound, landSound, walkSound;
 
 unsigned int dustKickUpTimer = 0;
+unsigned int wallDustKickUpTimer = 0;
+float walkBobOffsetVelocity = 0.0f;
 
 Player player;
 
@@ -24,7 +32,7 @@ void Player::Update() {
     Collision();
     playerLogicBox = BoundingBox{ position - (Vector3){ 8.0f, 8.0f, 8.0f }, position + (Vector3){ 8.0f, 8.0f, 8.0f } };
     playerHitbox = BoundingBox{ position - (Vector3){ radius * 0.5f, radius * 0.5f, radius * 0.5f }, position + (Vector3){ radius * 0.5f, radius * 0.5f, radius * 0.5f } };
-    if (!touchingGroundAtStart && touchingGround) { PlaySound(landSound); SpawnParticle(landDust); }
+    if (!touchingGroundAtStart && touchingGround && coyoteTimer == 0) { PlaySound(landSound); SpawnParticle(landDust); }
 }
 
 // Applies gravity within the max fall speed.
@@ -80,10 +88,41 @@ void Player::Move() {
     // Walk kick-up dust spawning and walk sound.
     if (touchingGround && Vector3Length(velocity) >= WALK_DUST_REQUIRED_SPEED) {
         dustKickUpTimer ++;
-        if (dustKickUpTimer >= WALK_DUST_PARTICLE_FREQUENCY / Vector3Length(velocity)) {
-            dustKickUpTimer = 0;
-            PlaySound(walkSound);
-            SpawnParticle(walkDust);
+        if (Vector2Length((Vector2){ velocity.x, velocity.z } + (Vector2){ moveVector.x, moveVector.z }) >= WALK_SLIDE_CUTOFF_DUST) {
+            if (dustKickUpTimer >= WALK_DUST_PARTICLE_FREQUENCY / Vector3Length(velocity)) {
+                dustKickUpTimer = 0;
+                PlaySound(walkSound);
+                SpawnParticle(walkDust);
+            }
+        } else {
+            if (dustKickUpTimer >= WALK_DUST_PARTICLE_FREQUENCY * 0.3f / Vector3Length(velocity)) {
+                dustKickUpTimer = 0;
+                PlaySound(walkSound);
+                SpawnParticle(walkDust);
+            }
+        }
+    } else {
+        dustKickUpTimer = 0;
+    }
+
+    // Walk bobbing animation.
+    if (Vector2Length(dirInput) > 0.0f && touchingGround && Vector3Length(velocity) >= WALK_BOB_REQUIRED_SPEED && Vector2Length((Vector2){ velocity.x, velocity.z } + (Vector2){ moveVector.x, moveVector.z }) >= WALK_SLIDE_CUTOFF_BOUNCE) {
+        if (walkBobOffset == 0.0f) {
+            walkBobOffsetVelocity = WALK_BOB_STRENGTH;
+        } else {
+            walkBobOffsetVelocity -= WALK_BOB_DECLINE;
+        }
+        walkBobOffset += walkBobOffsetVelocity;
+        if (walkBobOffset <= 0.0f) {
+            walkBobOffset = 0.0f;
+        }
+    } else {
+        if (touchingGround && walkBobOffset > 0.0f) {
+            walkBobOffsetVelocity -= WALK_BOB_DECLINE;
+            walkBobOffset += walkBobOffsetVelocity;
+        } else {
+            walkBobOffset = 0.0f;
+            walkBobOffsetVelocity = 0.0f;
         }
     }
 }
@@ -117,9 +156,9 @@ void Player::JumpLogic() {
                     // Wall slide.
                     if (velocity.y < -wallSlideVelocity) { 
                         velocity.y = -wallSlideVelocity; 
-                        dustKickUpTimer ++;
-                        if (dustKickUpTimer >= WALL_SLIDE_PARTICLE_FREQUENCY) {
-                            dustKickUpTimer = 0;
+                        wallDustKickUpTimer ++;
+                        if (wallDustKickUpTimer >= WALL_SLIDE_PARTICLE_FREQUENCY) {
+                            wallDustKickUpTimer = 0;
                             SpawnParticle(walkDust);
                         }
                     }

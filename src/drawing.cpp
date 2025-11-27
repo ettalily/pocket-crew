@@ -16,7 +16,7 @@ void Draw() {
         DrawPlane(Vector3Zero(), (Vector2){ 200.0f, 200.0f}, BLUE);
         // Draw player
         if (player.dived) { DrawSphere(player.position, player.radius - 0.1f, BLUE); }
-        else { DrawSphere(player.position, player.radius, BLUE); }
+        else { DrawSphere((Vector3){ player.position.x, player.position.y + player.walkBobOffset, player.position.z }, player.radius, BLUE); }
         // Draw area models.
         for (auto i : loadedAreas) {
             i->Draw();
@@ -27,7 +27,7 @@ void Draw() {
         }
     EndShaderMode();
         // Draw player drop shadow.
-        DrawModel(dropShadow, (Vector3){ player.position.x, dropShadowY + 0.05f, player.position.z }, 1.0f - ((player.position.y - dropShadowY) * 0.13f), WHITE);
+        DrawModel(dropShadow, (Vector3){ player.position.x, dropShadowY + 0.05f, player.position.z }, 1.0f - (((player.position.y + player.walkBobOffset) - dropShadowY) * 0.13f), WHITE);
         // Draw player particles.
         DrawParticles();
     EndMode3D();
