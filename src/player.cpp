@@ -117,7 +117,7 @@ void Player::Move() {
             walkBobOffset = 0.0f;
         }
     } else {
-        if (walkBobOffset > 0.0f) {
+        if (touchingGround && walkBobOffset > 0.0f) {
             walkBobOffsetVelocity -= WALK_BOB_DECLINE;
             walkBobOffset += walkBobOffsetVelocity;
         } else {
