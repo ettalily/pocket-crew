@@ -18,7 +18,7 @@ Game and display preferences can be set in `preferences.cfg`, which is created i
 - **Pause** - Start/Menu
 
 ## Building on Linux
-Requires ``gcc`` for linux builds and ``mingw-w64-gcc`` for windows builds.
+Requires `raylib`. Requires `gcc` for linux builds and `mingw-w64-gcc` for windows builds.
 
 To build for linux, navigate to the root directory of the repository and run:
 ```bash

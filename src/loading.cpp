@@ -1,6 +1,6 @@
 #include "global.hpp"
 #define RLIGHTS_IMPLEMENTATION
-#include <rlights.h>
+#include "../include/rlights.h"
 #define GLSL_VERSION 330
 
 Shader shader;
