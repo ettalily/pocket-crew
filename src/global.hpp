@@ -55,7 +55,7 @@ class Player {
     void FloorDetect(RayCollision ray); // collision.cpp
     void SlopeSteepness(Mesh mesh, Model model); // collision.cpp
     void SlopeStepDown(RayCollision front, RayCollision back); // collision.cpp
-    void WallDetect(RayCollision ray, Vector3 dir); // collision.cpp
+    void WallDetect(RayCollision ray, Vector3 dir, Vector3 offset); // collision.cpp
     void CollisionCheck(Mesh mesh, Model model); // collision.cpp
     void CeilingDetect(RayCollision ray); // collision.cpp
     void Collision(); // collision.cpp

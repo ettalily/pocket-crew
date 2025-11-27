@@ -27,34 +27,43 @@ void Player::Collision() {
 // Handles wall, floor, and ceiling collisions.
 void Player::CollisionCheck(Mesh mesh, Model model) {
     // Floor Collision. Raycasts the center and all four corners of the base of the collision box.
-    RayCollision basecenter = GetRayCollisionMesh(Ray{position, (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+    RayCollision basecenter = GetRayCollisionMesh(Ray{ position, (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
     FloorDetect(basecenter);
-    RayCollision basedirforward = GetRayCollisionMesh(Ray{position + (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+    RayCollision basedirforward = GetRayCollisionMesh(Ray{ position + (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
     FloorDetect(basedirforward);
-    RayCollision basedirback = GetRayCollisionMesh(Ray{position - (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+    RayCollision basedirback = GetRayCollisionMesh(Ray{ position - (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
     FloorDetect(basedirback);
     // Deals with stepping down slopes.
     SlopeStepDown(basedirforward, basedirback);
-    RayCollision basedirright = GetRayCollisionMesh(Ray{position + (Vector3Perpendicular(direction) * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+    RayCollision basedirright = GetRayCollisionMesh(Ray{ position + ((Vector3){ -direction.z, direction.y, direction.x } * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
     FloorDetect(basedirright);
-    RayCollision basedirleft = GetRayCollisionMesh(Ray{position - (Vector3Perpendicular(direction) * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
+    RayCollision basedirleft = GetRayCollisionMesh(Ray{ position - ((Vector3){ -direction.z, direction.y, direction.x } * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
     FloorDetect(basedirleft);
     
     // Changes the grounded movement speed based on the surface's steepness.
     SlopeSteepness(mesh, model);
 
-    // Wall Collision. Raycasts in all four directions, with the direction of movement as forward.
-    RayCollision walldirforward = GetRayCollisionMesh(Ray{position, direction }, mesh, model.transform);
-    WallDetect(walldirforward, direction);
-    RayCollision walldirright = GetRayCollisionMesh(Ray{position, Vector3Perpendicular(direction) }, mesh, model.transform);
-    WallDetect(walldirright, Vector3Perpendicular(direction));
-    RayCollision walldirleft = GetRayCollisionMesh(Ray{position, Vector3Perpendicular(direction) * -1 }, mesh, model.transform);
-    WallDetect(walldirleft, Vector3Perpendicular(direction) * -1);
-    RayCollision walldirback = GetRayCollisionMesh(Ray{position, direction * -1 }, mesh, model.transform);
-    WallDetect(walldirback, direction * -1);
+    // Wall Collision. Raycasts in all four directions, and five times forward, with the direction of movement as forward.
+    RayCollision walldirforward = GetRayCollisionMesh(Ray{ position, direction }, mesh, model.transform);
+    WallDetect(walldirforward, direction, Vector3Zero());
+    RayCollision walldirforwardright = GetRayCollisionMesh(Ray{ position + ((Vector3){ -direction.z, direction.y, direction.x } * radius * 0.75f), direction }, mesh, model.transform);
+    WallDetect(walldirforwardright, direction, (Vector3){ -direction.z, direction.y, direction.x } * radius * 0.75f);
+    RayCollision walldirforwardleft = GetRayCollisionMesh(Ray{ position - ((Vector3){ -direction.z, direction.y, direction.x } * radius * 0.75f), direction }, mesh, model.transform);
+    WallDetect(walldirforwardleft, direction, (Vector3){ -direction.z, direction.y, direction.x } * radius * -0.75f);
+    RayCollision walldirforwardup = GetRayCollisionMesh(Ray{ position + (Vector3){ 0.0f, radius * 0.5f, 0.0f }, direction }, mesh, model.transform);
+    WallDetect(walldirforwardup, direction, Vector3Zero());
+    RayCollision walldirforwarddown = GetRayCollisionMesh(Ray{ position - (Vector3){ 0.0f, radius * 0.5f, 0.0f }, direction }, mesh, model.transform);
+    WallDetect(walldirforwarddown, direction, Vector3Zero());
+
+    RayCollision walldirright = GetRayCollisionMesh(Ray{ position, (Vector3){ -direction.z, direction.y, direction.x } }, mesh, model.transform);
+    WallDetect(walldirright, (Vector3){ -direction.z, direction.y, direction.x }, Vector3Zero());
+    RayCollision walldirleft = GetRayCollisionMesh(Ray{ position, (Vector3){ -direction.z, direction.y, direction.x } * -1 }, mesh, model.transform);
+    WallDetect(walldirleft, (Vector3){ -direction.z, direction.y, direction.x } * -1, Vector3Zero());
+    RayCollision walldirback = GetRayCollisionMesh(Ray{ position, direction * -1 }, mesh, model.transform);
+    WallDetect(walldirback, direction * -1, Vector3Zero());
 
     // Ceiling Collision. Raycasts once straight above the center of the player.
-    RayCollision topcenter = GetRayCollisionMesh(Ray{position, (Vector3){ 0.0f, 1.0f, 0.0f } }, mesh, model.transform);
+    RayCollision topcenter = GetRayCollisionMesh(Ray{ position, (Vector3){ 0.0f, 1.0f, 0.0f } }, mesh, model.transform);
     CeilingDetect(topcenter);
 }
 
@@ -68,9 +77,9 @@ void Player::FloorDetect(RayCollision ray) {
     if (ray.point.y > dropShadowY) { dropShadowY = ray.point.y; }
 }
 
-void Player::WallDetect(RayCollision ray, Vector3 dir) {
+void Player::WallDetect(RayCollision ray, Vector3 dir, Vector3 offset) {
     if (ray.hit && ray.distance < radius) {
-        position = (Vector3){ ray.point.x - (dir.x * radius) , position.y, ray.point.z - (dir.z * radius) };
+        position = (Vector3){ (ray.point.x - (dir.x * radius)) - offset.x , position.y, ray.point.z - ((dir.z * radius)) - offset.z };
         if (dir == direction) { velocity.x = 0.0f, velocity.z = 0.0f; }
     }
 }
