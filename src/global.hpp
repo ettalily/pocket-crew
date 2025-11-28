@@ -4,6 +4,8 @@
 #include <string>
 #include <raylib.h>
 #include <raymath.h>
+#include <fstream>
+#include <filesystem>
 
 class Collectable {
     public:
@@ -66,8 +68,8 @@ class GameCamera {
     Camera3D camera;
     CameraSettings cameraMode = Orbit;
     Vector3 desiredPosition, orbits, lookDirection, staticOffset;
-    bool smoothing = false;
-    float offset = 20.0f;
+    bool smoothing = true;
+    float offset = 20.0f, speed = 0.2f;
     void CameraInit();
     void Update();
 };
@@ -87,6 +89,7 @@ extern Particle walkDust, jumpDust, walljumpDust, diveDust, landDust;
 class BugCollectable {
     public:
     Vector3 position, cameraOffset;
+    std::vector<std::string> dialogue;
     bool collected = false;
     Vector3 size = (Vector3){ 1.0f, 1.0f, 1.0f };
     BoundingBox hitbox = BoundingBox{ position - size, position + size };
@@ -115,6 +118,7 @@ extern Shader shader;
 extern std::vector<Area*> loadedAreas;
 void ShaderInit();
 void AudioInit();
+void DialogueInit();
 void UnloadDisabledAreas();
 
 // player.cpp
@@ -122,6 +126,7 @@ extern float slopeMovementModifier;
 extern Sound jumpSound, diveSound, landSound, walkSound, slideSound;
 
 // drawing.cpp
+void DrawTextScreenScaled(Font font, const char *text, float posPercentX, float posPercentY, float sizePercent, float spacingPercent, float posAlignmentPercent, Color color);
 void Draw();
 
 // particles.cpp
@@ -140,6 +145,12 @@ void UpdateMovementAxis();
 
 // collectables.cpp
 extern BugCollectable bugCollectables[1];
+
+// dialogue.cpp
+extern bool inDialogue;
+void StartDialogue(std::vector<std::string>* dialogue, bool* collected);
+void DialogueLogic();
+void DrawDialogue();
 
 // Area Setup
 void InitAreas();

@@ -44,6 +44,9 @@ int main() {
     // Setup level model values.
     InitAreas();
 
+    // Load dialogue text.
+    DialogueInit();
+
     // Load the starting area
     firstIsland.Load();
 
@@ -60,7 +63,7 @@ int main() {
         // Background music.
         if (musicOn && !IsSoundPlaying(backgroundMusic)) { PlaySound(backgroundMusic); }
         
-        // Update controller inputs
+        // Update controller inputs.
         UpdateMovementAxis();
 
         if (!pause && !pauseMenu) {
@@ -76,6 +79,9 @@ int main() {
         for (auto i : loadedAreas) {
             i->AreaLogic();
         }
+
+        // Updates dialogue.
+        DialogueLogic();
 
         // Updates the shader camera view vector.
         float cameraPos[3] = { cam.camera.position.x, cam.camera.position.y, cam.camera.position.z };

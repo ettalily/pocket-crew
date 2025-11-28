@@ -13,6 +13,9 @@
 #define WALK_BOB_STRENGTH 0.03
 #define WALK_BOB_DECLINE 0.0037
 
+#define PLAYER_HITBOX_SCALE 0.2f
+#define PLAYER_LOGIC_BOX_SIZE 8.0f
+
 Vector3 wallJumpDir;
 float slopeMovementModifier = 1.0f;
 
@@ -30,8 +33,8 @@ void Player::Update() {
     Gravity();
     ApplyVelocity();
     Collision();
-    playerLogicBox = BoundingBox{ position - (Vector3){ 8.0f, 8.0f, 8.0f }, position + (Vector3){ 8.0f, 8.0f, 8.0f } };
-    playerHitbox = BoundingBox{ position - (Vector3){ radius * 0.5f, radius * 0.5f, radius * 0.5f }, position + (Vector3){ radius * 0.5f, radius * 0.5f, radius * 0.5f } };
+    playerLogicBox = BoundingBox{ position - (Vector3){ PLAYER_LOGIC_BOX_SIZE, PLAYER_LOGIC_BOX_SIZE, PLAYER_LOGIC_BOX_SIZE }, position + (Vector3){ PLAYER_LOGIC_BOX_SIZE, PLAYER_LOGIC_BOX_SIZE, PLAYER_LOGIC_BOX_SIZE } };
+    playerHitbox = BoundingBox{ position - (Vector3){ radius * PLAYER_HITBOX_SCALE, radius * PLAYER_HITBOX_SCALE, radius * PLAYER_HITBOX_SCALE }, position + (Vector3){ radius * PLAYER_HITBOX_SCALE, radius * PLAYER_HITBOX_SCALE, radius * PLAYER_HITBOX_SCALE } };
     if (!touchingGroundAtStart && touchingGround && coyoteTimer == 0) { if (soundOn) { PlaySound(landSound); } SpawnParticle(landDust); }
 }
 

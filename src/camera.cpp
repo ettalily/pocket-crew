@@ -1,7 +1,5 @@
 #include "global.hpp"
 
-#define CAMERA_SPEED 0.05
-
 GameCamera cam;
 
 // Used to figure out the vector for forward relative to the camera. Returns a normal that only considers horizontal directions.
@@ -33,9 +31,8 @@ void GameCamera::Update() {
     }
     // Moves the camera.
     if (smoothing) {
-        camera.position += (desiredPosition - camera.position) * CAMERA_SPEED;
+        camera.position += (desiredPosition - camera.position) * speed;
     } else {
         camera.position = desiredPosition;
     }
-    
 }

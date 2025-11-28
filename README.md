@@ -23,7 +23,7 @@ Extract the archive and run `pocket` or `pocket.exe` to start the game.
 Game and display preferences can be set in `preferences.cfg`, which is created in the game's root directory when the game is first run. It can be reset by deleting the file and restarting the game.
 
 ## Building from Source
-Build instructions and dependencies can be found in [`INSTALL.md`](https://github.com/ettalily/pocket-crew/blob/main/INSTALL.md)
+Build instructions and dependencies can be found in [`INSTALL.md`](https://github.com/ettalily/pocket-crew/blob/main/INSTALL.md).
 
 ## Notes
 - The raylib project can be found [here](https://github.com/raysan5/raylib). I am not involved with this project.

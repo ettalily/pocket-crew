@@ -28,6 +28,26 @@ void AudioInit() {
     slideSound = LoadSound("assets/sound/slide.wav");
 }
 
+void DialogueInit() {
+    std::ifstream bugDialogue ("assets/text/bugDialogue");
+    if (!bugDialogue.is_open()) {
+        std::cout << "Unable to open assets/text/bugDialogue\n";
+        closeGame = true;
+        return;   
+    }
+    std::string currentLine;
+    int currentBug = 0;
+    while (std::getline(bugDialogue, currentLine)) {
+        if (currentLine == "") {
+            currentBug++;
+        } else {
+            bugCollectables[currentBug].dialogue.push_back(currentLine);
+        }
+    }
+    bugDialogue.close();
+    std::cout << "Successfully loaded dialogue.\n";
+}
+
 // Loads the level model and gives it the shader.
 void Area::Load() {
     active = true;

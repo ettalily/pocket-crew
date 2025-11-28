@@ -1,6 +1,4 @@
 #include "global.hpp"
-#include <fstream>
-#include <filesystem>
 
 const std::string preferencesDefault[8] = {"[Settings]", "music = 1", "sound = 1", "show_fps = 0", "", "[Display]", "borderless_fullscreen = 0", "msaa_4x = 1"};
 
@@ -9,7 +7,7 @@ void InitCfg() {
     if (!std::filesystem::exists("preferences.cfg")) {
         std::ofstream currentFileO ("preferences.cfg");
         if (!currentFileO.is_open()) {
-            std::cout << "Unable to create preferences.cfg" << "\n";
+            std::cout << "Unable to create preferences.cfg\n";
             closeGame = true;
             return;   
         }
@@ -17,14 +15,14 @@ void InitCfg() {
             currentFileO << preferencesDefault[i] << "\n";
         }
         currentFileO.close();
-        std::cout << "Created preferences.cfg with default values" << std::endl;
+        std::cout << "Created preferences.cfg with default values\n";
     }
 
     // Reads the content of preferences.cfg and sets the values accordingly.
     std::string currentLine;
     std::ifstream currentFileI ("preferences.cfg");
     if (!currentFileI.is_open()) {
-        std::cout << "Unable to open preferences.cfg" << "\n";
+        std::cout << "Unable to open preferences.cfg\n";
         closeGame = true;
         return;   
     }
@@ -71,7 +69,7 @@ void InitCfg() {
         
     }
     currentFileI.close();
-    std::cout << "Loaded setting preferences" << "\n";
+    std::cout << "Loaded setting preferences\n";
 }
 
 void CfgUpdate(std::string file, std::string setting, std::string value) {

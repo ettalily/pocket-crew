@@ -31,6 +31,7 @@ void Draw() {
         // Draw player particles.
         DrawParticles();
     EndMode3D();
+    DrawDialogue();
     if (pauseMenu) { DrawTextScreenScaled(GetFontDefault(), "PAUSED", 0.5f, 0.5f, 0.1f, 0.01f, 0.5f, BLACK); }
     if (showFps) { DrawFPS(10, 10); }
     EndDrawing();
