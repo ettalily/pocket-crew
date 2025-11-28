@@ -1,9 +1,9 @@
 #include <iostream>
-#include <raylib.h>
-#include <raymath.h>
 #include <algorithm>
 #include <vector>
 #include <string>
+#include <raylib.h>
+#include <raymath.h>
 
 class Collectable {
     public:

@@ -9,16 +9,14 @@ Requires the `gcc` compiler for linux builds, and the `mingw-w64-gcc` compiler f
 
 Raylib also has some required dependencies: `mesa`, `x11`, and `alsa`.
 
-The build script additionally uses `wget`, `tar` and `unzip`.
-
 #### Arch-based Distributions
 ```bash
-sudo pacman -S gcc mingw-w64-gcc alsa-lib mesa libx11 libxrandr libxi libxcursor libxinerama tar unzip wget
+sudo pacman -S gcc mingw-w64-gcc alsa-lib mesa libx11 libxrandr libxi libxcursor libxinerama
 ```
 
 #### Debian-based Distributions
 ```bash
-sudo apt install build-essential gcc-mingw-w64 libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev tar unzip wget
+sudo apt install build-essential gcc-mingw-w64 libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
 ```
 
 ### Build Script (Recommended)
@@ -63,12 +61,12 @@ gcc -o ./build/pocket.exe ./src/*.hpp ./src/*.cpp ./src/levels/*.cpp -lraylib -l
 ### Using Non-Installed Libraries
 Alternatively, you can manually download a compiler and a raylib release, and then link the libraries in the build command.
 
-Requires a C++ compiler, such as the `mingw-w64-gcc` compiler included in [w64devkit](https://github.com/skeeto/w64devkit), and a windows [raylib release](https://github.com/raysan5/raylib/releases).
+Requires a C++ compiler, such as the `mingw-w64-gcc` compiler included in [w64devkit](https://github.com/skeeto/w64devkit).
 
-To build for windows, run `w64devkit.exe`, navigate to the root directory of this repository, substitute `/path/to/raylib` in the following build command for the location of your raylib release, then run:
+To build for windows, run `w64devkit.exe`, navigate to the root directory of this repository, then run:
 
 ```bash
 mkdir -p build
 cp -r assets ./build/assets
-g++ -o ./build/pocket.exe ./src/*.hpp ./src/*.cpp ./src/levels/*.cpp -I /path/to/raylib/include /path/to/raylib/lib/libraylib.a -lgdi32 -lwinmm
+g++ -o ./build/pocket.exe ./src/*.hpp ./src/*.cpp ./src/levels/*.cpp -I ./lib/raylib/include ./lib/raylib/static/windows/libraylib.a -lgdi32 -lwinmm
 ```
