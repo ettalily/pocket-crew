@@ -69,11 +69,11 @@ int main() {
         if (!pause && !pauseMenu) {
             dropShadowY = -100.0f;
             player.Update();
-            OOBCheck();
         }
         if (!(pauseMenu)) {
             cam.Update();
         }
+        OOBCheck();
 
         // Update entities for loaded areas.
         for (auto i : loadedAreas) {

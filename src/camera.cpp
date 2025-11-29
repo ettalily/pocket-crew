@@ -11,7 +11,8 @@ void GameCamera::CameraInit() {
     camera.projection = CAMERA_PERSPECTIVE;
     camera.fovy = 40.0f;
     camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
-    camera.position = (Vector3){ 10.0f, 7.0f, 10.0f };
+    desiredPosition = orbits + ((Vector3){ camera.target.x - orbits.x, 0.0f, camera.target.z - orbits.z } + (Vector3Normalize((Vector3){ camera.target.x - orbits.x, 0.0f, camera.target.z - orbits.z }) * offset)) + (Vector3){ 0.0f, 6.0f, 0.0f };
+    camera.position = desiredPosition;
 }
 
 void GameCamera::Update() {

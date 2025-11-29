@@ -11,6 +11,8 @@ void OOBCheck() {
     if (player.position.y < -6) {
         player.position = lastSafeLocation;
         player.velocity = Vector3Zero();
+        cam.Update();
+        cam.camera.position = cam.desiredPosition;
         PlaySound(deathSound);
         return;
     }

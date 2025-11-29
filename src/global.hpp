@@ -69,7 +69,7 @@ class GameCamera {
     CameraSettings cameraMode = Orbit;
     Vector3 desiredPosition, orbits, lookDirection, staticOffset;
     bool smoothing = true;
-    float offset = 20.0f, speed = 0.2f;
+    float offset = 20.0f, speed = 0.35f;
     void CameraInit();
     void Update();
 };

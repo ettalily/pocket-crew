@@ -23,7 +23,7 @@ void DialogueLogic() {
             inDialogue = false;
             pause = false;
             cam.cameraMode = Orbit;
-            cam.speed = 0.2f;
+            cam.speed = 0.35f;
             *dialogueOverFlag = true;
         }
     }
