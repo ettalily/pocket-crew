@@ -21,18 +21,17 @@ int main() {
     // Sets up the window and audio device.
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Pocket Crew");
     SetTargetFPS(60);
-    InitAudioDevice();
 
     if (borderlessFullscreen) { ToggleBorderlessWindowed(); }
+
+    // Load audio.
+    AudioInit();
 
     // Sets up camera values.
     cam.CameraInit();
     
     // Loads the shaders.
     ShaderInit();
-
-    // Load audio.
-    AudioInit();
 
     // Creates drop shadow.
     dropShadow = LoadModelFromMesh(GenMeshPlane(1.0f, 1.0f, 16, 16));

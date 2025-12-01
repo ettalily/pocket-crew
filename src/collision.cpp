@@ -12,14 +12,11 @@ void Player::Collision() {
     // Iterates through each loaded area.
     for (auto it : loadedAreas) {
         // Checks if the player is inside the model bounding box.
-        if (!CheckCollisionBoxes(playerLogicBox, it->modelBoundingBox)) {
-            continue;
-        }
+        if (!CheckCollisionBoxes(playerLogicBox, it->modelBoundingBox)) continue;
         for (int m = 0; m < it->model.meshCount; m++) {
             // Checks whether the player is within each mesh's bounding box.
-            if (CheckCollisionBoxes(playerLogicBox, GetMeshBoundingBox(it->model.meshes[m]))) {
-                CollisionCheck(it->model.meshes[m], it->model);
-            }
+            if (!CheckCollisionBoxes(playerLogicBox, GetMeshBoundingBox(it->model.meshes[m]))) continue;
+            CollisionCheck(it->model.meshes[m], it->model);
         }
     }
 }
@@ -68,20 +65,22 @@ void Player::CollisionCheck(Mesh mesh, Model model) {
 }
 
 void Player::FloorDetect(RayCollision ray) {
-    if (!ray.hit || ray.normal.y < FLOOR_NORMAL_MIN) {
-        return;
-    }
+    if (!ray.hit || ray.normal.y < FLOOR_NORMAL_MIN) return;
+
     if (velocity.y <= 0 && ray.distance <= radius) {
         touchingGround = true; dived = false; velocity.y = 0.0f; position.y = ray.point.y + radius;
     }
-    if (ray.point.y > dropShadowY) { dropShadowY = ray.point.y; }
+    if (ray.point.y > dropShadowY)
+    { 
+        dropShadowY = ray.point.y;
+    }
 }
 
 void Player::WallDetect(RayCollision ray, Vector3 dir, Vector3 offset) {
-    if (ray.hit && ray.distance < radius) {
-        position = (Vector3){ (ray.point.x - (dir.x * radius)) - offset.x , position.y, ray.point.z - ((dir.z * radius)) - offset.z };
-        if (dir == direction) { velocity.x = 0.0f, velocity.z = 0.0f; }
-    }
+    if (!ray.hit || ray.distance >= radius) return;
+
+    position = (Vector3){ (ray.point.x - (dir.x * radius)) - offset.x , position.y, ray.point.z - ((dir.z * radius)) - offset.z };   
+    if (dir == direction) { velocity.x = 0.0f, velocity.z = 0.0f; }
 }
 
 void Player::CeilingDetect(RayCollision ray) {
@@ -91,9 +90,8 @@ void Player::CeilingDetect(RayCollision ray) {
 }
 
 void Player::SlopeStepDown(RayCollision front, RayCollision back) {
-    if (touchingGround || !touchingGroundAtStart || !front.hit || !back.hit) {
-        return;
-    }
+    if (touchingGround || !touchingGroundAtStart || !front.hit || !back.hit) return;
+
     // Checks if the slope meets the slope step conditions.
     if (back.distance <= STEP_DOWN_BACK_DISTANCE && front.normal.y >= FLOOR_NORMAL_MIN && back.normal.y >= FLOOR_NORMAL_MIN && back.distance < front.distance && front.distance - back.distance <= STEP_DOWN_MAX_DISTANCE_DIFF) {
         touchingGround = true; dived = false; velocity.y = 0.0f; position.y = back.point.y + radius;
@@ -101,16 +99,15 @@ void Player::SlopeStepDown(RayCollision front, RayCollision back) {
 }
 
 void Player::SlopeSteepness(Mesh mesh, Model model) {
-    if (!touchingGround) {
-        return;
-    }
+    if (!touchingGround) return;
+
     // Checks slope steepness and sets the slope steepness modifier.
     RayCollision slopefront = GetRayCollisionMesh(Ray{position + (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
     RayCollision slopeback = GetRayCollisionMesh(Ray{position - (direction * radius * 0.75f), (Vector3){ 0.0f, -1.0f, 0.0f } }, mesh, model.transform);
-    if (slopefront.hit && slopeback.hit) {
-        slopeMovementModifier = 1.0f + ((slopefront.distance - slopeback.distance) * SLOPE_STEEPNESS_IMPACT);
-        // Caps the minimum and maximum slope movement modifier.
-        if (slopeMovementModifier < 0.5f) { slopeMovementModifier = 0.5f; }
-        if (slopeMovementModifier > 1.5f) { slopeMovementModifier = 1.5f; }
-    }
+    if (!slopefront.hit || !slopeback.hit) return;
+
+    slopeMovementModifier = 1.0f + ((slopefront.distance - slopeback.distance) * SLOPE_STEEPNESS_IMPACT);
+    // Caps the minimum and maximum slope movement modifier.
+    if (slopeMovementModifier < 0.5f) { slopeMovementModifier = 0.5f; }
+    if (slopeMovementModifier > 1.5f) { slopeMovementModifier = 1.5f; }
 }

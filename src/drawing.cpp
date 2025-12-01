@@ -36,3 +36,8 @@ void Draw() {
     if (showFps) { DrawFPS(10, 10); }
     EndDrawing();
 }
+
+// Draws the model.
+void Area::Draw() {
+    DrawModel(model, position, scale, WHITE);
+}

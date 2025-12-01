@@ -19,6 +19,7 @@ void ShaderInit() {
 }
 
 void AudioInit() {
+    InitAudioDevice();
     backgroundMusic = LoadSound("assets/music/background.mp3");
     jumpSound = LoadSound("assets/sound/jump.wav");
     diveSound = LoadSound("assets/sound/dive.wav");
@@ -29,6 +30,9 @@ void AudioInit() {
 }
 
 void DialogueInit() {
+    speechBubbleDialogue = LoadTexture("assets/textures/speechbubble.png");
+
+    // Loads dialogue lines.
     std::ifstream bugDialogue ("assets/text/bugDialogue");
     if (!bugDialogue.is_open()) {
         std::cout << "Unable to open assets/text/bugDialogue\n";
@@ -59,17 +63,15 @@ void Area::Load() {
     loadedAreas.push_back(this);
 }
 
-// Draws the model.
-void Area::Draw() {
-    DrawModel(model, position, scale, WHITE);
-}
-
 // Unloads the model for non active areas and removes it from the vector.
 void UnloadDisabledAreas() {
     for (auto it = loadedAreas.begin(); it != loadedAreas.end();) {
         Area areaPtr = *loadedAreas[std::distance(loadedAreas.begin(), it)];
-        if (!areaPtr.active) { UnloadModel(areaPtr.model); it = loadedAreas.erase(it); }
-        else { ++it; }
+        if (!areaPtr.active) { 
+            UnloadModel(areaPtr.model); it = loadedAreas.erase(it); 
+        } else { 
+            ++it; 
+        }
     }
 }
 

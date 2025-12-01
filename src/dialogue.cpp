@@ -1,7 +1,6 @@
 #include "global.hpp"
 
 bool inDialogue = false;
-int currentBubbleFrame = 0;
 Texture2D speechBubbleDialogue;
 
 std::vector<std::string> dialogueText;
@@ -22,13 +21,12 @@ void DialogueLogic() {
     if (!inDialogue) return;
     if (IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_DOWN) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT) || IsKeyPressed(KEY_K) || IsKeyPressed(KEY_H)) {
         dialogueLine++;
-        if (dialogueLine == dialogueLineCount) {
-            inDialogue = false;
-            pause = false;
-            cam.cameraMode = Orbit;
-            cam.speed = 0.35f;
-            *dialogueOverFlag = true;
-        }
+        if (dialogueLine != dialogueLineCount) return;
+        inDialogue = false;
+        pause = false;
+        cam.cameraMode = Orbit;
+        cam.speed = 0.35f;
+        *dialogueOverFlag = true;
     }
 }
 

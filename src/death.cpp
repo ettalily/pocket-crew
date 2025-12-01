@@ -8,6 +8,7 @@ Vector3 lastSafeLocation = (Vector3){ 0.0f, 3.0f, 0.0f };
 unsigned int lslTimer= 0;
 
 void OOBCheck() {
+    // Move player to last safe grounded position if out of bounds.
     if (player.position.y < -6) {
         player.position = lastSafeLocation;
         player.velocity = Vector3Zero();
@@ -16,9 +17,9 @@ void OOBCheck() {
         PlaySound(deathSound);
         return;
     }
-    if (!player.touchingGround) {
-        return;
-    }
+
+    // Update last safe grounded position.
+    if (!player.touchingGround) return;
     lslTimer++;
     if (lslTimer == LSL_PING_FREQUENCY) {
         lslTimer = 0;

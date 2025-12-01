@@ -148,6 +148,7 @@ extern BugCollectable bugCollectables[1];
 
 // dialogue.cpp
 extern bool inDialogue;
+extern Texture2D speechBubbleDialogue;
 void StartDialogue(std::vector<std::string>* dialogue, bool* collected);
 void DialogueLogic();
 void DrawDialogue();

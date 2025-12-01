@@ -9,21 +9,19 @@ void BugCollectable::BugUpdate() {
 }
 
 void BugCollectable::PickupCheck() {
-    if (collected || pause) {
-        return;
-    }
-    if (CheckCollisionBoxes(player.playerHitbox, hitbox)) {
-        pause = true;
-        cam.cameraMode = Track;
-        cam.camera.target = position;
-        cam.smoothing = true;
-        cam.staticOffset = cameraOffset;
-        StartDialogue(&dialogue, &collected);
-    }
+    if (collected || pause) return;
+    if (!CheckCollisionBoxes(player.playerHitbox, hitbox)) return;
+
+    pause = true;
+    cam.cameraMode = Track;
+    cam.camera.target = position;
+    cam.smoothing = true;
+    cam.staticOffset = cameraOffset;
+    StartDialogue(&dialogue, &collected);
 }
 
 void BugCollectable::Draw() {
-    if (!collected) {
-        DrawCube(position, size.x, size.y, size.z, GREEN);
-    }
+    if (collected) return;
+    
+    DrawCube(position, size.x, size.y, size.z, GREEN);
 }
