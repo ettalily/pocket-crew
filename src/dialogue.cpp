@@ -1,12 +1,15 @@
 #include "global.hpp"
 
 bool inDialogue = false;
+int currentBubbleFrame = 0;
+Texture2D speechBubbleDialogue;
 
 std::vector<std::string> dialogueText;
 int dialogueLine, dialogueLineCount;
 bool* dialogueOverFlag;
 
 void StartDialogue(std::vector<std::string>* dialogue, bool* collected) {
+    speechBubbleDialogue = LoadTexture("assets/textures/speechbubble.png");
     inDialogue = true;
     dialogueText = *dialogue;
     dialogueLine = 0;
@@ -31,5 +34,6 @@ void DialogueLogic() {
 
 void DrawDialogue() {
     if (!inDialogue) return;
-    DrawTextScreenScaled(GetFontDefault(), dialogueText[dialogueLine].c_str(), 0.5f, 0.3f, 0.05f, 0.01f, 0.5f, DARKGREEN);
+    DrawTextureEx(speechBubbleDialogue, (Vector2){ (GetScreenWidth() * 0.5f) - ((GetScreenHeight() * 0.01f) * 0.5f * 128.0f), (GetScreenHeight() * 0.2f) - ((GetScreenHeight() * 0.0046f) * 0.5f * 64.0f) }, 0.0f, GetScreenHeight() * 0.01f, WHITE);
+    DrawTextScreenScaled(GetFontDefault(), dialogueText[dialogueLine].c_str(), 0.5f, 0.2f, 0.05f, 0.01f, 0.5f, DARKGREEN);
 }
