@@ -1,5 +1,7 @@
 #include "global.hpp"
 
+Sound dialogueEnterSound, promptAcceptSound;
+
 bool inDialogue = false;
 Texture2D speechBubbleDialogue;
 
@@ -14,14 +16,16 @@ void StartDialogue(std::vector<std::string>* dialogue, bool* collected) {
     dialogueLineCount = dialogueText.size();
     dialogueOverFlag = collected;
     cam.speed = 0.1f;
+    if (soundOn) PlaySound(dialogueEnterSound);
 }
 
 void DialogueLogic() {
     if (!inDialogue) return;
     if (IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_DOWN) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT) || IsKeyPressed(KEY_K) || IsKeyPressed(KEY_H)) {
+        if (soundOn) PlaySound(promptAcceptSound);
         dialogueLine++;
         if (dialogueLine != dialogueLineCount) return;
-        
+
         inDialogue = false;
         pause = false;
         cam.cameraMode = Orbit;

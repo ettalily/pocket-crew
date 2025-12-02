@@ -27,6 +27,8 @@ void AudioInit() {
     walkSound = LoadSound("assets/sound/walk.wav");
     deathSound = LoadSound("assets/sound/dies.wav");
     slideSound = LoadSound("assets/sound/slide.wav");
+    dialogueEnterSound = LoadSound("assets/sound/dialogueenter.wav");
+    promptAcceptSound = LoadSound("assets/sound/promptaccept.wav");
 }
 
 void DialogueInit() {

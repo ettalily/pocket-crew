@@ -4,7 +4,7 @@
 #define BUG_JUMP_GRAVITY 0.007f
 
 BugCollectable bugCollectables[1] = {
-    *new BugCollectable{(Vector3){ -1.0f, 2.0f, 4.0f }, (Vector3){ 10.0f, 0.0f, 0.0f }}
+    *new BugCollectable{(Vector3){ -2.22f, 18.63f, 35.20f }, (Vector3){ 5.0f, 1.0f, -5.0f }}
 };
 
 void BugCollectable::PickupCheck() {
@@ -14,7 +14,7 @@ void BugCollectable::PickupCheck() {
     pause = true;
     cam.cameraMode = Track;
     cam.camera.target = position + (Vector3){ 0.0f, 1.0f, 0.0f };
-    cam.staticOffset = cameraOffset;
+    cam.staticOffset = Vector3Normalize(cameraOffset) * offsetAmount;
     StartDialogue(&dialogue, &collected);
 }
 

@@ -1,3 +1,5 @@
 build
 preferences.cfg
 .vscode
+*.blend
+*.blend1

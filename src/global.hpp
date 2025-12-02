@@ -78,10 +78,10 @@ extern Particle walkDust, jumpDust, walljumpDust, diveDust, landDust;
 
 class BugCollectable {
     public:
-    Vector3 position, cameraOffset;
+    Vector3 position, cameraOffset, size = (Vector3){ 0.4f, 0.4f, 0.4f };;
     std::vector<std::string> dialogue;
     bool collected = false;
-    Vector3 size = (Vector3){ 0.4f, 0.4f, 0.4f };
+    float offsetAmount = 10.0f;
     BoundingBox hitbox = BoundingBox{ position - (size * 3), position + (size * 3)};
     float offsetY = 0.0f, velocity = 0.0f;
 
@@ -145,6 +145,7 @@ void DrawBugSign();
 void CurrentBugUpdate();
 
 // dialogue.cpp
+extern Sound dialogueEnterSound, promptAcceptSound;
 extern bool inDialogue;
 extern Texture2D speechBubbleDialogue;
 void StartDialogue(std::vector<std::string>* dialogue, bool* collected);
