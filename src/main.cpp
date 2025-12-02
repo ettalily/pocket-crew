@@ -49,6 +49,9 @@ int main() {
     // Load the starting area
     firstIsland.Load();
 
+    // Loads the bug sign and assigns it's initial value.
+    InitSigns();
+
     // Game loop
     while (!WindowShouldClose() || closeGame) {
         // Toggle borderless fullscreen.
@@ -105,6 +108,9 @@ int main() {
     UnloadSound(deathSound);
 
     // Unloads other assets and resources.
+    UnloadTexture(speechBubbleDialogue);
+    UnloadTexture(bugSign);
+    UnloadParticles();
     UnloadModel(dropShadow);
     UnloadShader(shader);
     CloseAudioDevice();

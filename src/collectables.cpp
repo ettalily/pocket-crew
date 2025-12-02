@@ -1,15 +1,11 @@
 #include "global.hpp"
 
-#define BUG_JUMP_POWER 0.2f
-#define BUG_JUMP_GRAVITY 0.01f
+#define BUG_JUMP_POWER 0.11f
+#define BUG_JUMP_GRAVITY 0.007f
 
 BugCollectable bugCollectables[1] = {
     *new BugCollectable{(Vector3){ -1.0f, 2.0f, 4.0f }, (Vector3){ 10.0f, 0.0f, 0.0f }}
 };
-
-void BugCollectable::BugUpdate() {
-
-}
 
 void BugCollectable::PickupCheck() {
     if (collected || pause) return;

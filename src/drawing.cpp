@@ -29,6 +29,7 @@ void Draw() {
             i.Draw();
         }
     EndShaderMode();
+        DrawBugSign();
         // Draw player drop shadow.
         DrawModel(dropShadow, (Vector3){ player.position.x, dropShadowY + 0.05f, player.position.z }, 1.0f - (((player.position.y + player.walkBobOffset) - dropShadowY) * 0.13f), WHITE);
         // Draw player particles.

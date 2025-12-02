@@ -7,7 +7,7 @@ void Particle::Draw() {
     DrawBillboardRec(cam.camera, texture, Rectangle{(float)frameSize * currentFrame, (float)frameSize * currentFrame, (float)frameSize, (float)frameSize}, position - (Vector3){ 0.0f, 0.15f, 0.0f}, (Vector2){ 1.0f, 1.0f }, WHITE);
     
     if (pauseMenu) return;
-        timer ++;
+    timer ++;
     if (timer != frameSpeed) return;
     timer = 0;
     currentFrame ++;
@@ -53,4 +53,12 @@ void SpawnParticle(Particle& particle) {
     particle.active = true;
     particle.timer = 0;
     particle.currentFrame = 1;
+}
+
+void UnloadParticles() {
+    UnloadTexture(walkDust.texture);
+    UnloadTexture(jumpDust.texture);
+    UnloadTexture(walljumpDust.texture);
+    UnloadTexture(diveDust.texture);
+    UnloadTexture(landDust.texture);
 }

@@ -7,16 +7,6 @@
 #include <fstream>
 #include <filesystem>
 
-class Collectable {
-    public:
-    Vector3 position, size = (Vector3){ 1.0f, 1.0f, 1.0f };
-    BoundingBox hitbox;
-    bool collected = false;
-
-    void PickupCheck();
-    void Draw();
-};
-
 class Area {
     public:
     bool active = false;
@@ -95,7 +85,6 @@ class BugCollectable {
     BoundingBox hitbox = BoundingBox{ position - (size * 3), position + (size * 3)};
     float offsetY = 0.0f, velocity = 0.0f;
 
-    void BugUpdate();
     void PickupCheck();
     void Draw();
 };
@@ -135,6 +124,7 @@ void Draw();
 void DrawParticles();
 void InitParticles();
 void SpawnParticle(Particle& particle);
+void UnloadParticles();
 
 // death.cpp
 extern Sound deathSound;
@@ -147,6 +137,12 @@ void UpdateMovementAxis();
 
 // collectables.cpp
 extern BugCollectable bugCollectables[1];
+
+// buglocationsign.cpp
+extern Texture2D bugSign;
+void InitSigns();
+void DrawBugSign();
+void CurrentBugUpdate();
 
 // dialogue.cpp
 extern bool inDialogue;
