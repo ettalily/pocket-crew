@@ -15,14 +15,17 @@ void Draw() {
         // Draw water.
         DrawPlane(Vector3Zero(), (Vector2){ 200.0f, 200.0f}, BLUE);
         // Draw player
-        if (player.dived) { DrawSphere(player.position, player.radius - 0.1f, BLUE); }
-        else { DrawSphere((Vector3){ player.position.x, player.position.y + player.walkBobOffset, player.position.z }, player.radius, BLUE); }
+        if (player.dived) {
+            DrawSphere(player.position, player.radius - 0.1f, BLUE);
+        } else { 
+            DrawSphere((Vector3){player.position.x, player.position.y + player.walkBobOffset, player.position.z }, player.radius, BLUE);
+        }
         // Draw area models.
         for (auto i : loadedAreas) {
             i->Draw();
         }
         // Draw bug collectables.
-        for (auto i : bugCollectables) {
+        for (auto& i : bugCollectables) {
             i.Draw();
         }
     EndShaderMode();

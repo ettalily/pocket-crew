@@ -70,8 +70,8 @@ void Player::FloorDetect(RayCollision ray) {
     if (velocity.y <= 0 && ray.distance <= radius) {
         touchingGround = true; dived = false; velocity.y = 0.0f; position.y = ray.point.y + radius;
     }
-    if (ray.point.y > dropShadowY)
-    { 
+
+    if (ray.point.y > dropShadowY) { 
         dropShadowY = ray.point.y;
     }
 }

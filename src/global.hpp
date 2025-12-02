@@ -91,8 +91,10 @@ class BugCollectable {
     Vector3 position, cameraOffset;
     std::vector<std::string> dialogue;
     bool collected = false;
-    Vector3 size = (Vector3){ 1.0f, 1.0f, 1.0f };
-    BoundingBox hitbox = BoundingBox{ position - size, position + size };
+    Vector3 size = (Vector3){ 0.4f, 0.4f, 0.4f };
+    BoundingBox hitbox = BoundingBox{ position - (size * 3), position + (size * 3)};
+    float offsetY = 0.0f, velocity = 0.0f;
+
     void BugUpdate();
     void PickupCheck();
     void Draw();
