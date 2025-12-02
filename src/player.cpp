@@ -130,14 +130,12 @@ void Player::Move() {
 
     // Walk bobbing animation.
     if (Vector2Length(dirInput) > 0.0f && touchingGround && Vector3Length(velocity) >= WALK_BOB_REQUIRED_SPEED && wallCoyoteTimer == 0 && ((Vector3Length(velocity + moveVector) >= WALK_SLIDE_CUTOFF_BOUNCE) || (Vector3Length(moveVector) > 0.0f && Vector3Length(velocity) < 0.155f && Vector3Length(velocity) > 0.002f))) {
-        if (walkBobOffset == 0.0f) {
-            walkBobOffsetVelocity = WALK_BOB_STRENGTH * Vector2Length(dirInput);
-        } else {
-            walkBobOffsetVelocity -= WALK_BOB_DECLINE * Vector2Length(dirInput);
-        }
         walkBobOffset += walkBobOffsetVelocity;
         if (walkBobOffset <= 0.0f) {
+            walkBobOffsetVelocity = WALK_BOB_STRENGTH * Vector2Length(dirInput);
             walkBobOffset = 0.0f;
+        } else {
+            walkBobOffsetVelocity -= WALK_BOB_DECLINE * Vector2Length(dirInput);
         }
     } else {
         if (touchingGround && walkBobOffset > 0.0f) {
