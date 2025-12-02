@@ -27,4 +27,3 @@ Build instructions and dependencies can be found in [`INSTALL.md`](https://githu
 
 ## Notes
 - The raylib project can be found [here](https://github.com/raysan5/raylib). I am not involved with this project.
-- The rlights project can be found [here](https://github.com/Bigfoot71/rlights). I am not involved with this project.
