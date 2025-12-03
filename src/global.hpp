@@ -78,7 +78,9 @@ extern Particle walkDust, jumpDust, walljumpDust, diveDust, landDust;
 
 class BugCollectable {
     public:
-    Vector3 position, cameraOffset, size = (Vector3){ 0.4f, 0.4f, 0.4f };;
+    Vector3 position, cameraOffset;
+    Color bugColor;
+    Vector3 size = (Vector3){ 0.4f, 0.4f, 0.4f };;
     std::vector<std::string> dialogue;
     bool collected = false;
     float offsetAmount = 10.0f;

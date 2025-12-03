@@ -4,7 +4,7 @@
 #define BUG_JUMP_GRAVITY 0.007f
 
 BugCollectable bugCollectables[1] = {
-    *new BugCollectable{(Vector3){ -2.22f, 18.63f, 35.20f }, (Vector3){ 5.0f, 1.0f, -5.0f }}
+    *new BugCollectable{(Vector3){ -2.22f, 18.63f, 35.20f }, (Vector3){ 5.0f, 1.0f, -5.0f }, GREEN}
 };
 
 void BugCollectable::PickupCheck() {
@@ -29,5 +29,5 @@ void BugCollectable::Draw() {
         velocity -= BUG_JUMP_GRAVITY;
     }
 
-    DrawCube((Vector3){ position.x, position.y + offsetY, position.z }, size.x, size.y, size.z, GREEN);
+    DrawCube((Vector3){ position.x, position.y + offsetY, position.z }, size.x, size.y, size.z, bugColor);
 }

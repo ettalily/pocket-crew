@@ -38,5 +38,5 @@ void DialogueLogic() {
 void DrawDialogue() {
     if (!inDialogue) return;
     DrawTextureEx(speechBubbleDialogue, (Vector2){ (GetScreenWidth() * 0.5f) - ((GetScreenHeight() * 0.012f) * 0.5f * 128.0f), (GetScreenHeight() * 0.2f) - ((GetScreenHeight() * 0.005f) * 0.5f * 64.0f) }, 0.0f, GetScreenHeight() * 0.012f, WHITE);
-    DrawTextScreenScaled(GetFontDefault(), dialogueText[dialogueLine].c_str(), 0.5f, 0.2f, 0.05f, 0.01f, 0.5f, DARKBLUE);
+    DrawTextScreenScaled(GetFontDefault(), dialogueText[dialogueLine].c_str(), 0.5f, 0.2f, 0.045f, 0.005f, 0.5f, DARKBLUE);
 }
