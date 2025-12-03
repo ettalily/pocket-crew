@@ -24,7 +24,7 @@ cp -r assets ./build/assets
 
 if [ $selection == "1" ]; then
     echo "Building binary for Linux platform..."
-    if g++ -o ./build/pocket ./src/*.hpp ./src/*.cpp ./src/levels/*cpp -I ./lib/raylib/include ./lib/raylib/static/linux/libraylib.a -lGL -lm -lpthread -ldl -lrt -lX11; then
+    if g++ -o ./build/pocket ./src/*.hpp ./src/*.cpp ./src/levels/*cpp -I ./lib/raylib/include ./lib/raylib/static/linux/libraylib.a -lGL -lm -lpthread -ldl -lrt -lX11 -static-libstdc++; then
         echo "Build successful."
     else
         echo "Build failed."
@@ -32,7 +32,7 @@ if [ $selection == "1" ]; then
     fi
 else
     echo "Building binary for Windows platform..."
-    if x86_64-w64-mingw32-g++ -o ./build/pocket.exe ./src/*.hpp ./src/*.cpp ./src/levels/*.cpp -I ./lib/raylib/include ./lib/raylib/static/windows/libraylib.a -lgdi32 -lwinmm; then
+    if x86_64-w64-mingw32-g++ -o ./build/pocket.exe ./src/*.hpp ./src/*.cpp ./src/levels/*.cpp -I ./lib/raylib/include ./lib/raylib/static/windows/libraylib.a -static -lgdi32 -lwinmm; then
         echo "Build successful."
     else
         echo "Build failed."

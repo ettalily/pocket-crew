@@ -27,9 +27,9 @@ To build linux and windows binaries with static raylib libraries, run the build 
 bash build.bash
 ```
 
-### Building with Shared Raylib Libraries
+### Building with Shared Libraries
 
-To use system-installed shared raylib libraries, navigate to the root of the repository and copy the asset files:
+To use system-installed shared raylib and gcc libraries, navigate to the root of the repository and copy the asset files:
 
 ```bash
 mkdir -p build
@@ -55,7 +55,7 @@ To build for windows, run `C:\raylib\w64devkit.exe`, then navigate to the root d
 ```bash
 mkdir -p build
 cp -r assets ./build/assets
-gcc -o ./build/pocket.exe ./src/*.hpp ./src/*.cpp ./src/levels/*.cpp -lraylib -lgdi32 -lwinmm -lstdc++
+gcc -o ./build/pocket.exe ./src/*.hpp ./src/*.cpp ./src/levels/*.cpp -I include -L lib -lraylib -lgdi32 -lwinmm -lstdc++
 ```
 
 ### Using Non-Installed Libraries
@@ -68,5 +68,5 @@ To build for windows, run `w64devkit.exe`, navigate to the root directory of thi
 ```bash
 mkdir -p build
 cp -r assets ./build/assets
-g++ -o ./build/pocket.exe ./src/*.hpp ./src/*.cpp ./src/levels/*.cpp -I ./lib/raylib/include ./lib/raylib/static/windows/libraylib.a -lgdi32 -lwinmm
+g++ -o ./build/pocket.exe ./src/*.hpp ./src/*.cpp ./src/levels/*.cpp -I ./lib/raylib/include ./lib/raylib/static/windows/libraylib.a -lgdi32 -lwinmm -static
 ```
