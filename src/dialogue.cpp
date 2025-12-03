@@ -1,5 +1,7 @@
 #include "global.hpp"
 
+#define CAMERA_SPEED_DIALOGUE 0.1f
+
 Sound dialogueEnterSound, promptAcceptSound, bugCollectSound;
 
 bool inDialogue = false;
@@ -15,7 +17,7 @@ void StartDialogue(std::vector<std::string>* dialogue, bool* collected) {
     dialogueLine = 0;
     dialogueLineCount = dialogueText.size();
     dialogueOverFlag = collected;
-    cam.speed = 0.1f;
+    cam.speed = CAMERA_SPEED_DIALOGUE;
     if (soundOn) PlaySound(dialogueEnterSound);
 }
 
@@ -30,7 +32,7 @@ void DialogueLogic() {
         inDialogue = false;
         pause = false;
         cam.cameraMode = Orbit;
-        cam.speed = 0.35f;
+        cam.speed = CAMERA_SPEED;
         *dialogueOverFlag = true;
         CurrentBugUpdate();
     }

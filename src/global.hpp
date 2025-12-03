@@ -8,6 +8,7 @@
 #include <filesystem>
 
 #define PLAYER_RADIUS 0.5f
+#define CAMERA_SPEED 0.35f
 
 class Area {
     public:
@@ -61,7 +62,7 @@ class GameCamera {
     CameraSettings cameraMode = Orbit;
     Vector3 desiredPosition, orbits, lookDirection, staticOffset;
     bool smoothing = true;
-    float offset = 20.0f, speed = 0.35f;
+    float offset = 20.0f, speed = CAMERA_SPEED;
     void CameraInit();
     void Update();
 };
