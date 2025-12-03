@@ -5,16 +5,18 @@
 
 #define WALK_DUST_PARTICLE_FREQUENCY 3
 #define WALL_SLIDE_PARTICLE_FREQUENCY 12
-#define WALK_DUST_REQUIRED_SPEED 0.05
-#define WALK_SLIDE_CUTOFF_DUST 1
-#define WALK_SLIDE_CUTOFF_BOUNCE 0.95
+#define WALK_DUST_REQUIRED_SPEED 0.05f
+#define WALK_SLIDE_CUTOFF_DUST 1.0f
+#define WALK_SLIDE_CUTOFF_BOUNCE 0.95f
 
-#define WALK_BOB_REQUIRED_SPEED 0.02
-#define WALK_BOB_STRENGTH 0.03
-#define WALK_BOB_DECLINE 0.0037
+#define WALK_BOB_REQUIRED_SPEED 0.02f
+#define WALK_BOB_STRENGTH 0.03f
+#define WALK_BOB_DECLINE 0.0037f
 
 #define PLAYER_HITBOX_SCALE 0.2f
 #define PLAYER_LOGIC_BOX_SIZE 8.0f
+
+#define PLAYER_DIVE_VELOCITY_MIN 0.1f
 
 Vector3 wallJumpDir;
 float slopeMovementModifier = 1.0f;
@@ -182,6 +184,7 @@ void Player::JumpLogic() {
                     if (velocity.y < -wallSlideVelocity) { 
                         velocity.y = -wallSlideVelocity; 
                         wallDustKickUpTimer ++;
+                        dived = false;
                         if (wallDustKickUpTimer >= WALL_SLIDE_PARTICLE_FREQUENCY) {
                             wallDustKickUpTimer = 0;
                             SpawnParticle(walkDust);
@@ -217,7 +220,7 @@ void Player::JumpLogic() {
 }
 
 void Player::Dive() {
-    if (!dived && !touchingGround && (IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_UP) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_LEFT) || IsKeyPressed(KEY_J))) {
+    if (!dived && !touchingGround && Vector3Length(velocity) >= PLAYER_DIVE_VELOCITY_MIN && (IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_UP) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_LEFT) || IsKeyPressed(KEY_J))) {
         dived = true;
         if (soundOn) { PlaySound(diveSound); }
         SpawnParticle(diveDust);
