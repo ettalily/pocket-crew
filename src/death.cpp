@@ -4,7 +4,7 @@
 
 Sound deathSound;
 
-Vector3 lastSafeLocation = (Vector3){ 0.0f, 3.0f, 0.0f };
+Vector3 lastSafeLocation = (Vector3){ 10.351066f, 3.706548f, 55.418526f };
 unsigned int lslTimer= 0;
 
 void OOBCheck() {

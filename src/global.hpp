@@ -33,13 +33,13 @@ enum CameraSettings {
 
 class Player {
     public:
-    Vector3 position = (Vector3){ 0.0f, 3.0f, 0.0f },
+    Vector3 position = (Vector3){ 10.351066f, 0.706548f, 55.418526f },
     velocity = Vector3Zero(), 
-    direction = Vector3Zero();
+    direction = (Vector3){ 1.0f, 0.0f, 0.0f };
     BoundingBox playerLogicBox, playerHitbox;
     float walkBobOffset = 0.0f;
     unsigned int coyoteTimer = 0, wallCoyoteTimer = 0;
-    bool touchingGround = false, jumpPressHeld = false, dived = false, touchingGroundAtStart = false;
+    bool touchingGround = true, jumpPressHeld = false, dived = false, touchingGroundAtStart = false;
     void Update(); // player.cpp
     void Move(); // player.cpp
     void Dive(); // player.cpp
@@ -83,6 +83,7 @@ class BugCollectable {
     public:
     Vector3 position, cameraOffset;
     Color bugColor;
+    float jumpPower, gravity;
     Vector3 size = (Vector3){ 0.3f, 0.3f, 0.3f };;
     std::vector<std::string> dialogue;
     bool collected = false;
@@ -141,7 +142,8 @@ extern Vector2 dirInput;
 void UpdateMovementAxis();
 
 // collectables.cpp
-extern BugCollectable bugCollectables[2];
+extern BugCollectable* currentBug;
+extern BugCollectable bugCollectables[3];
 
 // buglocationsign.cpp
 extern Texture2D bugSign;

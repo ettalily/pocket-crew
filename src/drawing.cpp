@@ -13,7 +13,8 @@ void Draw() {
     BeginMode3D(cam.camera);
     BeginShaderMode(shader);
         // Draw water.
-        DrawPlane(Vector3Zero(), (Vector2){ 2000.0f, 2000.0f}, BLUE);
+        DrawPlane((Vector3){ 0.0f, -1.0f, 0.0f }, (Vector2){ 4000.0f, 4000.0f}, BLUE);
+        DrawPlane(Vector3Zero(), (Vector2){ 200.0f, 200.0f}, BLUE);
         // Draw player
         if (player.dived) {
             DrawSphere(player.position, PLAYER_RADIUS - 0.1f, BLUE);

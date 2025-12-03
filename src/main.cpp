@@ -7,6 +7,7 @@ bool pause = false;
 bool pauseMenu = false;
 bool closeGame = false;
 bool musicOn, soundOn, showFps, borderlessFullscreen, devKeybinds;
+Vector3 devPosition = Vector3Zero() + (Vector3){ 0.0f, 200.0f, 0.0f };
 
 float dropShadowY;
 Model dropShadow;
@@ -46,6 +47,9 @@ int main() {
     // Load dialogue text.
     DialogueInit();
 
+    // Sets initial current bug value.
+    CurrentBugUpdate();
+
     // Load the starting area
     firstIsland.Load();
 
@@ -57,7 +61,10 @@ int main() {
         // Toggle borderless fullscreen.
         if (IsKeyPressed(KEY_EQUAL)) { ToggleBorderlessWindowed(); borderlessFullscreen = !borderlessFullscreen; if (borderlessFullscreen) { CfgUpdate("preferences.cfg", "borderless_fullscreen", "1"); } else { CfgUpdate("preferences.cfg", "borderless_fullscreen", "0"); } }
 
-        if (devKeybinds && IsKeyPressed(KEY_M)) { std::cout << std::to_string(player.position.x) + " " + std::to_string(player.position.y) + " " + std::to_string(player.position.z) << std::endl; }
+        // Developer Keybinds.
+        if (devKeybinds && IsKeyPressed(KEY_M)) { std::cout << std::to_string(player.position.x) + "f, " + std::to_string(player.position.y) + "f, " + std::to_string(player.position.z) + "f " << "\n"; }
+        if (devKeybinds && IsKeyPressed(KEY_PERIOD)) { player.position = devPosition; }
+        if (devKeybinds && IsKeyPressed(KEY_COMMA)) { devPosition = player.position; }
 
         // Pause toggle.
         if (IsKeyPressed(KEY_ENTER) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_MIDDLE_RIGHT)) { pauseMenu = !pauseMenu; }

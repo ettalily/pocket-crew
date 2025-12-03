@@ -3,13 +3,16 @@
 #define BUG_JUMP_POWER 0.11f
 #define BUG_JUMP_GRAVITY 0.007f
 
-BugCollectable bugCollectables[2] = {
-    *new BugCollectable{(Vector3){ -1.76f, 16.46f, 38.40f }, (Vector3){ 5.0f, 1.0f, -5.0f }, GREEN},
-    *new BugCollectable{(Vector3){ -22.18f, 73.38f, 7.12f }, (Vector3){ 5.0f, 1.0f, 0.0f }, YELLOW}
+BugCollectable* currentBug;
+
+BugCollectable bugCollectables[3] = {
+    *new BugCollectable{(Vector3){ -1.989857f, 16.181393f, 37.484776f }, (Vector3){ 5.0f, 1.0f, -5.0f }, GREEN, 0.11f, 0.007f},
+    *new BugCollectable{(Vector3){ -15.118676f, 92.578828f, 12.186043f }, (Vector3){ 1.0f, 1.0f, -7.0f }, YELLOW, 0.2f, 0.05f},
+    *new BugCollectable{(Vector3){ -27.376028f, 131.887878f, 30.528135f }, (Vector3){ 2.0f, 1.0f, -6.0f }, DARKGREEN, 0.02f, 0.007f}
 };
 
 void BugCollectable::PickupCheck() {
-    if (collected || pause) return;
+    if (collected || pause || this != currentBug) return;
     if (!CheckCollisionBoxes(player.playerHitbox, hitbox)) return;
 
     pause = true;
@@ -24,10 +27,10 @@ void BugCollectable::Draw() {
     
     offsetY += velocity;
     if (offsetY <= 0.0f) {
-        velocity = BUG_JUMP_POWER;
+        velocity = jumpPower;
         offsetY = 0.0f;
     } else {
-        velocity -= BUG_JUMP_GRAVITY;
+        velocity -= gravity;
     }
 
     DrawCube((Vector3){ position.x, position.y + offsetY, position.z }, size.x, size.y, size.z, bugColor);

@@ -6,7 +6,6 @@
 
 Texture2D bugSign;
 int currentFrame = 1, frameTimer = 0;
-BugCollectable* currentBug;
 bool enabled = true;
 
 void InitSigns() {
