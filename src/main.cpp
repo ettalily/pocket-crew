@@ -108,6 +108,7 @@ int main() {
     UnloadSound(deathSound);
     UnloadSound(dialogueEnterSound);
     UnloadSound(promptAcceptSound);
+    UnloadSound(bugCollectSound);
 
     // Unloads other assets and resources.
     UnloadTexture(speechBubbleDialogue);

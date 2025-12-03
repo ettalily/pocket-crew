@@ -29,6 +29,7 @@ void AudioInit() {
     slideSound = LoadSound("assets/sound/slide.wav");
     dialogueEnterSound = LoadSound("assets/sound/dialogueenter.wav");
     promptAcceptSound = LoadSound("assets/sound/promptaccept.wav");
+    bugCollectSound = LoadSound("assets/sound/bugcollect.wav");
 }
 
 void DialogueInit() {

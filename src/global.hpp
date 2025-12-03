@@ -149,7 +149,7 @@ void DrawBugSign();
 void CurrentBugUpdate();
 
 // dialogue.cpp
-extern Sound dialogueEnterSound, promptAcceptSound;
+extern Sound dialogueEnterSound, promptAcceptSound, bugCollectSound;
 extern bool inDialogue;
 extern Texture2D speechBubbleDialogue;
 void StartDialogue(std::vector<std::string>* dialogue, bool* collected);

@@ -1,6 +1,6 @@
 #include "global.hpp"
 
-Sound dialogueEnterSound, promptAcceptSound;
+Sound dialogueEnterSound, promptAcceptSound, bugCollectSound;
 
 bool inDialogue = false;
 Texture2D speechBubbleDialogue;
@@ -24,6 +24,7 @@ void DialogueLogic() {
     if (IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_DOWN) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT) || IsKeyPressed(KEY_K) || IsKeyPressed(KEY_H)) {
         if (soundOn) PlaySound(promptAcceptSound);
         dialogueLine++;
+        if (dialogueLine == dialogueLineCount - 1) PlaySound(bugCollectSound);
         if (dialogueLine != dialogueLineCount) return;
 
         inDialogue = false;
