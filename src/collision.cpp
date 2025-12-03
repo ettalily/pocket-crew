@@ -47,21 +47,39 @@ void Player::CollisionCheck(Mesh mesh, Model model) {
     WallDetect(walldirforwardright, direction, (Vector3){ -direction.z, direction.y, direction.x } * PLAYER_RADIUS * 0.75f);
     RayCollision walldirforwardleft = GetRayCollisionMesh(Ray{ position - ((Vector3){ -direction.z, direction.y, direction.x } * PLAYER_RADIUS * 0.75f), direction }, mesh, model.transform);
     WallDetect(walldirforwardleft, direction, (Vector3){ -direction.z, direction.y, direction.x } * PLAYER_RADIUS * -0.75f);
-    RayCollision walldirforwardup = GetRayCollisionMesh(Ray{ position + (Vector3){ 0.0f, PLAYER_RADIUS * 0.5f, 0.0f }, direction }, mesh, model.transform);
+    RayCollision walldirforwardup = GetRayCollisionMesh(Ray{ position + (Vector3){ 0.0f, PLAYER_RADIUS * 0.75f, 0.0f }, direction }, mesh, model.transform);
     WallDetect(walldirforwardup, direction, Vector3Zero());
-    RayCollision walldirforwarddown = GetRayCollisionMesh(Ray{ position - (Vector3){ 0.0f, PLAYER_RADIUS * 0.5f, 0.0f }, direction }, mesh, model.transform);
+    RayCollision walldirforwarddown = GetRayCollisionMesh(Ray{ position - (Vector3){ 0.0f, PLAYER_RADIUS * 0.75f, 0.0f }, direction }, mesh, model.transform);
     WallDetect(walldirforwarddown, direction, Vector3Zero());
 
     RayCollision walldirright = GetRayCollisionMesh(Ray{ position, (Vector3){ -direction.z, direction.y, direction.x } }, mesh, model.transform);
     WallDetect(walldirright, (Vector3){ -direction.z, direction.y, direction.x }, Vector3Zero());
+    RayCollision walldirrightfront = GetRayCollisionMesh(Ray{ position + (direction * PLAYER_RADIUS * 0.75f), (Vector3){ -direction.z, direction.y, direction.x } }, mesh, model.transform);
+    WallDetect(walldirrightfront, (Vector3){ -direction.z, direction.y, direction.x }, (direction * PLAYER_RADIUS * 0.75f));
+    RayCollision walldirrighttop = GetRayCollisionMesh(Ray{ position + (Vector3){ 0.0f, PLAYER_RADIUS * 0.75f, 0.0f }, (Vector3){ -direction.z, direction.y, direction.x } }, mesh, model.transform);
+    WallDetect(walldirrighttop, (Vector3){ -direction.z, direction.y, direction.x }, Vector3Zero());
+    
     RayCollision walldirleft = GetRayCollisionMesh(Ray{ position, (Vector3){ -direction.z, direction.y, direction.x } * -1 }, mesh, model.transform);
     WallDetect(walldirleft, (Vector3){ -direction.z, direction.y, direction.x } * -1, Vector3Zero());
+    RayCollision walldirleftfront = GetRayCollisionMesh(Ray{ position + (direction * PLAYER_RADIUS * 0.75f), (Vector3){ -direction.z, direction.y, direction.x } * -1 }, mesh, model.transform);
+    WallDetect(walldirleftfront, (Vector3){ -direction.z, direction.y, direction.x } * -1, (direction * PLAYER_RADIUS * 0.75f));
+    RayCollision walldirlefttop = GetRayCollisionMesh(Ray{ position + (Vector3){ 0.0f, PLAYER_RADIUS * 0.75f, 0.0f }, (Vector3){ -direction.z, direction.y, direction.x } * -1 }, mesh, model.transform);
+    WallDetect(walldirlefttop, (Vector3){ -direction.z, direction.y, direction.x } * -1, Vector3Zero());
+    
     RayCollision walldirback = GetRayCollisionMesh(Ray{ position, direction * -1 }, mesh, model.transform);
     WallDetect(walldirback, direction * -1, Vector3Zero());
 
     // Ceiling Collision. Raycasts once straight above the center of the player.
     RayCollision topcenter = GetRayCollisionMesh(Ray{ position, (Vector3){ 0.0f, 1.0f, 0.0f } }, mesh, model.transform);
     CeilingDetect(topcenter);
+    RayCollision topdirforward = GetRayCollisionMesh(Ray{ position + (direction * PLAYER_RADIUS * 0.75f), (Vector3){ 0.0f, 1.0f, 0.0f } }, mesh, model.transform);
+    CeilingDetect(topdirforward);
+    RayCollision topdirback = GetRayCollisionMesh(Ray{ position - (direction * PLAYER_RADIUS * 0.75f), (Vector3){ 0.0f, 1.0f, 0.0f } }, mesh, model.transform);
+    CeilingDetect(topdirback);
+    RayCollision topdirright = GetRayCollisionMesh(Ray{ position + ((Vector3){ -direction.z, direction.y, direction.x } * PLAYER_RADIUS * 0.75f), (Vector3){ 0.0f, 1.0f, 0.0f } }, mesh, model.transform);
+    CeilingDetect(topdirright);
+    RayCollision topdirleft = GetRayCollisionMesh(Ray{ position - ((Vector3){ -direction.z, direction.y, direction.x } * PLAYER_RADIUS * 0.75f), (Vector3){ 0.0f, 1.0f, 0.0f } }, mesh, model.transform);
+    CeilingDetect(topdirleft);
 }
 
 void Player::FloorDetect(RayCollision ray) {
