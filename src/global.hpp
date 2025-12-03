@@ -83,11 +83,11 @@ class BugCollectable {
     public:
     Vector3 position, cameraOffset;
     Color bugColor;
-    Vector3 size = (Vector3){ 0.4f, 0.4f, 0.4f };;
+    Vector3 size = (Vector3){ 0.3f, 0.3f, 0.3f };;
     std::vector<std::string> dialogue;
     bool collected = false;
     float offsetAmount = 10.0f;
-    BoundingBox hitbox = BoundingBox{ position - (size * 3), position + (size * 3)};
+    BoundingBox hitbox = BoundingBox{ position - (size * 5), position + (size * 5)};
     float offsetY = 0.0f, velocity = 0.0f;
 
     void PickupCheck();
@@ -141,7 +141,7 @@ extern Vector2 dirInput;
 void UpdateMovementAxis();
 
 // collectables.cpp
-extern BugCollectable bugCollectables[1];
+extern BugCollectable bugCollectables[2];
 
 // buglocationsign.cpp
 extern Texture2D bugSign;
