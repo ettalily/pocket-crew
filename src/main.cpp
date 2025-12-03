@@ -6,7 +6,7 @@
 bool pause = false;
 bool pauseMenu = false;
 bool closeGame = false;
-bool musicOn, soundOn, showFps, borderlessFullscreen;
+bool musicOn, soundOn, showFps, borderlessFullscreen, devKeybinds;
 
 float dropShadowY;
 Model dropShadow;
@@ -57,7 +57,7 @@ int main() {
         // Toggle borderless fullscreen.
         if (IsKeyPressed(KEY_EQUAL)) { ToggleBorderlessWindowed(); borderlessFullscreen = !borderlessFullscreen; if (borderlessFullscreen) { CfgUpdate("preferences.cfg", "borderless_fullscreen", "1"); } else { CfgUpdate("preferences.cfg", "borderless_fullscreen", "0"); } }
 
-        if (IsKeyPressed(KEY_M)) { std::cout << std::to_string(player.position.x) + " " + std::to_string(player.position.y) + " " + std::to_string(player.position.z) << std::endl; }
+        if (devKeybinds && IsKeyPressed(KEY_M)) { std::cout << std::to_string(player.position.x) + " " + std::to_string(player.position.y) + " " + std::to_string(player.position.z) << std::endl; }
 
         // Pause toggle.
         if (IsKeyPressed(KEY_ENTER) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_MIDDLE_RIGHT)) { pauseMenu = !pauseMenu; }

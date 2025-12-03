@@ -100,7 +100,7 @@ void InitCfg();
 
 // main.cpp
 extern bool closeGame;
-extern bool musicOn, soundOn, showFps, borderlessFullscreen;
+extern bool musicOn, soundOn, showFps, borderlessFullscreen, devKeybinds;
 extern float dropShadowY;
 extern Model dropShadow;
 extern bool pause, pauseMenu;

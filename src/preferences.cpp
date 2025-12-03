@@ -1,6 +1,18 @@
 #include "global.hpp"
 
-const std::string preferencesDefault[8] = {"[Settings]", "music = 1", "sound = 1", "show_fps = 0", "", "[Display]", "borderless_fullscreen = 0", "msaa_4x = 1"};
+const std::string preferencesDefault[11] = {
+    "[Settings]",
+    "music = 1",
+    "sound = 1",
+    "show_fps = 0",
+    "",
+    "[Display]",
+    "borderless_fullscreen = 0",
+    "msaa_4x = 1",
+    "",
+    "[Other]",
+    "developer_keybinds = 0"
+};
 
 void InitCfg() {
     // Create preferences.cfg if it doesn't exist.
@@ -64,6 +76,13 @@ void InitCfg() {
                 borderlessFullscreen = false;
             } else {
                 borderlessFullscreen = true;
+            }
+        }
+        if (currentLine.find("developer_keybinds") != std::string::npos) {
+            if (currentLine.substr(currentLine.find("=") + 2, currentLine.find("=") + 3) == "0") {
+                devKeybinds = false;
+            } else {
+                devKeybinds = true;
             }
         }
         
