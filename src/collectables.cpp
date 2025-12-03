@@ -4,7 +4,7 @@
 #define BUG_JUMP_GRAVITY 0.007f
 
 BugCollectable bugCollectables[1] = {
-    *new BugCollectable{(Vector3){ -2.22f, 18.63f, 35.20f }, (Vector3){ 5.0f, 1.0f, -5.0f }, GREEN}
+    *new BugCollectable{(Vector3){ -1.04f, 17.81f, 39.63f }, (Vector3){ 5.0f, 1.0f, -5.0f }, GREEN}
 };
 
 void BugCollectable::PickupCheck() {
