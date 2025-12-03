@@ -16,9 +16,9 @@ void Draw() {
         DrawPlane(Vector3Zero(), (Vector2){ 200.0f, 200.0f}, BLUE);
         // Draw player
         if (player.dived) {
-            DrawSphere(player.position, player.radius - 0.1f, BLUE);
+            DrawSphere(player.position, PLAYER_RADIUS - 0.1f, BLUE);
         } else { 
-            DrawSphere((Vector3){player.position.x, player.position.y + player.walkBobOffset, player.position.z }, player.radius, BLUE);
+            DrawSphere((Vector3){player.position.x, player.position.y + player.walkBobOffset, player.position.z }, PLAYER_RADIUS, BLUE);
         }
         // Draw area models.
         for (auto i : loadedAreas) {

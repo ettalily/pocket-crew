@@ -7,6 +7,8 @@
 #include <fstream>
 #include <filesystem>
 
+#define PLAYER_RADIUS 0.5f
+
 class Area {
     public:
     bool active = false;
@@ -34,7 +36,7 @@ class Player {
     velocity = Vector3Zero(), 
     direction = Vector3Zero();
     BoundingBox playerLogicBox, playerHitbox;
-    float radius = 0.5f, acceleration = 0.018f, decceleration = 0.006f, maxVelocity = 0.17f, gravity = 0.01f, maxFallSpeed = 0.5f, jumpPower = 0.25f, wallJumpHorPower = 0.17f, wallSlideVelocity = 0.09f, jumpReleasePower = 0.045f, airAcceleration = 0.006f, airDecceleration = 0.0015, divePowerMult = 1.6f, diveMaxSpeed = 0.35f, walkBobOffset = 0.0f;
+    float walkBobOffset = 0.0f;
     unsigned int coyoteTimer = 0, wallCoyoteTimer = 0;
     bool touchingGround = false, jumpPressHeld = false, dived = false, touchingGroundAtStart = false;
     void Update(); // player.cpp

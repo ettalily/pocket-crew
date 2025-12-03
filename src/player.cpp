@@ -18,6 +18,20 @@
 
 #define PLAYER_DIVE_VELOCITY_MIN 0.1f
 
+#define PLAYER_GROUNDED_ACCELERATION 0.018f
+#define PLAYER_GROUNDED_DECCELERATION 0.006f
+#define PLAYER_MAX_VELOCITY 0.17f
+#define PLAYER_GRAVITY 0.01f
+#define PLAYER_MAX_FALL_SPEED 0.5f
+#define PLAYER_JUMP_POWER 0.25f
+#define PLAYER_WALL_JUMP_HOR_POWER 0.17f
+#define PLAYER_WALL_SLIDE_VELOCITY 0.09f
+#define PLAYER_JUMP_RELEASE_POWER 0.045f
+#define PLAYER_AIR_ACCELERATION 0.006f
+#define PLAYER_AIR_DECCELERATION 0.0015f
+#define PLAYER_DIVE_MULTIPLIER 1.6f
+#define PLAYER_DIVE_MAX_SPEED 0.35f 
+
 Vector3 wallJumpDir;
 float slopeMovementModifier = 1.0f;
 
@@ -36,7 +50,7 @@ void Player::Update() {
     ApplyVelocity();
     Collision();
     playerLogicBox = BoundingBox{ position - (Vector3){ PLAYER_LOGIC_BOX_SIZE, PLAYER_LOGIC_BOX_SIZE, PLAYER_LOGIC_BOX_SIZE }, position + (Vector3){ PLAYER_LOGIC_BOX_SIZE, PLAYER_LOGIC_BOX_SIZE, PLAYER_LOGIC_BOX_SIZE } };
-    playerHitbox = BoundingBox{ position - (Vector3){ radius * PLAYER_HITBOX_SCALE, radius * PLAYER_HITBOX_SCALE, radius * PLAYER_HITBOX_SCALE }, position + (Vector3){ radius * PLAYER_HITBOX_SCALE, radius * PLAYER_HITBOX_SCALE, radius * PLAYER_HITBOX_SCALE } };
+    playerHitbox = BoundingBox{ position - (Vector3){ PLAYER_RADIUS * PLAYER_HITBOX_SCALE, PLAYER_RADIUS * PLAYER_HITBOX_SCALE, PLAYER_RADIUS * PLAYER_HITBOX_SCALE }, position + (Vector3){ PLAYER_RADIUS * PLAYER_HITBOX_SCALE, PLAYER_RADIUS * PLAYER_HITBOX_SCALE, PLAYER_RADIUS * PLAYER_HITBOX_SCALE } };
     
     if (!touchingGroundAtStart && touchingGround && coyoteTimer == 0) {
         if (soundOn) PlaySound(landSound);
@@ -46,9 +60,9 @@ void Player::Update() {
 
 // Applies gravity within the max fall speed.
 void Player::Gravity() {
-    velocity.y -= gravity; 
-    if (velocity.y <= -maxFallSpeed) {
-        velocity.y = -maxFallSpeed;
+    velocity.y -= PLAYER_GRAVITY; 
+    if (velocity.y <= -PLAYER_MAX_FALL_SPEED) {
+        velocity.y = -PLAYER_MAX_FALL_SPEED;
     }
 }
 
@@ -62,34 +76,34 @@ void Player::Move() {
     Vector3 moveVector = (GetForwardNormal() * dirInput.y) + (Vector3Perpendicular(GetForwardNormal()) * dirInput.x);
     // Caps max input magnitude at 1 if it exceeds that. Applies it differently to the velocity depending on whether the player is touching the ground or not.
     if (Vector2Length(dirInput) >= 1) { 
-        if (Vector2Length((Vector2){ velocity.x, velocity.z }) < maxVelocity) { 
+        if (Vector2Length((Vector2){ velocity.x, velocity.z }) < PLAYER_MAX_VELOCITY) { 
             if (touchingGround) {
-                velocity += moveVector * acceleration * slopeMovementModifier;
+                velocity += moveVector * PLAYER_GROUNDED_ACCELERATION * slopeMovementModifier;
             } else { 
-                velocity += moveVector * airAcceleration;
+                velocity += moveVector * PLAYER_AIR_ACCELERATION;
             } 
         }
     // Max velocity scales with input magnitude. Applies it differently to the velocity depending on whether the player is touching the ground or not.
     } else { 
-        if (Vector2Length((Vector2){ velocity.x, velocity.z }) < maxVelocity * Vector2Length(dirInput)) {
+        if (Vector2Length((Vector2){ velocity.x, velocity.z }) < PLAYER_MAX_VELOCITY * Vector2Length(dirInput)) {
             if (touchingGround) {
-                velocity += moveVector * acceleration * slopeMovementModifier;
+                velocity += moveVector * PLAYER_GROUNDED_ACCELERATION * slopeMovementModifier;
             } else {
-                velocity += moveVector * airAcceleration;
+                velocity += moveVector * PLAYER_AIR_ACCELERATION;
             }
         }
     }
 
     // Applies drag/friction. Sets horizontal velocity to 0 if one application of drag would push the object past 0. Different amounts are applied depending on whether the player is touching the ground.
     if (touchingGround) {
-        if (Vector2Length((Vector2){ velocity.x, velocity.z }) >= decceleration) {
-            velocity -= Vector3Normalize((Vector3){ velocity.x, 0.0f, velocity.z }) * decceleration;
+        if (Vector2Length((Vector2){ velocity.x, velocity.z }) >= PLAYER_GROUNDED_DECCELERATION) {
+            velocity -= Vector3Normalize((Vector3){ velocity.x, 0.0f, velocity.z }) * PLAYER_GROUNDED_DECCELERATION;
         } else {
             velocity.x = 0.0f; velocity.z = 0.0f;
         }
     } else {
-        if (Vector2Length((Vector2){ velocity.x, velocity.z }) >= airDecceleration) {
-            velocity -= Vector3Normalize((Vector3){ velocity.x, 0.0f, velocity.z }) * airDecceleration;
+        if (Vector2Length((Vector2){ velocity.x, velocity.z }) >= PLAYER_AIR_DECCELERATION) {
+            velocity -= Vector3Normalize((Vector3){ velocity.x, 0.0f, velocity.z }) * PLAYER_AIR_DECCELERATION;
         } else {
             velocity.x = 0.0f; velocity.z = 0.0f;
         }
@@ -152,7 +166,7 @@ void Player::Move() {
 
 void Player::JumpLogic() {
     // Jump hold difference.
-    if ((IsGamepadButtonReleased(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT) || IsGamepadButtonReleased(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_DOWN) || IsKeyReleased(KEY_K) || IsKeyReleased(KEY_H)) && jumpPressHeld && !dived) { jumpPressHeld = false; if (velocity.y > 0) { velocity.y -= jumpReleasePower; } }
+    if ((IsGamepadButtonReleased(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT) || IsGamepadButtonReleased(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_DOWN) || IsKeyReleased(KEY_K) || IsKeyReleased(KEY_H)) && jumpPressHeld && !dived) { jumpPressHeld = false; if (velocity.y > 0) { velocity.y -= PLAYER_JUMP_RELEASE_POWER; } }
 
     // Sets and increments the coyote timer.
     if (touchingGround) { 
@@ -179,10 +193,10 @@ void Player::JumpLogic() {
                 // Raycasts in the stick input direction and the player facing direction.
                 RayCollision wallCheckInputDir = GetRayCollisionMesh(Ray{(Vector3){ position.x, position.y, position.z }, (GetForwardNormal() * dirInput.y) + (Vector3Perpendicular(GetForwardNormal()) * dirInput.x) }, i->model.meshes[m], i->model.transform);
                 RayCollision wallCheckFacingDir = GetRayCollisionMesh(Ray{position, direction }, i->model.meshes[m], i->model.transform);
-                if ((wallCheckInputDir.hit && abs(wallCheckInputDir.normal.y) <= 0.2f && wallCheckInputDir.distance <= radius + 0.2f) && (wallCheckFacingDir.hit && abs(wallCheckFacingDir.normal.y) <= 0.2f && wallCheckFacingDir.distance <= radius + 0.2f)) {
+                if ((wallCheckInputDir.hit && abs(wallCheckInputDir.normal.y) <= 0.2f && wallCheckInputDir.distance <= PLAYER_RADIUS + 0.2f) && (wallCheckFacingDir.hit && abs(wallCheckFacingDir.normal.y) <= 0.2f && wallCheckFacingDir.distance <= PLAYER_RADIUS + 0.2f)) {
                     // Wall slide.
-                    if (velocity.y < -wallSlideVelocity) { 
-                        velocity.y = -wallSlideVelocity; 
+                    if (velocity.y < -PLAYER_WALL_SLIDE_VELOCITY) { 
+                        velocity.y = -PLAYER_WALL_SLIDE_VELOCITY; 
                         wallDustKickUpTimer ++;
                         dived = false;
                         if (wallDustKickUpTimer >= WALL_SLIDE_PARTICLE_FREQUENCY) {
@@ -200,19 +214,19 @@ void Player::JumpLogic() {
         }
         // Wall jumping.
         if (wallCoyoteTimer != 0 && (IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_DOWN) || IsKeyPressed(KEY_K) || IsKeyPressed(KEY_H))) {
-            velocity.y = jumpPower;
+            velocity.y = PLAYER_JUMP_POWER;
             jumpPressHeld = true; 
             dived = false; 
             wallCoyoteTimer = 0; 
-            velocity.x = wallJumpDir.x * wallJumpHorPower;
-            velocity.z = wallJumpDir.z * wallJumpHorPower;
+            velocity.x = wallJumpDir.x * PLAYER_WALL_JUMP_HOR_POWER;
+            velocity.z = wallJumpDir.z * PLAYER_WALL_JUMP_HOR_POWER;
             if (soundOn) PlaySound(jumpSound);
             SpawnParticle(walljumpDust);
         }
     // Jumping on the ground.
     } else if ((touchingGround || coyoteTimer != 0) && (IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_DOWN) || IsKeyPressed(KEY_K) || IsKeyPressed(KEY_H)) ) {
         touchingGround = false;
-        velocity.y = jumpPower;
+        velocity.y = PLAYER_JUMP_POWER;
         coyoteTimer = 0; jumpPressHeld = true;
         if (soundOn) { PlaySound(jumpSound); }
         SpawnParticle(jumpDust);
@@ -220,15 +234,15 @@ void Player::JumpLogic() {
 }
 
 void Player::Dive() {
-    if (!dived && !touchingGround && Vector3Length(velocity) >= PLAYER_DIVE_VELOCITY_MIN && (IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_UP) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_LEFT) || IsKeyPressed(KEY_J))) {
+    if (!dived && !touchingGround && Vector3Length((Vector3){ velocity.x, 0.0f, velocity.z }) >= PLAYER_DIVE_VELOCITY_MIN && (IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_UP) || IsGamepadButtonPressed(gamepadID, GAMEPAD_BUTTON_RIGHT_FACE_LEFT) || IsKeyPressed(KEY_J))) {
         dived = true;
         if (soundOn) { PlaySound(diveSound); }
         SpawnParticle(diveDust);
         // Applies the dive values.
-        velocity = (Vector3){ velocity.x * divePowerMult, velocity.y, velocity.z * divePowerMult };
+        velocity = (Vector3){ velocity.x * PLAYER_DIVE_MULTIPLIER, velocity.y, velocity.z * PLAYER_DIVE_MULTIPLIER };
         // Caps the max horizontal speed of a dive.
-        if (Vector3Length((Vector3){ velocity.x, 0.0f, velocity.z }) > diveMaxSpeed) {
-            velocity = (Vector3){ direction.x * diveMaxSpeed, velocity.y, direction.z * diveMaxSpeed };
+        if (Vector3Length((Vector3){ velocity.x, 0.0f, velocity.z }) > PLAYER_DIVE_MAX_SPEED) {
+            velocity = (Vector3){ direction.x * PLAYER_DIVE_MAX_SPEED, velocity.y, direction.z * PLAYER_DIVE_MAX_SPEED };
         }       
     }
 }
