@@ -10,9 +10,9 @@
 
 **Documentation Link:** https://github.com/ettalily/pocket-crew/blob/main/INSTALL.md
 
-**Build Link:** https://github.com/ettalily/pocket-crew/releases
+**Build Link:** https://github.com/ettalily/pocket-crew/releases/tag/Submission
 
-**Video Demonstration Link:** 
+**Video Demonstration Link:** https://youtu.be/uGnA6cjl57Y
 
 <img src="https://github.com/ettalily/pocket-crew/blob/main/dev-commentary/ss1.png?raw=true">
 
@@ -173,9 +173,12 @@ What the user tests demonstrated were that the controls had been tweaked rather 
 ## Outcome
 
 ### Final Build
-Releases for linux and windows platforms can be found on the [GitHub Releases](https://github.com/ettalily/pocket-crew/releases) page.
+Releases for linux and windows platforms can be found on the [GitHub Releases](https://github.com/ettalily/pocket-crew/releases/tag/Submission) page.
 
 ### Video Demonstration
+[Pocket Crew Showcase](https://youtu.be/uGnA6cjl57Y).
+
+*Fig 5. Kennedy, R. 2025. Pocket Crew Showcase Video*
 
 ## Critical Reflection
 ### Research Effectiveness
@@ -238,3 +241,5 @@ Fig 2. Nintendo. *Super Mario 64 Screenshot*. Avaliable at: https://www.nintendo
 Fig 3. Vicarious Visions (2017). *Crash Bandicoot N. Sane Trilogy Screenshot.* Available at: https://www.crashbandicoot.com/nsane-trilogy/gallery/image-16 (Accessed 1/12/25).
 
 Fig 4. Kennedy, R. (2025). *Pocket Crew Conversation Screenshot*.
+
+Fig 5. Kennedy, R (2025). *Pocket Crew Showcase Video* [Video]. 
