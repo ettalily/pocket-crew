@@ -6,6 +6,7 @@ const char *firstIslandPath = "assets/models/firstIsland.glb";
 void Logic() {
     bugCollectables[0].PickupCheck();
     bugCollectables[1].PickupCheck();
+    bugCollectables[2].PickupCheck();
 }
 
 void FirstIslandInit() {
