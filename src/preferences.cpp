@@ -1,13 +1,12 @@
 #include "global.hpp"
 
-const std::string preferencesDefault[11] = {
+const std::string preferencesDefault[10] = {
     "[Settings]",
     "music = 1",
     "sound = 1",
     "show_fps = 0",
     "",
     "[Display]",
-    "borderless_fullscreen = 0",
     "msaa_4x = 1",
     "",
     "[Other]",
@@ -68,14 +67,6 @@ void InitCfg() {
         if (currentLine.find("msaa_4x") != std::string::npos) {
             if (currentLine.substr(currentLine.find("=") + 2, currentLine.find("=") + 3) == "1") {
                 SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
-            }
-        }
-        // Borderless Fullscreen
-        if (currentLine.find("borderless_fullscreen") != std::string::npos) {
-            if (currentLine.substr(currentLine.find("=") + 2, currentLine.find("=") + 3) == "0") {
-                borderlessFullscreen = false;
-            } else {
-                borderlessFullscreen = true;
             }
         }
         if (currentLine.find("developer_keybinds") != std::string::npos) {

@@ -6,7 +6,7 @@
 bool pause = false;
 bool pauseMenu = false;
 bool closeGame = false;
-bool musicOn, soundOn, showFps, borderlessFullscreen, devKeybinds;
+bool musicOn, soundOn, showFps, devKeybinds;
 Vector3 devPosition = Vector3Zero() + (Vector3){ 0.0f, 200.0f, 0.0f };
 
 float dropShadowY;
@@ -22,8 +22,6 @@ int main() {
     // Sets up the window and audio device.
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Pocket Crew");
     SetTargetFPS(60);
-
-    if (borderlessFullscreen) { ToggleBorderlessWindowed(); }
 
     // Load audio.
     AudioInit();
@@ -58,8 +56,6 @@ int main() {
 
     // Game loop
     while (!WindowShouldClose() || closeGame) {
-        // Toggle borderless fullscreen.
-        if (IsKeyPressed(KEY_EQUAL)) { ToggleBorderlessWindowed(); borderlessFullscreen = !borderlessFullscreen; if (borderlessFullscreen) { CfgUpdate("preferences.cfg", "borderless_fullscreen", "1"); } else { CfgUpdate("preferences.cfg", "borderless_fullscreen", "0"); } }
 
         // Developer Keybinds.
         if (devKeybinds && IsKeyPressed(KEY_M)) { std::cout << std::to_string(player.position.x) + "f, " + std::to_string(player.position.y) + "f, " + std::to_string(player.position.z) + "f " << "\n"; }
