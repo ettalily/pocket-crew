@@ -139,7 +139,7 @@ void Particle::Draw() {
 ```
 
 ### Note on Implementation
-Lots of my code is too big or complicated to cut down and summarise here; please skim through the scripts in `/src`, they are commented well, are quite readable and give more insight into how things work that I can summarise here. This project got quite big.
+Lots of my code is too big or complicated to cut down and summarise here; please skim through the scripts in `/src`, they are commented well, are quite readable, and give more insight into how things work than I can summarise here. This project got quite big, mostly due to 3D being complicated.
 
 ## User Testing
 

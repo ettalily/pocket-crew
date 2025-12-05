@@ -12,6 +12,7 @@ void OOBCheck() {
     if (player.position.y < -6) {
         player.position = lastSafeLocation;
         player.velocity = Vector3Zero();
+        player.velocity.y = 0.1f;
         cam.Update();
         cam.camera.position = cam.desiredPosition;
         PlaySound(deathSound);
@@ -24,6 +25,5 @@ void OOBCheck() {
     if (lslTimer == LSL_PING_FREQUENCY) {
         lslTimer = 0;
         lastSafeLocation = player.position;
-        lastSafeLocation.y += 3.0f;
     }
 }
