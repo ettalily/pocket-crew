@@ -17,7 +17,7 @@ void GameCamera::CameraInit() {
 }
 
 void GameCamera::Update() {
-    orbits = (Vector3){ -33.0f, player.position.y, 33.0f };
+    orbits = (Vector3){ -37.0f, player.position.y, 33.0f };
     switch (cameraMode) {
         // Orbits around a center point but looks at the player.
         case Orbit:
