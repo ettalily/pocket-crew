@@ -24,7 +24,9 @@ void BugCollectable::PickupCheck() {
 
 void BugCollectable::Draw() {
     if (collected) return;
+    DrawCube((Vector3){ position.x, position.y + offsetY, position.z }, size.x, size.y, size.z, bugColor);
     
+    if (pauseMenu) return;
     offsetY += velocity;
     if (offsetY <= 0.0f) {
         velocity = jumpPower;
@@ -32,6 +34,4 @@ void BugCollectable::Draw() {
     } else {
         velocity -= gravity;
     }
-
-    DrawCube((Vector3){ position.x, position.y + offsetY, position.z }, size.x, size.y, size.z, bugColor);
 }

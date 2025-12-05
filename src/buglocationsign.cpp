@@ -17,6 +17,7 @@ void DrawBugSign() {
     if (pause || !enabled) return;
     DrawBillboardRec(cam.camera, bugSign, Rectangle{16.0f * currentFrame, 16.0f * currentFrame, 16.0f, 16.0f}, currentBug->position + (Vector3){ 0.0f, BUG_SIGN_HEIGHT_OFFSET, 0.0f }, (Vector2){ BUG_SIGN_SIZE, BUG_SIGN_SIZE }, WHITE);
     
+    if (pauseMenu) return;
     frameTimer++;
     if (frameTimer != BUG_SIGN_SPEED) return;
     frameTimer = 0;
